@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#f5e014"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <title>Na Boa do Rio • Eventos Errejota</title>
+  <link rel="manifest" href="manifest.json"/>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ============================================================
+  ✏️  EDITE APENAS ESTE BLOCO — dados do site
+  ============================================================ -->
+<script>
+const CONFIG = {
+
+  nome:      "Na Boa do Rio",
+  slogan:    "Eventos • Festas Errejota",
+  cupom:     "BOA",
+
+  /* Logo: caminho relativo ou URL. Deixe "" para usar a logo padrão */
+  logo: "logo.png",
+
+  /* Eventos — campos:
+     dia, mes, diaSemana, hora, nome, subtitulo, local, link, img, ativo */
+  eventos: [
+    {
+      dia:"13", mes:"Mar", diaSemana:"Sex", hora:"21h",
+      nome:"Alexandre Pires", subtitulo:"Pagonejo Bão",
+      local:"Espaço Hall",
+      link:"https://uhuu.com/evento/rj/rio-de-janeiro/alexandre-pires-pagonejo-bao-15480",
+      img:"https://i.ytimg.com/vi/j5xF3FXAfZA/maxresdefault.jpg", ativo:true
+    },
+    {
+      dia:"22", mes:"Mar", diaSemana:"Dom", hora:"",
+      nome:"João Gomes", subtitulo:"",
+      local:"Ilha do Itanhangá",
+      link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA",
+      img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Jo%C3%A3o_Gomes_em_show_no_Vibra_S%C3%A3o_Paulo_-_2024_%281%29.jpg/960px-Jo%C3%A3o_Gomes_em_show_no_Vibra_S%C3%A3o_Paulo_-_2024_%281%29.jpg", ativo:true
+    },
+    {
+      dia:"04", mes:"Abr", diaSemana:"Sáb", hora:"",
+      nome:"Festa Geração 80", subtitulo:"20 Anos",
+      local:"Arena Bangu",
+      link:"https://www.sympla.com.br/festa-geracao-80---20-anos--04abr-sab--bangu-shopping__3293624?afid=108666",
+      img:"", ativo:true
+    },
+    {
+      dia:"11", mes:"Abr", diaSemana:"Sáb", hora:"",
+      nome:"Pôr do Suel", subtitulo:"1ª Edição 2026",
+      local:"Ilha do Itanhangá",
+      link:"https://www.bilheteriadigital.com/por-do-suel-11-de-abril?c=144691",
+      img:"", ativo:true
+    },
+    {
+      dia:"11", mes:"Abr", diaSemana:"Sáb", hora:"",
+      nome:"Delacruz", subtitulo:"",
+      local:"Clube dos Aliados",
+      link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/906661?coupon=BOA",
+      img:"", ativo:true
+    },
+    {
+      dia:"26", mes:"Abr", diaSemana:"Dom", hora:"",
+      nome:"Festival Nova Iguaçu", subtitulo:"",
+      local:"Shopping Nova Iguaçu",
+      link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA",
+      img:"", ativo:true
+    },
+    {
+      dia:"16", mes:"Mai", diaSemana:"Sex", hora:"",
+      nome:"Capital do Samba", subtitulo:"2 dias de festa",
+      local:"Marina da Glória",
+      link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA",
+      img:"", ativo:true
+    },
+    {
+      dia:"16", mes:"Mai", diaSemana:"Sex", hora:"",
+      nome:"Paralamas do Sucesso", subtitulo:"Clássicos",
+      local:"Arena Bangu",
+      link:"https://www.sympla.com.br/paralamas-do-sucesso--16mai-sab--bangu-shopping__3177364?afid=108667",
+      img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Os_Paralamas_do_Sucesso_at_Rock_in_Rio_2011.jpg/960px-Os_Paralamas_do_Sucesso_at_Rock_in_Rio_2011.jpg", ativo:true
+    },
+    {
+      dia:"26", mes:"Mai", diaSemana:"Ter", hora:"",
+      nome:"Elymar Santos", subtitulo:"Especial Dia das Mães",
+      local:"Arena Bangu",
+      link:"https://www.sympla.com.br/elymar-santos--23mai-sab--bangu-shopping__3272174?afid=108665A",
+      img:"", ativo:true
+    },
+    {
+      dia:"31", mes:"Mai", diaSemana:"Dom", hora:"",
+      nome:"Belo", subtitulo:"Show Completo",
+      local:"Arena Bangu",
+      link:"https://www.sympla.com.br/belo--31mai-dom--bangu-shopping__3291480?afid=108664",
+      img:"", ativo:true
+    },
+    {
+      dia:"16", mes:"Ago", diaSemana:"Dom", hora:"",
+      nome:"Delacruz", subtitulo:"Show Completo",
+      local:"Arena Bangu",
+      link:"https://www.sympla.com.br/delacruz--16ago-dom--bangu-shopping__3216355?afid=108663",
+      img:"", ativo:true
+    },
+  ],
+
+  /* Redes sociais */
+  redes: [
+    { label:"Instagram", sub:"@naboadorio",      tipo:"instagram", link:"https://www.instagram.com/naboadorio",                        ativo:true },
+    { label:"Facebook",  sub:"Na Boa do Rio",    tipo:"facebook",  link:"https://www.facebook.com/Na-Boa-do-Rio-2383544258637781/",     ativo:true },
+    { label:"WhatsApp",  sub:"Grupo de eventos", tipo:"whatsapp",  link:"https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd",            ativo:true },
+    { label:"Telegram",  sub:"Canal oficial",    tipo:"telegram",  link:"https://t.me/naboadorio",                                     ativo:true },
+  ],
+};
+</script>
+<!-- ============================================================
+  FIM DA ÁREA DE EDIÇÃO
+  ============================================================ -->
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --yellow: #f5e014;
+  --pink:   #e91e8c;
+  --blue:   #29abe2;
+  --white:  #ffffff;
+  --dark:   #1a1a1a;
+
+  --bg:     #fdf9e8;
+  --card:   #ffffff;
+  --card2:  #fffdf0;
+  --border: rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.15);
+  --text:   #1a1a1a;
+  --text-dim:#555;
+  --text-muted:#999;
+  --radius: 18px;
+  --radius-sm:12px;
+}
+
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{
+  min-height:100dvh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Archivo',sans-serif;
+  overflow-x:hidden;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+/* ── WAVE BACKGROUND PATTERN (SVG inline) ── */
+.wave-bg{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='40'%3E%3Cpath d='M0 20 Q15 5 30 20 Q45 35 60 20 Q75 5 90 20 Q105 35 120 20' fill='none' stroke='%23e91e8c' stroke-width='6'/%3E%3C/svg%3E");
+  background-size:120px 40px;
+}
+
+/* ── HERO HEADER ── */
+.hero{
+  position:relative;z-index:2;
+  background:var(--yellow);
+  padding:48px 20px 0;
+  display:flex;flex-direction:column;align-items:center;
+  overflow:hidden;
+}
+
+/* wave divider bottom of hero */
+.hero-wave{
+  width:100%;display:block;
+  margin-bottom:-2px;
+}
+
+.logo-wrap{
+  position:relative;
+  margin-bottom:16px;
+  animation:popIn .6s cubic-bezier(.22,1,.36,1) both;
+}
+.logo-img{
+  width:130px;
+  display:block;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.18));
+  animation:popIn .6s cubic-bezier(.22,1,.36,1) both;
+}
+.logo-fallback{
+  width:110px;height:110px;border-radius:50%;
+  background:var(--pink);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Archivo Black',sans-serif;font-size:22px;color:#fff;
+  box-shadow:0 4px 20px rgba(233,30,140,.4);
+}
+
+.hero-tag{
+  font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  color:rgba(26,26,26,.55);font-weight:400;margin-bottom:6px;
+  animation:fadeDown .5s .1s both;
+}
+.hero-sub{
+  font-size:12px;font-style:italic;font-weight:300;
+  color:rgba(26,26,26,.6);letter-spacing:.3px;
+  margin-bottom:28px;
+  animation:fadeDown .5s .18s both;
+}
+
+/* ── CUPOM ── */
+.cupom-wrap{
+  margin-bottom:28px;
+  animation:fadeDown .5s .24s both;
+}
+.cupom{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--pink);
+  border-radius:100px;padding:10px 20px;
+  box-shadow:0 4px 16px rgba(233,30,140,.35);
+  cursor:default;
+}
+.cupom-txt{font-size:11px;color:rgba(255,255,255,.8);letter-spacing:.5px}
+.cupom-code{
+  font-family:'Archivo Black',sans-serif;
+  font-size:15px;color:#fff;letter-spacing:3px;
+}
+
+/* ── MAIN CONTENT ── */
+.wrap{
+  position:relative;z-index:2;
+  max-width:480px;margin:0 auto;
+  padding:0 16px 60px;
+}
+
+/* ── SEARCH ── */
+.search-wrap{
+  position:relative;
+  margin:24px 0 8px;
+  animation:fadeDown .5s .3s both;
+}
+.search-input{
+  width:100%;
+  background:#fff;
+  border:2px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:13px 16px 13px 44px;
+  color:var(--text);
+  font-family:'Archivo',sans-serif;font-size:14px;
+  outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.search-input::placeholder{color:var(--text-muted)}
+.search-input:focus{
+  border-color:var(--pink);
+  box-shadow:0 0 0 3px rgba(233,30,140,.12);
+}
+.search-icon{
+  position:absolute;left:15px;top:50%;transform:translateY(-50%);
+  font-size:16px;pointer-events:none;
+}
+.search-clear{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  background:rgba(0,0,0,.08);border:none;
+  width:22px;height:22px;border-radius:50%;
+  color:var(--text-dim);font-size:12px;cursor:pointer;
+  display:none;align-items:center;justify-content:center;
+  transition:background .15s;
+}
+.search-clear:hover{background:rgba(0,0,0,.15)}
+.search-clear.visible{display:flex}
+
+.search-empty{
+  display:none;text-align:center;padding:36px 16px;
+  color:var(--text-muted);font-size:13px;
+}
+.search-empty.visible{display:block}
+.search-empty-icon{font-size:32px;margin-bottom:8px}
+
+/* ── SECTION HEADER ── */
+.sec-head{
+  display:flex;align-items:center;gap:10px;
+  margin:24px 0 14px;
+}
+.sec-head-label{
+  font-size:10px;font-weight:500;color:var(--text-muted);
+  letter-spacing:3px;text-transform:uppercase;white-space:nowrap;
+}
+.sec-head::after{content:'';flex:1;height:2px;background:var(--yellow);border-radius:2px}
+
+/* ── MONTH HEADER ── */
+.month-header{
+  display:flex;align-items:center;gap:10px;
+  margin:20px 0 10px;
+}
+.month-pill{
+  display:flex;align-items:center;gap:7px;
+  background:var(--pink);
+  color:#fff;border-radius:100px;
+  padding:5px 14px 5px 10px;
+  font-family:'Archivo Black',sans-serif;
+  font-size:11px;letter-spacing:1px;text-transform:uppercase;
+  white-space:nowrap;
+  box-shadow:0 3px 10px rgba(233,30,140,.3);
+}
+.month-pill-dot{width:7px;height:7px;border-radius:50%;background:var(--yellow);flex-shrink:0}
+.month-line{flex:1;height:2px;background:rgba(233,30,140,.15);border-radius:2px}
+.month-count{font-size:10px;color:var(--text-muted);white-space:nowrap}
+
+/* ── EVENT LIST ── */
+.ev-list{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+
+/* ── EVENT CARD ── */
+.ev-card{
+  display:block;text-decoration:none;color:var(--text);
+  background:var(--card);
+  border:2px solid transparent;
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.ev-card:active{transform:scale(.98)}
+@media(hover:hover){
+  .ev-card:hover{
+    transform:translateY(-3px);
+    border-color:var(--pink);
+    box-shadow:0 8px 28px rgba(233,30,140,.18);
+  }
+}
+
+/* card image */
+.ev-img{
+  width:100%;height:160px;
+  object-fit:cover;object-position:center top;
+  display:block;
+}
+.ev-img-placeholder{
+  width:100%;height:120px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;
+  position:relative;overflow:hidden;
+}
+.ev-img-placeholder::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 18px,
+    rgba(255,255,255,.12) 18px,
+    rgba(255,255,255,.12) 20px
+  );
+}
+
+/* card body */
+.ev-body{
+  padding:13px 14px 14px;
+  display:flex;gap:12px;align-items:flex-start;
+}
+
+/* date block */
+.ev-date{
+  flex-shrink:0;
+  background:var(--yellow);
+  border-radius:10px;
+  padding:7px 10px;
+  text-align:center;min-width:50px;
+}
+.ev-date-day{
+  display:block;
+  font-family:'Archivo Black',sans-serif;
+  font-size:22px;line-height:1;color:var(--dark);
+}
+.ev-date-mes{
+  display:block;font-size:9px;
+  color:rgba(26,26,26,.6);letter-spacing:1px;
+  text-transform:uppercase;margin-top:1px;
+}
+.ev-date-dsem{
+  display:block;font-size:8px;
+  color:rgba(26,26,26,.5);letter-spacing:.5px;
+  text-transform:uppercase;margin-top:3px;
+  padding-top:3px;border-top:1px solid rgba(0,0,0,.12);
+}
+
+/* info */
+.ev-info{flex:1;min-width:0;padding-top:1px}
+.ev-nome{
+  font-family:'Archivo Black',sans-serif;
+  font-size:15px;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ev-sub{font-size:11px;color:var(--pink);font-weight:500;margin-top:2px}
+.ev-meta{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.ev-meta-row{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;color:var(--text-dim);font-weight:300;
+}
+.ev-meta-icon{font-size:11px;flex-shrink:0}
+
+/* CTA */
+.ev-cta{
+  margin:0 14px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--yellow);
+  border-radius:10px;padding:9px 14px;
+}
+.ev-cta-txt{font-size:11px;color:var(--dark);font-weight:500;letter-spacing:.2px}
+.ev-cta-arr{font-size:14px;color:var(--dark);font-weight:700}
+
+/* placeholder gradients */
+.pc-0{background:linear-gradient(135deg,var(--pink),#c4006e)}
+.pc-1{background:linear-gradient(135deg,var(--blue),#1480b8)}
+.pc-2{background:linear-gradient(135deg,#f5a623,#e8860a)}
+.pc-3{background:linear-gradient(135deg,var(--pink),var(--blue))}
+.pc-4{background:linear-gradient(135deg,#7b2d8b,#4a1260)}
+.pc-5{background:linear-gradient(135deg,var(--blue),var(--pink))}
+.pc-6{background:linear-gradient(135deg,#e8860a,var(--pink))}
+
+/* ── SOCIAL GRID ── */
+.soc-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin-bottom:40px;
+}
+.soc-card{
+  display:flex;flex-direction:column;gap:10px;
+  background:var(--card);
+  border:2px solid transparent;
+  border-radius:var(--radius-sm);
+  padding:14px;text-decoration:none;color:var(--text);
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  transition:transform .18s,border-color .18s,box-shadow .18s;
+  -webkit-tap-highlight-color:transparent;
+}
+.soc-card:active{transform:scale(.97)}
+@media(hover:hover){
+  .soc-card:hover{transform:translateY(-2px);border-color:var(--pink);box-shadow:0 6px 20px rgba(233,30,140,.15)}
+}
+.soc-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.soc-icon svg{width:18px;height:18px;fill:#fff}
+.soc-label{font-size:10px;color:var(--text-muted);font-weight:300}
+.soc-name{font-size:13px;font-weight:500}
+.si-instagram{background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+.si-facebook {background:#1877f2}
+.si-whatsapp {background:#25d366}
+.si-telegram {background:#229ed9}
+
+/* ── FOOTER ── */
+.footer{
+  text-align:center;padding-bottom:16px;
+}
+.footer-wave{
+  width:100%;margin-bottom:12px;display:block;
+}
+.footer-txt{
+  font-size:10px;color:var(--text-muted);
+  letter-spacing:2px;text-transform:uppercase;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes popIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+</style>
+
+<!-- WAVE PATTERN BG -->
+<div class="wave-bg"></div>
+
+<!-- HERO YELLOW HEADER -->
+<div class="hero">
+  <div class="logo-wrap">
+    <img class="logo-img" id="logo-img" src="logo.png" alt="Na Boa do Rio"
+         onerror="this.style.display='none';document.getElementById('logo-fb').style.display='flex'"/>
+    <div class="logo-fallback" id="logo-fb" style="display:none">NBR</div>
+  </div>
+  <p class="hero-tag" id="h-slogan"></p>
+  <div class="cupom-wrap">
+    <div class="cupom">
+      <span style="font-size:15px">🎟️</span>
+      <span class="cupom-txt">Código de desconto</span>
+      <span class="cupom-code" id="cupom-val"></span>
+    </div>
+  </div>
+
+  <!-- Wave SVG divider -->
+  <svg class="hero-wave" viewBox="0 0 390 48" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 48 L0 28 Q16 8 32 28 Q48 48 64 28 Q80 8 96 28 Q112 48 128 28 Q144 8 160 28 Q176 48 192 28 Q208 8 224 28 Q240 48 256 28 Q272 8 288 28 Q304 48 320 28 Q336 8 352 28 Q368 48 390 28 L390 48 Z" fill="#fdf9e8"/>
+  </svg>
+</div>
+
+<!-- MAIN -->
+<div class="wrap">
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search-input"
+           type="search" placeholder="Buscar artista, evento ou local…"
+           autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <button class="search-clear" id="search-clear" aria-label="Limpar">✕</button>
+  </div>
+
+  <!-- EVENTOS -->
+  <div class="sec-head" style="animation:fadeDown .5s .35s both">
+    <span class="sec-head-label">📅 Agenda 2026</span>
+  </div>
+  <div class="ev-list" id="ev-list"></div>
+  <div class="search-empty" id="search-empty">
+    <div class="search-empty-icon">🎭</div>
+    Nenhum evento encontrado para "<span id="search-term"></span>"
+  </div>
+
+  <!-- REDES -->
+  <div class="sec-head" style="animation:fadeDown .5s .5s both;margin-top:8px">
+    <span class="sec-head-label">🔗 Nossas redes</span>
+  </div>
+  <div class="soc-grid" id="soc-grid"></div>
+
+  <footer class="footer">
+    <svg class="footer-wave" viewBox="0 0 390 32" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0 Q16 20 32 0 Q48 20 64 0 Q80 20 96 0 Q112 20 128 0 Q144 20 160 0 Q176 20 192 0 Q208 20 224 0 Q240 20 256 0 Q272 20 288 0 Q304 20 320 0 Q336 20 352 0 Q368 20 390 0 L390 32 L0 32 Z" fill="#e91e8c" opacity=".12"/>
+    </svg>
+    <p class="footer-txt" id="footer-txt"></p>
+  </footer>
+</div>
+
+<script>
+const ICONS = {
+  instagram:`<svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+  facebook:`<svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  whatsapp:`<svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`,
+  telegram:`<svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>`,
+};
+
+const PC = ['pc-0','pc-1','pc-2','pc-3','pc-4','pc-5','pc-6'];
+const EMOJIS = ['🎵','🎤','🎶','🎸','🥁','🎺','🎻','🪗','🪘'];
+
+(function render(){
+  document.getElementById('h-slogan').textContent   = CONFIG.slogan;
+  document.getElementById('cupom-val').textContent  = CONFIG.cupom;
+  document.getElementById('footer-txt').textContent = `© ${new Date().getFullYear()} Na Boa do Rio`;
+
+  // ── Eventos agrupados por mês
+  const list   = document.getElementById('ev-list');
+  const ativos = CONFIG.eventos.filter(e => e.ativo);
+  const porMes = {};
+  ativos.forEach(ev => { if(!porMes[ev.mes]) porMes[ev.mes]=[]; porMes[ev.mes].push(ev); });
+
+  let idx = 0;
+  Object.entries(porMes).forEach(([mes, evs]) => {
+    const cnt = evs.length;
+    list.innerHTML += `
+      <div class="month-header">
+        <div class="month-pill"><span class="month-pill-dot"></span>${mes}</div>
+        <div class="month-line"></div>
+        <span class="month-count">${cnt} evento${cnt>1?'s':''}</span>
+      </div>`;
+
+    evs.forEach(ev => {
+      const delay  = (.4 + idx * .055).toFixed(2);
+      const pc     = PC[idx % PC.length];
+      const emoji  = EMOJIS[idx % EMOJIS.length];
+      idx++;
+
+      const imgBlock = ev.img
+        ? `<img class="ev-img" src="${ev.img}" alt="${ev.nome}" loading="lazy"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+           <div class="ev-img-placeholder ${pc}" style="display:none">${emoji}</div>`
+        : `<div class="ev-img-placeholder ${pc}">${emoji}</div>`;
+
+      const subLine  = ev.subtitulo ? `<div class="ev-sub">${ev.subtitulo}</div>` : '';
+      const horaLine = ev.hora      ? `<div class="ev-meta-row"><span class="ev-meta-icon">🕐</span>${ev.hora}</div>` : '';
+
+      list.innerHTML += `
+      <a class="ev-card" href="${ev.link}" target="_blank" rel="noopener"
+         style="animation:slideUp .5s ${delay}s both">
+        ${imgBlock}
+        <div class="ev-body">
+          <div class="ev-date">
+            <span class="ev-date-day">${ev.dia}</span>
+            <span class="ev-date-mes">${ev.mes}</span>
+            ${ev.diaSemana ? `<span class="ev-date-dsem">${ev.diaSemana}</span>` : ''}
+          </div>
+          <div class="ev-info">
+            <div class="ev-nome">${ev.nome}</div>
+            ${subLine}
+            <div class="ev-meta">
+              <div class="ev-meta-row"><span class="ev-meta-icon">📍</span>${ev.local}</div>
+              ${horaLine}
+            </div>
+          </div>
+        </div>
+        <div class="ev-cta">
+          <span class="ev-cta-txt">🎟️ Garantir ingresso · cód. <strong>${CONFIG.cupom}</strong></span>
+          <span class="ev-cta-arr">↗</span>
+        </div>
+      </a>`;
+    });
+  });
+
+  // ── Redes
+  const grid = document.getElementById('soc-grid');
+  CONFIG.redes.filter(r=>r.ativo).forEach((r,i)=>{
+    const delay = (.7 + i*.07).toFixed(2);
+    grid.innerHTML += `
+    <a class="soc-card" href="${r.link}" target="_blank" rel="noopener"
+       style="animation:slideUp .5s ${delay}s both">
+      <div class="soc-icon si-${r.tipo}">${ICONS[r.tipo]||''}</div>
+      <div>
+        <div class="soc-label">${r.label}</div>
+        <div class="soc-name">${r.sub}</div>
+      </div>
+    </a>`;
+  });
+
+  // ── Search
+  const inp   = document.getElementById('search-input');
+  const clr   = document.getElementById('search-clear');
+  const empty = document.getElementById('search-empty');
+  const term  = document.getElementById('search-term');
+
+  function doSearch(q){
+    const t = q.trim().toLowerCase();
+    clr.classList.toggle('visible', t.length > 0);
+    let found = 0;
+    document.querySelectorAll('.ev-card').forEach(c => {
+      const match = !t || c.textContent.toLowerCase().includes(t);
+      c.style.display = match ? '' : 'none';
+      if(match) found++;
+    });
+    document.querySelectorAll('.month-header').forEach(h => {
+      let sib = h.nextElementSibling, vis = false;
+      while(sib && !sib.classList.contains('month-header')){
+        if(sib.classList.contains('ev-card') && sib.style.display !== 'none'){ vis=true; break; }
+        sib = sib.nextElementSibling;
+      }
+      h.style.display = vis ? '' : 'none';
+    });
+    empty.classList.toggle('visible', t.length > 0 && found === 0);
+    if(t && found === 0) term.textContent = q.trim();
+  }
+
+  inp.addEventListener('input', e => doSearch(e.target.value));
+  clr.addEventListener('click', () => { inp.value=''; inp.focus(); doSearch(''); });
+})();
+</script>
+</body>
+</html>
