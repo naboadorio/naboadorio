@@ -65,7 +65,60 @@
     .btn-whatsapp{background:linear-gradient(135deg,#25D366,#20ba58)}
     .btn-instagram{background:linear-gradient(135deg,#E1306C,#C13584)}
     .no-results{padding:24px 16px;color:var(--text-gray);font-weight:700;text-align:center}
-    @media (max-width:480px){ .container{max-width:100%} .header{padding:10px 12px} .logo{width:100px} .search-wrapper input{font-size:12px;padding:9px 12px 9px 32px} .coupon-banner{padding:12px;font-size:12px} .event-image-wrapper{aspect-ratio:16/9;padding-top:56.25%} .artist-title{font-size:16px} }
+
+    /* ── RESPONSIVO ── */
+
+    /* Mobile pequeno (< 480px) */
+    @media (max-width:479px){
+      .container{max-width:100%}
+      .header{padding:10px 12px}
+      .logo{width:100px}
+      .search-wrapper input{font-size:12px;padding:9px 12px 9px 32px}
+      .coupon-banner{padding:12px;font-size:12px}
+      .artist-title{font-size:16px}
+    }
+
+    /* Tablet (≥ 600px) */
+    @media (min-width:600px){
+      .container{max-width:100%;background:var(--bg-light)}
+      .header{padding:14px 24px}
+      .logo{width:140px}
+      .coupon-banner{padding:18px 24px;gap:16px}
+      .coupon-text{font-size:15px}
+      .filter-section{padding:14px 20px;gap:10px}
+      .section-header{padding:20px 20px 8px;font-size:20px}
+      .events-grid{padding:0 20px 32px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+      .month-header{padding:16px 20px}
+      footer{padding:28px 24px}
+      .footer-buttons{flex-direction:row}
+      .footer-btn{flex:1}
+    }
+
+    /* Desktop (≥ 1024px) */
+    @media (min-width:1024px){
+      .container{max-width:1100px;margin:0 auto;background:var(--white);border-radius:0;box-shadow:0 0 40px rgba(0,0,0,.08)}
+      .header{padding:16px 32px}
+      .logo{width:150px}
+      .search-wrapper input{font-size:14px;padding:11px 16px 11px 40px}
+      .coupon-banner{padding:20px 32px}
+      .filter-section{padding:16px 28px}
+      .section-header{padding:24px 28px 8px;font-size:22px}
+      .events-grid{padding:0 28px 40px;grid-template-columns:repeat(3,1fr);gap:24px}
+      .month-header{padding:16px 28px}      footer{padding:32px 32px}
+      .artist-title{font-size:19px}
+      .btn-ticket,.btn-share{font-size:12px;padding:9px 10px;gap:4px}
+      .btn-ticket i,.btn-share i{font-size:11px}
+    }
+
+    /* Wide (≥ 1400px) */
+    @media (min-width:1400px){
+      .container{max-width:1280px}
+    }
+
+    /* Grid único de eventos */
+    @media (min-width:1024px){
+      .events-grid{padding:0 28px 40px;grid-template-columns:repeat(3,1fr);gap:24px}
+    }
   </style>
 </head>
 <body>
@@ -255,7 +308,7 @@
 
     function applyFilters(){ var byMonth=ALL_CARDS.filter(function(it){ if(activeMonthFilter==='all')return true; return it.ym===activeMonthFilter;}); if(!searchQuery.trim()){ render(byMonth); return; } var ext=extractFilters(searchQuery); var text=(ext.text||'').trim(); var datePred=ext.datePred; var filtered=byMonth; if(text){ var tokens=stripAccents(text).toLowerCase().split(/\s+/).filter(Boolean); filtered=filtered.filter(function(it){ for(var k=0;k<tokens.length;k++){ if(it.searchText.indexOf(tokens[k])===-1)return false; } return true; }); } if(datePred){ filtered=filtered.filter(datePred);} if(!text && !datePred){ var q=stripAccents(searchQuery.trim()).toLowerCase(); filtered=byMonth.filter(function(it){ return it.searchText.indexOf(q)!==-1;}); } render(filtered); }
 
-    function render(list){ view.innerHTML=''; if(!list.length){ var msg=document.createElement('div'); msg.className='no-results'; msg.textContent='Nenhum evento encontrado.'; view.appendChild(msg); return bindShare(); } if(activeMonthFilter==='all'){ var lastYM=''; var grid=null; for(var i=0;i<list.length;i++){ var it=list[i]; if(it.ym!==lastYM){ lastYM=it.ym; var header=document.createElement('div'); header.className='month-header'; header.innerHTML='<i class="far fa-calendar-alt"></i> <span>'+labelYM(it.date)+'</span>'; view.appendChild(header); grid=document.createElement('div'); grid.className='events-grid'; view.appendChild(grid);} grid.appendChild(it.node);} } else { var grid=document.createElement('div'); grid.className='events-grid'; for(var j=0;j<list.length;j++){ grid.appendChild(list[j].node);} view.appendChild(grid);} bindShare(); }
+    function render(list){ view.innerHTML=''; if(!list.length){ var msg=document.createElement('div'); msg.className='no-results'; msg.textContent='Nenhum evento encontrado.'; view.appendChild(msg); return bindShare(); } var grid=document.createElement('div'); grid.className='events-grid'; for(var i=0;i<list.length;i++){ grid.appendChild(list[i].node);} view.appendChild(grid); bindShare(); }
 
     function setActive(btn){ var all=document.querySelectorAll('#filters .filter-btn'); for(var i=0;i<all.length;i++) all[i].classList.remove('active'); btn.classList.add('active'); }
     document.getElementById('filters').addEventListener('click',function(e){ var btn=e.target.closest('.filter-btn'); if(!btn)return; var f=btn.getAttribute('data-filter'); if(f==='all')activeMonthFilter='all'; else if(f==='this')activeMonthFilter=thisKey; else if(f==='next')activeMonthFilter=nextKey; setActive(btn); applyFilters(); });
