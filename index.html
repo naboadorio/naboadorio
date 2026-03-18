@@ -7,13 +7,13 @@
   <link href="./Ingressos com Desconto BOA_files/css2" rel="stylesheet">
   <link href="./Ingressos com Desconto BOA_files/all.min.css" rel="stylesheet">
   <style>
-    :root{ --primary:#FF2A6D;--secondary:#FFE600;--bg-light:#f5f5f5;--text-dark:#1a1a1a; --text-gray:#777;--border-gray:#e0e0e0;--white:#ffffff; }
+    :root{ --primary:#FF2A6D;--secondary:#fee822;--bg-light:#f5f5f5;--text-dark:#1a1a1a; --text-gray:#777;--border-gray:#e0e0e0;--white:#ffffff; }
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:'Nunito',sans-serif;background:var(--bg-light);color:var(--text-dark);line-height:1.6}
     a{color:inherit;text-decoration:none}
     .container{max-width:480px;margin:0 auto;background:var(--white);min-height:100vh;display:flex;flex-direction:column}
     .header{background:var(--secondary);padding:8px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,.15);position:sticky;top:0;z-index:1000;flex-wrap:wrap}
-    .logo{flex-shrink:0;width:140px;height:60px;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease, filter 0.3s ease;filter:drop-shadow(0 2px 4px rgba(255,42,109,.2))}
+    .logo{flex-shrink:0;width:140px;height:60px;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease}
     .logo img{width:100%;height:100%;object-fit:contain;display:block}
     .search-wrapper{flex:1;position:relative;min-width:120px}
     .search-wrapper input{width:100%;padding:8px 12px 8px 32px;border:none;background:#fff;border-radius:24px;font-size:14px;color:var(--text-dark);box-shadow:0 1px 4px rgba(0,0,0,.1)}
@@ -29,6 +29,8 @@
     .filter-btn:hover{border-color:var(--primary)}
     .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
     .section-header{padding:18px 16px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .section-header .section-subtitle{font-size:11px;font-weight:600;color:var(--text-gray);margin-top:2px;letter-spacing:0.3px;text-transform:uppercase}
+    .section-header > div{display:flex;flex-direction:column}
     .events-grid{padding:0 12px 24px;display:flex;flex-direction:column;gap:16px}
     .event-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:.3s cubic-bezier(0.34, 1.56, 0.64, 1);border:1px solid rgba(255,42,109,.08)}
     .event-card:hover{transform:translateY(-8px);box-shadow:0 12px 24px rgba(255,42,109,.15)}
@@ -46,13 +48,13 @@
     .discount-badge{position:absolute;top:12px;right:12px;background:linear-gradient(135deg, var(--primary) 0%, #ff0066 100%);color:#fff;padding:8px 12px;border-radius:18px;font-weight:800;font-size:13px;box-shadow:0 2px 8px rgba(255,42,109,.3)}
     .promo-badge{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.98);color:var(--primary);padding:8px 14px;border-radius:16px;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.15);border:1px solid rgba(255,42,109,.2)}
     .event-content{padding:16px}
-    .artist-title{font-size:18px;font-weight:900;letter-spacing:.3px}
+    .artist-title{font-size:16px;font-weight:900;letter-spacing:.3px}
     .event-subtitle{font-size:12px;font-weight:800;color:var(--text-gray);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
     .event-location{font-size:13px;color:var(--text-gray);margin:10px 0 12px;display:flex;align-items:flex-start;gap:6px}
     .event-location i{color:var(--primary);margin-top:2px}
     .event-location a{text-decoration:underline}
-    .event-datetime{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;font-weight:800;color:var(--text-gray);text-transform:uppercase;letter-spacing:.3px}
-    .event-datetime i{color:var(--primary);font-size:12px}
+    .event-datetime{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.3px}
+    .event-datetime i{color:#bbb;font-size:10px}
     .event-actions{display:flex;gap:10px;margin-top:12px}
     .btn-ticket{flex:1;background:linear-gradient(135deg, var(--primary) 0%, #ff0066 100%);color:#fff;padding:12px 14px;border-radius:12px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.3s ease;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(255,42,109,.2)}
     .btn-ticket:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,42,109,.3)}
@@ -78,7 +80,7 @@
       .logo{width:150px}
       .search-wrapper input{font-size:12px;padding:9px 12px 9px 32px}
       .coupon-banner{padding:12px;font-size:12px}
-      .artist-title{font-size:16px}
+      .artist-title{font-size:14px}
     }
 
     /* Tablet (≥ 600px) */
@@ -108,7 +110,7 @@
       .section-header{padding:24px 28px 8px;font-size:22px}
       .events-grid{padding:0 28px 40px;grid-template-columns:repeat(3,1fr);gap:24px}
       .month-header{padding:16px 28px}      footer{padding:32px 32px}
-      .artist-title{font-size:19px}
+      .artist-title{font-size:17px}
       .btn-ticket,.btn-share{font-size:12px;padding:9px 10px;gap:4px}
       .btn-ticket i,.btn-share i{font-size:11px}
     }
@@ -124,6 +126,7 @@
     }
   
 .tag-boa { color:#FF2A6D; font-weight:900; text-shadow:1px 1px 0 #ffffff, 3px 3px 3px rgba(0,0,0,0.18); letter-spacing:0.5px;}
+.promo-badge span.boa-3d { color:#FF2A6D; font-weight:900; text-shadow:1px 1px 0 #ffffff, 3px 3px 3px rgba(0,0,0,0.18); letter-spacing:0.5px;}
 
 /* Sticky filters */
 .header { position: sticky; top: 0; z-index: 1000; }
@@ -133,7 +136,7 @@
 <body>
   <div class="container">
     <header class="header">
-      <div class="logo"><img src="assets/logo.png" alt="Logo"/></div>
+      <div class="logo"><img src="logo-primaria3-sem-fundo.png" alt="Logo BOA DORIO"/></div>
       <div class="search-wrapper"><i class="fas fa-search search-icon"></i><input type="text" placeholder="Buscar eventos, atrações, local ou datas"></div>
       <div class="coupon-badge"><i class="fas fa-scissors"></i><span>CÓDIGO <span class="tag-boa">BOA</span></span></span></div>
       <div class="coupon-text"><strong>Ganhe até <span class="highlight">10% OFF</span></strong></div>
@@ -160,7 +163,7 @@
           </div>
           <div class="date-badge"><div class="day">22</div><div class="month">MAR</div></div>
           <div class="discount-badge">-10%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">O Grito da Copa</div>
@@ -182,7 +185,7 @@
           </div>
           <div class="date-badge"><div class="day">16</div><div class="month">MAI</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Paralamas do Sucesso</div>
@@ -204,7 +207,7 @@
           </div>
           <div class="date-badge"><div class="day">04</div><div class="month">ABR</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Festa Geração 80 - 20 anos</div>
@@ -226,7 +229,7 @@
           </div>
           <div class="date-badge"><div class="day">12</div><div class="month">ABR</div></div>
           <div class="discount-badge">-10%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Suel e Convidados</div>
@@ -248,7 +251,7 @@
           </div>
           <div class="date-badge"><div class="day">26</div><div class="month">ABR</div></div>
           <div class="discount-badge">-10%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Festival Nova Iguaçu</div>
@@ -261,7 +264,7 @@
       <!-- EVENTO 6 - Capital do Samba (Dia 1) -->
       <div class="event-card" data-nome="Capital do Samba" data-data="16/05 • Sábado • 16h" data-local="Local a definir" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" data-date="2026-05-16T16:00:00-03:00">
         <a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Capital do Samba">
-          <img src="file:///C:/Users/priscila.lobato/Downloads/evento5.png" alt="Capa do evento Capital do Samba - Dia 1">
+          <img src="capital-samba.png" alt="Capa do evento Capital do Samba - Dia 1">
           <div class="event-image-fallback" aria-hidden="true" hidden="">
             <div>
               <div class="fallback-title">Capital do Samba</div>
@@ -270,7 +273,7 @@
           </div>
           <div class="date-badge"><div class="day">16</div><div class="month">MAI</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Capital do Samba</div>
@@ -283,7 +286,7 @@
       <!-- EVENTO 7 - Capital do Samba (Dia 2) -->
       <div class="event-card" data-nome="Capital do Samba" data-data="17/05 • Domingo • 15h" data-local="Local a definir" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" data-date="2026-05-17T15:00:00-03:00">
         <a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Capital do Samba">
-          <img src="file:///C:/Users/priscila.lobato/Downloads/evento6.png" alt="Capa do evento Capital do Samba - Dia 2">
+          <img src="capital-samba.png" alt="Capa do evento Capital do Samba - Dia 2">
           <div class="event-image-fallback" aria-hidden="true" hidden="">
             <div>
               <div class="fallback-title">Capital do Samba</div>
@@ -292,7 +295,7 @@
           </div>
           <div class="date-badge"><div class="day">17</div><div class="month">MAI</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Capital do Samba</div>
@@ -315,7 +318,7 @@
           </div>
           <div class="date-badge"><div class="day">22</div><div class="month">MAR</div></div>
           <div class="discount-badge">-10%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">O Grito da Copa</div>
@@ -334,7 +337,7 @@
           </div>
           <div class="date-badge"><div class="day">04</div><div class="month">ABR</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Festa Geração 80 - 20 anos</div>
@@ -353,7 +356,7 @@
           </div>
           <div class="date-badge"><div class="day">12</div><div class="month">ABR</div></div>
           <div class="discount-badge">-10%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Suel e Convidados</div>
@@ -372,7 +375,7 @@
           </div>
           <div class="date-badge"><div class="day">26</div><div class="month">ABR</div></div>
           <div class="discount-badge">-10%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Festival Nova Iguaçu</div>
@@ -382,7 +385,7 @@
         </div>
       </div><div class="event-card" data-nome="Capital do Samba" data-data="16/05 • Sábado • 16h" data-local="Local a definir" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" data-date="2026-05-16T16:00:00-03:00">
         <a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper no-image" aria-label="Comprar ingresso - Capital do Samba">
-          <img src="file:///C:/Users/priscila.lobato/Downloads/evento5.png" alt="Capa do evento Capital do Samba - Dia 1">
+          <img src="capital-samba.png" alt="Capa do evento Capital do Samba - Dia 1">
           <div class="event-image-fallback" aria-hidden="true">
             <div>
               <div class="fallback-title">Capital do Samba</div>
@@ -391,7 +394,7 @@
           </div>
           <div class="date-badge"><div class="day">16</div><div class="month">MAI</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Capital do Samba</div>
@@ -410,7 +413,7 @@
           </div>
           <div class="date-badge"><div class="day">16</div><div class="month">MAI</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Paralamas do Sucesso</div>
@@ -420,7 +423,7 @@
         </div>
       </div><div class="event-card" data-nome="Capital do Samba" data-data="17/05 • Domingo • 15h" data-local="Local a definir" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" data-date="2026-05-17T15:00:00-03:00">
         <a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper no-image" aria-label="Comprar ingresso - Capital do Samba">
-          <img src="file:///C:/Users/priscila.lobato/Downloads/evento6.png" alt="Capa do evento Capital do Samba - Dia 2">
+          <img src="capital-samba.png" alt="Capa do evento Capital do Samba - Dia 2">
           <div class="event-image-fallback" aria-hidden="true">
             <div>
               <div class="fallback-title">Capital do Samba</div>
@@ -429,7 +432,7 @@
           </div>
           <div class="date-badge"><div class="day">17</div><div class="month">MAI</div></div>
           <div class="discount-badge">-5%</div>
-          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o cupom BOA</span></div>
+          <div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span class="boa-3d">BOA</span></span></div>
         </a>
         <div class="event-content">
           <div class="artist-title">Capital do Samba</div>
