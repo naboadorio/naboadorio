@@ -61,13 +61,17 @@
 
   <script>
   const imageStorage = {};
+  let secretCode = '';
 
-  // Atalho de teclado: Ctrl+Shift+I para mostrar painel de admin
-  document.addEventListener('keydown', (e) => {
-    if(e.ctrlKey && e.shiftKey && e.key === 'I'){
-      e.preventDefault();
+  // Digite "admin" para ativar o painel
+  document.addEventListener('keypress', (e) => {
+    secretCode += e.key.toLowerCase();
+    if(secretCode.includes('admin')){
       document.getElementById('adminBtn').style.display = 'block';
+      secretCode = '';
+      alert('✅ Painel de admin ativado!');
     }
+    if(secretCode.length > 10) secretCode = secretCode.slice(-10);
   });
 
   function toggleUploadPanel(){
