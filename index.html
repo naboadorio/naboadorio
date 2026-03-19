@@ -27,10 +27,60 @@
     
     <button onclick="toggleUploadPanel()" id="adminBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;">📸 Adicionar Imagens dos Eventos</button>
 
+    <button onclick="toggleEventsPanel()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;">📅 Gerenciar Eventos</button>
+
     <div class="image-upload-panel" id="uploadPanel">
       <div class="upload-title">Selecione suas imagens:</div>
       <div class="upload-inputs" id="uploadInputs"></div>
       <button class="upload-btn" onclick="saveImages()">✅ Salvar Imagens</button>
+    </div>
+
+    <div class="image-upload-panel" id="eventsPanel" style="display:none;">
+      <div class="upload-title">📅 Gerenciar Eventos</div>
+      
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--primary);">Seus Eventos:</div>
+        <div id="eventsList" style="max-height:220px;overflow-y:auto;"></div>
+      </div>
+
+      <div style="border-top:2px solid #fee822;padding-top:12px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">➕ Novo Evento Completo:</div>
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;font-size:11px;color:#666;">
+          <strong>📝 Informações Básicas:</strong>
+        </div>
+        <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventArtist" placeholder="Artista/Banda" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventSubtitle" placeholder="Subtítulo (Ex: Rock/MPB)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>📅 Data e Hora:</strong>
+        </div>
+        <input type="text" id="newEventDate" placeholder="Data (Ex: 25/05)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventDayWeek" placeholder="Dia da semana (Ex: Sábado)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventTime" placeholder="Horário (Ex: 19h)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>📍 Local e Links:</strong>
+        </div>
+        <input type="text" id="newEventLocal" placeholder="Local (Ex: Marina da Glória)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventLink" placeholder="Link de ingresso" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>🎉 Promoção:</strong>
+        </div>
+        <input type="text" id="newEventDiscount" placeholder="Desconto (Ex: -10%)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>📸 Foto do Evento:</strong>
+        </div>
+        <input type="file" id="newEventImage" accept="image/*" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
+        <div id="imagePreview" style="width:100%;height:120px;background:#f9f9f9;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;overflow:hidden;">
+          Clique para adicionar imagem
+        </div>
+        
+        <button class="upload-btn" onclick="addNewEvent()">✅ Adicionar Evento Completo</button>
+      </div>
     </div>
   </div>
 
@@ -63,11 +113,12 @@
   const imageStorage = {};
   let secretCode = '';
 
-  // Digite "admin" para ativar o painel
+  // Ativar painel por 5 cliques no logo
   document.addEventListener('keypress', (e) => {
     secretCode += e.key.toLowerCase();
     if(secretCode.includes('admin')){
       document.getElementById('adminBtn').style.display = 'block';
+      document.getElementById('adminEventsBtn').style.display = 'block';
       secretCode = '';
       alert('✅ Painel de admin ativado!');
     }
@@ -80,6 +131,130 @@
     if(panel.classList.contains('show')){
       generateUploadInputs();
     }
+  }
+
+  function toggleEventsPanel(){
+    const panel = document.getElementById('eventsPanel');
+    if(panel.style.display === 'none'){
+      panel.style.display = 'block';
+      loadEventsList();
+    } else {
+      panel.style.display = 'none';
+    }
+  }
+
+  // Preview de imagem
+  document.addEventListener('DOMContentLoaded', () => {
+    const imageInput = document.getElementById('newEventImage');
+    if(imageInput){
+      imageInput.addEventListener('change', function(e){
+        const file = e.target.files[0];
+        if(file){
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+            // Salvar em variável global
+            window.selectedEventImage = event.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  });
+
+  function loadEventsList(){
+    const saved = localStorage.getItem('customEvents');
+    const events = saved ? JSON.parse(saved) : [];
+    const list = document.getElementById('eventsList');
+    list.innerHTML = '';
+    
+    if(events.length === 0){
+      list.innerHTML = '<div style="color:#999;text-align:center;padding:16px;font-size:12px;">Nenhum evento adicionado ainda</div>';
+      return;
+    }
+
+    events.forEach((evt, idx) => {
+      const item = document.createElement('div');
+      item.style.cssText = 'padding:12px;background:linear-gradient(135deg,#FFF0C2,#FFE0EA);border-radius:8px;margin-bottom:8px;border-left:4px solid #FF2A6D;';
+      item.innerHTML = `
+        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:4px;">${evt.nome}</div>
+        <div style="font-size:11px;color:#666;margin-bottom:6px;">
+          🎤 ${evt.artista || 'Sem artista'} • 📅 ${evt.date} ${evt.dayWeek ? '• ' + evt.dayWeek : ''} ${evt.time ? '• ' + evt.time : ''}
+        </div>
+        <div style="font-size:11px;color:#666;margin-bottom:6px;">
+          📍 ${evt.local || 'Local não definido'} ${evt.discount ? ' • ' + evt.discount : ''}
+        </div>
+        <button onclick="deleteEvent(${idx})" style="background:#FF2A6D;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700;width:100%;">🗑️ Deletar</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function addNewEvent(){
+    const nome = document.getElementById('newEventName').value.trim();
+    const artist = document.getElementById('newEventArtist').value.trim();
+    const subtitle = document.getElementById('newEventSubtitle').value.trim();
+    const date = document.getElementById('newEventDate').value.trim();
+    const dayWeek = document.getElementById('newEventDayWeek').value.trim();
+    const time = document.getElementById('newEventTime').value.trim();
+    const local = document.getElementById('newEventLocal').value.trim();
+    const link = document.getElementById('newEventLink').value.trim();
+    const discount = document.getElementById('newEventDiscount').value.trim();
+    const image = window.selectedEventImage || null;
+
+    if(!nome || !date){
+      alert('⚠️ Preencha pelo menos nome e data!');
+      return;
+    }
+
+    const saved = localStorage.getItem('customEvents');
+    const events = saved ? JSON.parse(saved) : [];
+    
+    events.push({
+      nome,
+      artist,
+      subtitle,
+      date,
+      dayWeek,
+      time,
+      local,
+      link,
+      discount,
+      image
+    });
+
+    localStorage.setItem('customEvents', JSON.stringify(events));
+    alert('✅ Evento adicionado com sucesso!');
+    
+    // Limpar campos
+    document.getElementById('newEventName').value = '';
+    document.getElementById('newEventArtist').value = '';
+    document.getElementById('newEventSubtitle').value = '';
+    document.getElementById('newEventDate').value = '';
+    document.getElementById('newEventDayWeek').value = '';
+    document.getElementById('newEventTime').value = '';
+    document.getElementById('newEventLocal').value = '';
+    document.getElementById('newEventLink').value = '';
+    document.getElementById('newEventDiscount').value = '';
+    document.getElementById('newEventImage').value = '';
+    document.getElementById('imagePreview').innerHTML = 'Clique para adicionar imagem';
+    window.selectedEventImage = null;
+    
+    loadEventsList();
+    location.reload();
+  }
+
+  function deleteEvent(idx){
+    if(!confirm('Tem certeza que quer deletar esse evento?')) return;
+    
+    const saved = localStorage.getItem('customEvents');
+    const events = saved ? JSON.parse(saved) : [];
+    events.splice(idx, 1);
+    localStorage.setItem('customEvents', JSON.stringify(events));
+    alert('✅ Evento deletado com sucesso!');
+    loadEventsList();
+    location.reload();
   }
 
   function generateUploadInputs(){
@@ -100,28 +275,50 @@
     reader.onload = (e) => {
       imageStorage[index] = e.target.result;
       input.style.borderColor = '#25D366';
+      // Mostra a imagem em tempo real
+      const cards = document.querySelectorAll(`[data-img="${index}"]`);
+      cards.forEach(card => {
+        const img = card.querySelector('img');
+        if(img) {
+          img.src = e.target.result;
+          img.style.display = 'block';
+        }
+      });
     };
     reader.readAsDataURL(input.files[0]);
   }
 
   function saveImages(){
-    localStorage.setItem('eventImages', JSON.stringify(imageStorage));
-    alert('✅ Imagens salvas! Elas aparecerão automaticamente.');
-    document.getElementById('uploadPanel').classList.remove('show');
-    loadSavedImages();
+    if(Object.keys(imageStorage).length === 0){
+      alert('⚠️ Nenhuma imagem selecionada!');
+      return;
+    }
+    try {
+      localStorage.setItem('eventImages', JSON.stringify(imageStorage));
+      alert('✅ Imagens salvas com sucesso!\n\nImagens adicionadas: ' + Object.keys(imageStorage).length + '\n\nAs imagens continuarão aqui mesmo se você fechar o site!');
+      document.getElementById('uploadPanel').classList.remove('show');
+    } catch(e) {
+      alert('⚠️ Erro ao salvar. Tente de novo ou use menos imagens.');
+    }
   }
 
   function loadSavedImages(){
-    const saved = localStorage.getItem('eventImages');
-    if(saved){
-      const images = JSON.parse(saved);
-      document.querySelectorAll('[data-img]').forEach(card => {
-        const imgNum = card.getAttribute('data-img');
-        const img = card.querySelector('img');
-        if(images[imgNum]){
-          img.src = images[imgNum];
-        }
-      });
+    try {
+      const saved = localStorage.getItem('eventImages');
+      if(saved){
+        const images = JSON.parse(saved);
+        document.querySelectorAll('[data-img]').forEach(card => {
+          const imgNum = card.getAttribute('data-img');
+          const img = card.querySelector('img');
+          if(images[imgNum]){
+            img.src = images[imgNum];
+            img.style.display = 'block';
+          }
+        });
+        console.log('✅ Imagens carregadas:', Object.keys(images).length);
+      }
+    } catch(e) {
+      console.error('Erro ao carregar imagens:', e);
     }
   }
 
@@ -152,8 +349,10 @@
     const setActive=btn=>{document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');};
     document.getElementById('filters').addEventListener('click',e=>{const btn=e.target.closest('.filter-btn');if(!btn)return;const f=btn.getAttribute('data-filter');activeMonthFilter=f==='all'?'all':(f==='this'?thisKey:nextKey);setActive(btn);applyFilters();});
     if(searchInput)searchInput.addEventListener('input',function(){searchQuery=this.value||'';applyFilters();});
-    loadSavedImages();
-    applyFilters();
+    setTimeout(() => {
+      loadSavedImages();
+      applyFilters();
+    }, 100);
   })();
   </script>
 </body>
