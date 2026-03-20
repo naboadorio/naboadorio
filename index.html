@@ -491,9 +491,6 @@
   ===================================================== */
 
   // ── Senha Admin ──────────────────────────────────────
-  function requestAdminPassword(){
-    openPasswordModal();
-  }
 
   function activateAdmin(){
     document.getElementById('adminEventsBtn').style.display = 'block';
@@ -535,18 +532,7 @@
   if(searchInput && !isMobile) {
     searchInput.addEventListener('input', function(){
       if(this.value.toLowerCase().trim() === 'admin'){
-        // Pedir senha
-        var senha = prompt('🔐 Digite a senha do admin:');
-        if(senha && senha === 'BOA123') {
-          document.getElementById('enterEditBtn').style.display = 'block';
-          document.getElementById('adminEventsBtn').style.display = 'block';
-          document.getElementById('downloadHTMLBtn').style.display = 'block';
-          document.getElementById('closeAdminBtn').style.display = 'block';
-          isPreviewMode = false; // Volta ao modo admin
-          alert('🔓 Modo Admin Ativado!');
-        } else if(senha !== null) {
-          alert('❌ Senha incorreta!');
-        }
+        openPasswordModal();
         this.value = '';
       }
     });
@@ -1033,7 +1019,7 @@
   // ── Preview imagem novo evento ─────────────────────────
   document.addEventListener('DOMContentLoaded', function(){
     var si=document.getElementById('search');
-    if(si) si.addEventListener('input',function(){ if(this.value.toLowerCase().includes('admin')){ this.value=''; requestAdminPassword(); } });
+    if(si) si.addEventListener('input',function(){ if(this.value.toLowerCase().includes('admin')){ this.value=''; openPasswordModal(); } });
     var fi=document.getElementById('newEventImage');
     if(fi) fi.addEventListener('change',function(e){
       var f=e.target.files[0]; if(!f) return;
