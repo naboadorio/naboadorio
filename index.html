@@ -147,6 +147,7 @@
 
   // Detectar se é celular
   var isMobile = window.innerWidth < 768;
+  var isPreviewMode = false;
   
   function closeAdminPanel(){
     document.getElementById('eventsPanel').style.display      = 'none';
@@ -171,30 +172,42 @@
       if(this.value.toLowerCase().trim() === 'admin'){
         // Pedir senha
         var senha = prompt('🔐 Digite a senha do admin:');
-        if(senha && senha === 'BOA123') { // Mude BOA123 pela senha que quiser
+        if(senha && senha === 'BOA123') {
           document.getElementById('adminEventsBtn').style.display = 'block';
           document.getElementById('downloadHTMLBtn').style.display = 'block';
           document.getElementById('closeAdminBtn').style.display = 'block';
           document.getElementById('previewPublicBtn').style.display = 'block';
+          isPreviewMode = false; // Volta ao modo admin
           alert('🔓 Modo Admin Ativado!');
         } else if(senha !== null) {
           alert('❌ Senha incorreta!');
         }
-        this.value = ''; // Limpar o campo
+        this.value = '';
       }
     });
   }
 
   // Botão para visualizar como público
   function togglePreviewMode(){
-    var isPreview = document.body.getAttribute('data-preview') === 'true';
-    if(isPreview){
-      document.body.setAttribute('data-preview', 'false');
-      document.getElementById('previewPublicBtn').textContent = '👁️ Visualizar como Público';
+    isPreviewMode = !isPreviewMode;
+    if(isPreviewMode){
+      // Entra no modo público - salva estado e recarrega sem localStorage visível
+      localStorage.setItem('previewMode', 'true');
+      location.reload();
     } else {
-      document.body.setAttribute('data-preview', 'true');
-      document.getElementById('previewPublicBtn').textContent = '✏️ Voltar ao Editor';
+      // Volta ao editor
+      localStorage.removeItem('previewMode');
+      location.reload();
     }
+  }
+
+  // Verificar se deve carregar em modo preview
+  var previewMode = localStorage.getItem('previewMode') === 'true';
+  if(previewMode){
+    isPreviewMode = true;
+    document.body.setAttribute('data-preview', 'true');
+    document.getElementById('previewPublicBtn').textContent = '✏️ Voltar ao Editor';
+    document.getElementById('previewPublicBtn').style.display = 'block';
   }
 
   function toggleEventsPanel(){
@@ -225,6 +238,9 @@
 
   // ── Injetar eventos custom no events-source ────────────
   function loadCustomEventsToDOM(){
+    // Não carrega eventos customizados se estiver em modo preview
+    if(previewMode) return;
+    
     var source = document.getElementById('events-source');
     if(!source) return;
     // remove cards custom anteriores para evitar duplicatas
