@@ -205,6 +205,12 @@
       document.getElementById('downloadHTMLBtn').style.display = 'block';
       document.getElementById('closeAdminBtn').style.display = 'block';
       
+      // Recarregar dados do localStorage
+      try { 
+        loadCustomEventsToDOM(); 
+        if(window._boa && window._boa.refresh) window._boa.refresh();
+      } catch(e){ console.warn('Erro ao recarregar dados:', e); }
+      
       // Rolar para o topo
       window.scrollTo(0, 0);
       
