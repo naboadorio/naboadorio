@@ -45,25 +45,25 @@
 
       <div style="border-top:2px solid #fee822;padding-top:12px;margin-bottom:16px;">
         <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">✏️ Editar Eventos Existentes:</div>
-        <div id="existingEventsList" style="max-height:250px;overflow-y:auto;">
-          <p style="color:#999;font-size:12px;">Carregando eventos...</p>
-        </div>
+        <div id="existingEventsList" style="max-height:250px;overflow-y:auto;border:1px solid #fee822;border-radius:6px;padding:10px;"></div>
       </div>
 
       <div style="border-top:2px solid #fee822;padding-top:12px;">
         <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">➕ Novo Evento Completo:</div>
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;font-size:11px;color:#666;">
-          <strong>📝 Informações do Evento:</strong>
+          <strong>📝 Informações Básicas:</strong>
         </div>
         <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventSubtitle" placeholder="Subtítulo/Artista (Ex: Banda XYZ)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventArtist" placeholder="Artista/Banda" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventSubtitle" placeholder="Subtítulo (Ex: Rock/MPB)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📅 Data e Hora:</strong>
         </div>
-        <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="time" id="newEventTime" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventDate" placeholder="Data (Ex: 25/05)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventDayWeek" placeholder="Dia da semana (Ex: Sábado)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventTime" placeholder="Horário (Ex: 19h)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📍 Local e Links:</strong>
@@ -130,6 +130,48 @@
     if(secretCode.length > 10) secretCode = secretCode.slice(-10);
   });
 
+  // Carregar eventos customizados
+  function loadCustomEventsToDOM(){
+    const saved = localStorage.getItem('customEvents');
+    const events = saved ? JSON.parse(saved) : [];
+    const source = document.getElementById('events-source');
+    if(!source) return;
+    
+    events.forEach((evt) => {
+      const dateISO = evt.date ? evt.date + 'T' + (evt.time || '19:00:00') + '-03:00' : '';
+      const [year, month, day] = (evt.date || '2026-01-01').split('-');
+      const MESES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+      const monthAbbr = MESES_ABR[parseInt(month) - 1].toUpperCase();
+      
+      const cardHTML = `
+        <div class="event-card" data-nome="${evt.nome || ''}" data-data="${evt.data || ''}" data-local="${evt.local || ''}" data-link="${evt.link || ''}" data-date="${dateISO}">
+          <a href="${evt.link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
+            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
+            <div class="event-image-fallback" aria-hidden="true">
+              <div><div class="fallback-title">${evt.nome || 'Evento'}</div></div>
+            </div>
+            <div class="date-badge"><div class="day">${day}</div><div class="month">${monthAbbr}</div></div>
+            ${evt.discount ? `<div class="discount-badge">${evt.discount}</div>` : ''}
+            ${evt.link ? `<div class="promo-badge"><i class="fas fa-tag"></i> Compre aqui</div>` : ''}
+          </a>
+          <div class="event-content">
+            <div class="artist-title">${evt.nome || 'Evento'}</div>
+            ${evt.subtitle ? `<div class="event-subtitle">${evt.subtitle}</div>` : ''}
+            ${evt.local ? `<div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.local)}" target="_blank">${evt.local}</a></div></div></div>` : ''}
+            <div class="event-actions">
+              <a class="btn-ticket" href="${evt.link || '#'}" target="_blank"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a>
+              <button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = cardHTML;
+      source.appendChild(tempDiv.firstElementChild);
+    });
+  }
+
   function toggleUploadPanel(){
     const panel = document.getElementById('uploadPanel');
     panel.classList.toggle('show');
@@ -190,10 +232,8 @@
     const currentData = card.getAttribute('data-data') || '';
     const currentLocal = card.getAttribute('data-local') || '';
     const currentLink = card.getAttribute('data-link') || '';
-    
     const subtitle = card.querySelector('.event-subtitle')?.textContent || '';
     
-    // Criar modal de edição
     const modal = document.createElement('div');
     modal.style.cssText = `
       position: fixed;
@@ -256,7 +296,6 @@
     modal.appendChild(dialog);
     document.body.appendChild(modal);
     
-    // Event listeners
     document.getElementById('editSaveBtn').onclick = () => {
       const novoNome = document.getElementById('editNome').value.trim();
       const novoSubtitle = document.getElementById('editSubtitle').value.trim();
@@ -269,13 +308,11 @@
         return;
       }
       
-      // Atualizar atributos
       card.setAttribute('data-nome', novoNome);
       card.setAttribute('data-data', novaData);
       card.setAttribute('data-local', novoLocal);
       card.setAttribute('data-link', novoLink);
       
-      // Atualizar textos visuais
       card.querySelector('.artist-title').textContent = novoNome;
       
       const subtitle_el = card.querySelector('.event-subtitle');
@@ -287,13 +324,11 @@
       const fallbackTitle = card.querySelector('.fallback-title');
       if(fallbackTitle) fallbackTitle.textContent = novoNome;
       
-      // Salvar no localStorage
       localStorage.setItem('boaEventsEdited', 'true');
       
       document.body.removeChild(modal);
       alert('✅ Evento atualizado com sucesso!');
       renderExistingEvents();
-      applyFilters();
     };
     
     document.getElementById('editCancelBtn').onclick = () => {
@@ -309,93 +344,14 @@
     
     if(!confirm(`⚠️ Deletar "${eventName}"?\n\nEsta ação não pode ser desfeita!`)) return;
     
-    // Remover do DOM
     card.remove();
     
-    // Salvar que foi deletado
     localStorage.setItem('boaEventsDeleted', 'true');
     
     alert('✅ Evento deletado com sucesso!');
     
-    // Recarregar lista
     renderExistingEvents();
-    applyFilters();
   }
-
-  function saveImages(){
-    const uploadInputs = document.querySelectorAll('#uploadInputs .upload-item input[type="file"]');
-    let savedCount = 0;
-    let totalFiles = 0;
-    
-    uploadInputs.forEach((input) => {
-      if(input.files.length > 0){
-        totalFiles++;
-        const imgIndex = input.getAttribute('data-img');
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          imageStorage[imgIndex] = e.target.result;
-          localStorage.setItem('boaImages', JSON.stringify(imageStorage));
-          savedCount++;
-          
-          // Se todas foram carregadas
-          if(savedCount === totalFiles){
-            alert('✅ Imagens salvas com sucesso!');
-            loadSavedImages();
-            applyFilters();
-            toggleUploadPanel();
-          }
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    });
-    
-    if(totalFiles === 0){
-      alert('⚠️ Selecione pelo menos uma imagem!');
-      return;
-    }
-  }
-
-  function loadSavedImages(){
-    const saved = localStorage.getItem('boaImages');
-    if(saved){
-      Object.assign(imageStorage, JSON.parse(saved));
-    }
-    
-    // Aplicar imagens aos cartões
-    Object.keys(imageStorage).forEach(imgIndex => {
-      const cards = document.querySelectorAll('.event-card[data-img="' + imgIndex + '"]');
-      cards.forEach(card => {
-        const img = card.querySelector('.event-image-wrapper img');
-        const fallback = card.querySelector('.event-image-fallback');
-        if(img && imageStorage[imgIndex]){
-          img.src = imageStorage[imgIndex];
-          img.style.display = 'block';
-          if(fallback) fallback.style.display = 'none';
-          card.querySelector('.event-image-wrapper').classList.remove('no-image');
-        }
-      });
-    });
-  }
-
-  function generateUploadInputs(){
-    const container = document.getElementById('uploadInputs');
-    container.innerHTML = '';
-    const eventCards = document.querySelectorAll('.event-card');
-    
-    eventCards.forEach((card) => {
-      const imgIndex = card.getAttribute('data-img');
-      const nome = card.getAttribute('data-nome') || 'Evento';
-      const item = document.createElement('div');
-      item.className = 'upload-item';
-      item.innerHTML = `
-        <label style="flex-shrink:0;width:auto;min-width:140px;font-size:11px;font-weight:700;color:#666;white-space:nowrap;">${nome}:</label>
-        <input type="file" accept="image/*" data-img="${imgIndex}">
-      `;
-      container.appendChild(item);
-    });
-  }
-
-  // Preview de imagem
   document.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('newEventImage');
     if(imageInput){
@@ -430,12 +386,9 @@
       const item = document.createElement('div');
       item.style.cssText = 'padding:12px;background:linear-gradient(135deg,#FFF0C2,#FFE0EA);border-radius:8px;margin-bottom:8px;border-left:4px solid #FF2A6D;';
       item.innerHTML = `
-        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:2px;">${evt.nome}</div>
+        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:4px;">${evt.nome}</div>
         <div style="font-size:11px;color:#666;margin-bottom:6px;">
-          🎤 ${evt.subtitle || 'Sem subtítulo'}
-        </div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px;">
-          📅 ${evt.data || evt.date}
+          🎤 ${evt.artista || 'Sem artista'} • 📅 ${evt.date} ${evt.dayWeek ? '• ' + evt.dayWeek : ''} ${evt.time ? '• ' + evt.time : ''}
         </div>
         <div style="font-size:11px;color:#666;margin-bottom:6px;">
           📍 ${evt.local || 'Local não definido'} ${evt.discount ? ' • ' + evt.discount : ''}
@@ -448,50 +401,31 @@
 
   function addNewEvent(){
     const nome = document.getElementById('newEventName').value.trim();
+    const artist = document.getElementById('newEventArtist').value.trim();
     const subtitle = document.getElementById('newEventSubtitle').value.trim();
-    const dateInput = document.getElementById('newEventDate').value;
-    const timeInput = document.getElementById('newEventTime').value;
+    const date = document.getElementById('newEventDate').value.trim();
+    const dayWeek = document.getElementById('newEventDayWeek').value.trim();
+    const time = document.getElementById('newEventTime').value.trim();
     const local = document.getElementById('newEventLocal').value.trim();
     const link = document.getElementById('newEventLink').value.trim();
     const discount = document.getElementById('newEventDiscount').value.trim();
     const image = window.selectedEventImage || null;
 
-    if(!nome || !dateInput){
+    if(!nome || !date){
       alert('⚠️ Preencha pelo menos nome e data!');
       return;
     }
 
-    // Parsear data
-    const [year, month, day] = dateInput.split('-');
-    const eventDate = new Date(year, month - 1, day);
-    
-    // Dias da semana
-    const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-    const dayWeek = DIAS[eventDate.getDay()];
-    
-    // Formatar data como DD/MM
-    const dateParts = day + '/' + month;
-    
-    // Formatar hora como HHh ou HHhMM
-    let timeFormatted = '';
-    if(timeInput){
-      const [hours, minutes] = timeInput.split(':');
-      timeFormatted = minutes === '00' ? hours + 'h' : hours + 'h' + minutes;
-    }
-    
-    // Montar data completa: DD/MM • Dia da semana • HH:MM
-    const dataCompleta = dateParts + ' • ' + dayWeek + (timeFormatted ? ' • ' + timeFormatted : '');
-    
     const saved = localStorage.getItem('customEvents');
     const events = saved ? JSON.parse(saved) : [];
     
     events.push({
       nome,
+      artist,
       subtitle,
-      data: dataCompleta,
-      date: dateInput,
-      time: timeInput,
+      date,
       dayWeek,
+      time,
       local,
       link,
       discount,
@@ -503,8 +437,10 @@
     
     // Limpar campos
     document.getElementById('newEventName').value = '';
+    document.getElementById('newEventArtist').value = '';
     document.getElementById('newEventSubtitle').value = '';
     document.getElementById('newEventDate').value = '';
+    document.getElementById('newEventDayWeek').value = '';
     document.getElementById('newEventTime').value = '';
     document.getElementById('newEventLocal').value = '';
     document.getElementById('newEventLink').value = '';
@@ -612,7 +548,7 @@
     const setupImageFallback=w=>{const img=w.querySelector('img');const fb=w.querySelector('.event-image-fallback');const showFallback=()=>{w.classList.add('no-image');if(fb)fb.hidden=false;};if(!img||!img.getAttribute('src')){showFallback();return;}img.addEventListener('error',showFallback);img.addEventListener('load',()=>{if(img.naturalWidth===0||img.naturalHeight===0)showFallback();});};
     const ensureDateTimeLine=(node,dt)=>{if(node.querySelector('.event-datetime'))return;const content=node.querySelector('.event-content');if(!content)return;const h=pad2(dt.getHours()),m=pad2(dt.getMinutes()),hora=(m==='00')?(h+'h'):(h+'h'+m);const line=document.createElement('div');line.className='event-datetime';line.innerHTML='<i class="far fa-clock" aria-hidden="true"></i><span>'+DIAS[dt.getDay()]+' • '+hora+'</span>';const location=content.querySelector('.event-location');if(location)content.insertBefore(line,location);else content.appendChild(line);};
     const getCards=()=>{const nodes=source.querySelectorAll('.event-card');const list=[];for(let i=0;i<nodes.length;i++){const node=nodes[i];const dt=new Date(node.getAttribute('data-date'));const cloned=node.cloneNode(true);const wrap=cloned.querySelector('.event-image-wrapper');if(wrap){const fbTitle=wrap.querySelector('.fallback-title');const nome=cloned.getAttribute('data-nome')||'';if(fbTitle)fbTitle.textContent=nome;setupImageFallback(wrap);}ensureDateTimeLine(cloned,dt);const nomeAttr=cloned.getAttribute('data-nome')||'';const dataAttr=cloned.getAttribute('data-data')||'';const localAttr=cloned.getAttribute('data-local')||'';const artistEl=cloned.querySelector('.artist-title');const artista=artistEl?artistEl.textContent:'';const subtitleEl=cloned.querySelector('.event-subtitle');const subtitulo=subtitleEl?subtitleEl.textContent:'';const diaNum=dt.getDate(),mesNum=dt.getMonth(),anoNum=dt.getFullYear(),dowNum=dt.getDay();const dataStr1=pad2(diaNum)+'/'+pad2(mesNum+1)+'/'+anoNum;const dataStr2=pad2(diaNum)+'/'+pad2(mesNum+1);const iso=anoNum+'-'+pad2(mesNum+1)+'-'+pad2(diaNum);const rawText=[artista,nomeAttr,subtitulo,localAttr,dataAttr,dataStr1,dataStr2,iso,MESES[mesNum],MESES_ABR[mesNum],DIAS_LONGO[dowNum],DIAS[dowNum]].join(' • ');const searchText=stripAccents(rawText).toLowerCase();list.push({node:cloned,date:dt,ym:keyYM(dt),searchText:searchText,meta:{dia:diaNum,mes:mesNum,ano:anoNum,dow:dowNum,ddmm:dataStr2,ddmmyyyy:dataStr1,iso:iso}});}list.sort((a,b)=>a.date-b.date);return list;};
-    const ALL_CARDS=getCards();
+    let ALL_CARDS=[];
     const parseSingleDate=s=>{s=s.trim();const mIso=s.match(/^(\d{4})[\/\.\-](\d{1,2})[\/\.\-](\d{1,2})$/);if(mIso){const y=+mIso[1],mo=+mIso[2]-1,d=+mIso[3];const dt=new Date(y,mo,d);if(dt&&dt.getMonth()===mo&&dt.getDate()===d)return dt;}const mLocal=s.match(/^(\d{1,2})[\/\.\-](\d{1,2})(?:[\/\.\-](\d{2,4}))?$/);if(mLocal){const d2=+mLocal[1],mo2=+mLocal[2]-1;let y2=mLocal[3]?+mLocal[3]:new Date().getFullYear();if(y2<100)y2=2000+y2;const dt2=new Date(y2,mo2,d2);if(dt2&&dt2.getMonth()===mo2&&dt2.getDate()===d2)return dt2;}return null;};
     const extractFilters=qRaw=>{let q=stripAccents((qRaw||'').toLowerCase());let datePred=null;if(q.indexOf('fim de semana')!==-1||q.indexOf('final de semana')!==-1){datePred=it=>{const dw=it.meta.dow;return dw===0||dw===6;};q=q.replace(/fim de semana|final de semana/g,' ').trim();}const mRange=q.match(/(\d{1,2}[\/\.\-]\d{1,2}(?:[\/\.\-]\d{2,4})?)\s*(?:a|\-)\s*(\d{1,2}[\/\.\-]\d{1,2}(?:[\/\.\-]\d{2,4})?)/);if(mRange){let d1=parseSingleDate(mRange[1]),d2=parseSingleDate(mRange[2]);if(d1&&d2){if(d1.getTime()>d2.getTime()){const t=d1;d1=d2;d2=t;}d1.setHours(0,0,0,0);d2.setHours(23,59,59,999);const predRange=it=>new Date(it.date).getTime()>=d1.getTime()&&new Date(it.date).getTime()<=d2.getTime();datePred=datePred?it=>predRange(it)&&datePred(it):predRange;q=q.replace(mRange[0],' ').trim();}}const mSingle=q.match(/\b(\d{4}[\/\.\-]\d{1,2}[\/\.\-]\d{1,2}|\d{1,2}[\/\.\-]\d{1,2}(?:[\/\.\-]\d{2,4})?)\b/);if(mSingle){const d=parseSingleDate(mSingle[1]);if(d){d.setHours(0,0,0,0);const tgt=d.getTime();const predSingle=it=>{const dd=new Date(it.date);dd.setHours(0,0,0,0);return dd.getTime()===tgt;};datePred=datePred?it=>predSingle(it)&&datePred(it):predSingle;q=q.replace(mSingle[0],' ').trim();}}const words=q.split(/\s+/).filter(Boolean);return {text:words.join(' ').trim(),datePred};};
     const bindShare=()=>{const btns=view.querySelectorAll('.btn-share');for(let i=0;i<btns.length;i++){btns[i].onclick=function(){const card=this.closest('.event-card');const nome=(card.getAttribute('data-nome')||'').trim();const data=(card.getAttribute('data-data')||'').trim();const local=(card.getAttribute('data-local')||'').trim();const link=(card.getAttribute('data-link')||'').trim();const msg='confira "'+nome+'" em "'+data+'" no "'+local+'". Aproveita o desconto do código BOA: '+link;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');};} };
@@ -622,9 +558,11 @@
     document.getElementById('filters').addEventListener('click',e=>{const btn=e.target.closest('.filter-btn');if(!btn)return;const f=btn.getAttribute('data-filter');activeMonthFilter=f==='all'?'all':(f==='this'?thisKey:nextKey);setActive(btn);applyFilters();});
     if(searchInput)searchInput.addEventListener('input',function(){searchQuery=this.value||'';applyFilters();});
     setTimeout(() => {
+      loadCustomEventsToDOM();
+      ALL_CARDS = getCards();
       loadSavedImages();
       applyFilters();
-    }, 100);
+    }, 50);
   })();
   </script>
 </body>
