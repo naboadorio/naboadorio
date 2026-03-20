@@ -138,9 +138,9 @@
       
       const cardHTML = `
         <div class="event-card" data-nome="${evt.nome || ''}" data-data="${evt.data || ''}" data-local="${evt.local || ''}" data-link="${evt.link || ''}" data-date="${dateISO}">
-          <a href="${evt.link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
-            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}" style="display:block;width:100%;height:100%;object-fit:cover;transform:translate(${evt.imageOffsetX || 0}px, ${evt.imageOffsetY || 0}px) scale(${(evt.imageZoom || 100)/100});">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
-            <div class="event-image-fallback" aria-hidden="true">
+          <a href="${evt.link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper ${evt.image ? '' : 'no-image'}">
+            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}" style="display:block !important;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:translate(${evt.imageOffsetX || 0}px, ${evt.imageOffsetY || 0}px) scale(${(evt.imageZoom || 100)/100});">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
+            <div class="event-image-fallback" aria-hidden="true" ${evt.image ? 'style="display:none;"' : ''}>
               <div><div class="fallback-title">${evt.nome || 'Evento'}</div></div>
             </div>
             <div class="date-badge"><div class="day">${day}</div><div class="month">${monthAbbr}</div></div>
@@ -873,6 +873,7 @@
     console.log('Nome:', nome);
     console.log('Subtitle:', subtitle);
     console.log('Local:', local);
+    console.log('Imagem (primeiros 50 chars):', image ? image.substring(0, 50) : 'NENHUMA');
     console.log('localStorage customEvents:', localStorage.getItem('customEvents'));
     
     // Inserir o novo evento no DOM também (para editar)
@@ -884,9 +885,9 @@
       
       const cardHTML = `
         <div class="event-card" data-nome="${nome}" data-data="${dataCompleta}" data-local="${local}" data-link="${link}" data-date="${dateISO}">
-          <a href="${link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
-            ${image ? `<img src="${image}" alt="Capa do evento ${nome}" style="display:block;width:100%;height:100%;object-fit:cover;">` : `<img src="" alt="Capa do evento ${nome}">`}
-            <div class="event-image-fallback" aria-hidden="true">
+          <a href="${link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper ${image ? '' : 'no-image'}">
+            ${image ? `<img src="${image}" alt="Capa do evento ${nome}" style="display:block !important;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;">` : `<img src="" alt="Capa do evento ${nome}">`}
+            <div class="event-image-fallback" aria-hidden="true" ${image ? 'style="display:none;"' : ''}>
               <div><div class="fallback-title">${nome}</div></div>
             </div>
             <div class="date-badge"><div class="day">${day}</div><div class="month">${monthAbbr}</div></div>
@@ -924,8 +925,12 @@
     document.getElementById('imagePreview').innerHTML = 'Clique para adicionar imagem';
     window.selectedEventImage = null;
     
-    // Recarregar página para ver os eventos
-    location.reload();
+    // Atualizar a página SEM recarregar
+    setTimeout(() => {
+      ALL_CARDS = getCards();
+      applyFilters();
+      renderExistingEvents();
+    }, 100);
   }
 
   function deleteEvent(idx){
