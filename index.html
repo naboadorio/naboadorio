@@ -29,6 +29,13 @@
 
     <button onclick="toggleEventsPanel()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;">📅 Gerenciar Eventos</button>
 
+    <button onclick="downloadUpdatedHTML()" style="background:#ff9800;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="downloadHTMLBtn">📥 Baixar HTML Atualizado (com eventos novos)</button>
+
+    <button onclick="exportEvents()" style="background:#0066cc;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="exportBtn">📥 Exportar Eventos (Backup)</button>
+
+    <button onclick="triggerImport()" style="background:#0066cc;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="importBtn">📤 Importar Eventos (Restaurar)</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;">
+
     <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
 
     <div class="image-upload-panel" id="uploadPanel">
@@ -119,6 +126,9 @@
     if(secretCode.includes('admin')){
       document.getElementById('adminBtn').style.display = 'block';
       document.getElementById('adminEventsBtn').style.display = 'block';
+      document.getElementById('downloadHTMLBtn').style.display = 'block';
+      document.getElementById('exportBtn').style.display = 'block';
+      document.getElementById('importBtn').style.display = 'block';
       document.getElementById('closeAdminBtn').style.display = 'block';
       secretCode = '';
       alert('✅ Painel de admin ativado!');
@@ -191,8 +201,235 @@
     document.getElementById('eventsPanel').style.display = 'none';
     document.getElementById('adminBtn').style.display = 'none';
     document.getElementById('adminEventsBtn').style.display = 'none';
+    document.getElementById('downloadHTMLBtn').style.display = 'none';
+    document.getElementById('exportBtn').style.display = 'none';
+    document.getElementById('importBtn').style.display = 'none';
     document.getElementById('closeAdminBtn').style.display = 'none';
     alert('✅ Painel de admin fechado!');
+  }
+
+  function downloadUpdatedHTML(){
+    const source = document.getElementById('events-source');
+    if(!source){
+      alert('⚠️ Erro: não consegui encontrar os eventos!');
+      return;
+    }
+
+    // Pegar o HTML atual da página
+    let htmlContent = document.documentElement.outerHTML;
+    
+    // Pegar o novo conteúdo do #events-source (com todos os eventos)
+    const newEventsHTML = source.innerHTML;
+    
+    // Substituir o conteúdo de #events-source no HTML
+    const oldEventsPattern = /<div id="events-source"[\s\S]*?<\/div>/;
+    const newEventsDiv = `<div id="events-source" style="display:none">\n${newEventsHTML}\n    </div>`;
+    
+    htmlContent = htmlContent.replace(oldEventsPattern, newEventsDiv);
+    
+    // Detectar se é mobile
+    const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if(isMobile){
+      // Mobile: mostrar modal com opção de copiar
+      showHTMLModal(htmlContent);
+    } else {
+      // Desktop: baixar arquivo normalmente
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `index_atualizado_${new Date().toISOString().slice(0,10)}.html`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      alert(`✅ HTML Atualizado baixado com sucesso!\n\nArquivo: index_atualizado_${new Date().toISOString().slice(0,10)}.html\n\nAgora todos os seus eventos novos estarão permanentes!\n\n👉 Use este arquivo no lugar do antigo!`);
+    }
+  }
+
+  function showHTMLModal(htmlContent){
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      padding: 10px;
+    `;
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      width: 100%;
+    `;
+    
+    dialog.innerHTML = `
+      <div style="font-size: 16px; font-weight: 800; color: #FF2A6D; margin-bottom: 16px; text-align: center;">📱 HTML Atualizado (Mobile)</div>
+      
+      <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #FF2A6D;">
+        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+          <strong>✅ Pronto para publicar!</strong><br>
+          Copie o código abaixo e compartilhe com seu computador.
+        </div>
+      </div>
+      
+      <div style="position: relative; margin-bottom: 12px;">
+        <textarea id="htmlCodeArea" readonly style="width: 100%; height: 200px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; background: #f9f9f9;"></textarea>
+        <div style="font-size: 11px; color: #999; margin-top: 6px; text-align: right;">Clique para selecionar e copiar</div>
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+        <button id="copyHTMLBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">📋 Copiar HTML</button>
+        <button id="shareHTMLBtn" style="flex: 1; background: #25D366; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">💬 Compartilhar</button>
+      </div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button id="closeHTMLModal" style="flex: 1; background: #999; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">✕ Fechar</button>
+      </div>
+      
+      <div style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 11px; color: #856404;">
+        <strong>📌 Como usar:</strong><br>
+        1️⃣ Copie o código<br>
+        2️⃣ Compartilhe no WhatsApp/Email<br>
+        3️⃣ No computador, abra um editor de texto<br>
+        4️⃣ Cole o código<br>
+        5️⃣ Salve como "index.html"<br>
+        6️⃣ Substitua o arquivo antigo<br>
+        7️⃣ Pronto! Novos eventos aparecem para todos! ✅
+      </div>
+    `;
+    
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+    
+    // Preencher textarea com HTML
+    const htmlArea = document.getElementById('htmlCodeArea');
+    htmlArea.value = htmlContent;
+    
+    // Botão Copiar
+    document.getElementById('copyHTMLBtn').onclick = () => {
+      htmlArea.select();
+      document.execCommand('copy');
+      alert('✅ HTML copiado para a área de transferência!');
+    };
+    
+    // Botão Compartilhar
+    document.getElementById('shareHTMLBtn').onclick = () => {
+      const filename = `index_atualizado_${new Date().toISOString().slice(0,10)}.html`;
+      
+      // Tentar usar Web Share API (melhor para mobile)
+      if(navigator.share){
+        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
+        const file = new File([blob], filename, { type: 'text/html' });
+        
+        navigator.share({
+          title: '🎉 HTML BOA Atualizado',
+          text: '✅ HTML com todos os novos eventos cadastrados!\n\n👉 Salve como index.html e substitua o arquivo antigo no seu site.\n\nOs eventos aparecerão para TODOS os clientes! 🎊',
+          files: [file]
+        }).catch(err => {
+          // Se falhar, abrir WhatsApp
+          const msg = encodeURIComponent(`🎉 HTML ATUALIZADO BOA\n\n✅ HTML com todos os novos eventos!\n\n👉 Salve como index.html e substitua o arquivo antigo.\n\n(Código do HTML está acima nesta conversa)`);
+          window.open(`https://wa.me/?text=${msg}`, '_blank');
+        });
+      } else {
+        // Se não tiver Web Share API, abrir WhatsApp
+        const msg = encodeURIComponent(`🎉 HTML ATUALIZADO BOA\n\n✅ HTML com todos os novos eventos!\n\n👉 Salve como index.html e substitua o arquivo antigo.\n\n(Copie o código da mensagem anterior)`);
+        window.open(`https://wa.me/?text=${msg}`, '_blank');
+      }
+    };
+    
+    // Botão Fechar
+    document.getElementById('closeHTMLModal').onclick = () => {
+      document.body.removeChild(modal);
+    };
+  }
+
+  function exportEvents(){
+    const customEvents = localStorage.getItem('customEvents');
+    const events = customEvents ? JSON.parse(customEvents) : [];
+    
+    if(events.length === 0){
+      alert('⚠️ Nenhum evento customizado para exportar!');
+      return;
+    }
+
+    const dataStr = JSON.stringify(events, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `eventos_boa_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert('✅ Eventos exportados com sucesso!\n\nArquivo: eventos_boa_' + new Date().toISOString().slice(0,10) + '.json\n\nGuarde este arquivo em um local seguro!');
+  }
+
+  function triggerImport(){
+    document.getElementById('importFile').click();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const importInput = document.getElementById('importFile');
+    if(importInput){
+      importInput.addEventListener('change', importEvents);
+    }
+  });
+
+  function importEvents(e){
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const imported = JSON.parse(event.target.result);
+        
+        if(!Array.isArray(imported)){
+          alert('⚠️ Arquivo inválido! Deve ser um array de eventos.');
+          return;
+        }
+
+        const existing = localStorage.getItem('customEvents');
+        const currentEvents = existing ? JSON.parse(existing) : [];
+        
+        const merged = [...currentEvents];
+        let added = 0;
+        
+        imported.forEach(evt => {
+          if(!merged.some(e => e.nome === evt.nome && e.data === evt.data)){
+            merged.push(evt);
+            added++;
+          }
+        });
+
+        localStorage.setItem('customEvents', JSON.stringify(merged));
+        alert(`✅ Importação concluída!\n\nEventos adicionados: ${added}\nEventos duplicados ignorados: ${imported.length - added}`);
+        
+        location.reload();
+      } catch(err){
+        alert('⚠️ Erro ao importar arquivo:\n' + err.message);
+      }
+    };
+    reader.readAsText(file);
   }
 
   function renderExistingEvents(){
@@ -297,6 +534,14 @@
         <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Desconto</label>
         <input type="text" id="editDiscount" value="${currentDiscount}" placeholder="Ex: -10%" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
       </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">📸 Foto do Evento</label>
+        <input type="file" id="editEventImage" accept="image/*" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
+        <div id="editImagePreview" style="margin-top: 8px; width: 100%; height: 80px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; overflow: hidden;">Clique para adicionar foto</div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
         <button id="editSaveBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">💾 Salvar</button>
         <button id="editCancelBtn" style="flex: 1; background: #999; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">✕ Cancelar</button>
       </div>
@@ -304,6 +549,23 @@
     
     modal.appendChild(dialog);
     document.body.appendChild(modal);
+    
+    // Lidar com seleção de imagem no modal de edição
+    const editImageInput = document.getElementById('editEventImage');
+    let editSelectedImage = null;
+    
+    editImageInput.addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          editSelectedImage = event.target.result;
+          const preview = document.getElementById('editImagePreview');
+          preview.innerHTML = `<img src="${editSelectedImage}" style="width:100%; height:100%; object-fit:cover;">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
     
     document.getElementById('editSaveBtn').onclick = () => {
       const novoNome = document.getElementById('editNome').value.trim();
@@ -388,6 +650,15 @@
         imageWrapper.href = novoLink || '#';
       }
       
+      // Atualizar imagem se uma nova foi selecionada
+      if(editSelectedImage){
+        const img = card.querySelector('img');
+        if(img){
+          img.src = editSelectedImage;
+          img.style.display = 'block';
+        }
+      }
+      
       // Atualizar fallback title
       const fallbackTitle = card.querySelector('.fallback-title');
       if(fallbackTitle) fallbackTitle.textContent = novoNome;
@@ -396,7 +667,13 @@
       
       document.body.removeChild(modal);
       alert('✅ Evento atualizado com sucesso!');
-      renderExistingEvents();
+      
+      // Re-renderizar a página para mostrar as mudanças
+      setTimeout(() => {
+        loadSavedImages();
+        applyFilters();
+        renderExistingEvents();
+      }, 100);
     };
     
     document.getElementById('editCancelBtn').onclick = () => {
