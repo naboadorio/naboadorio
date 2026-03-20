@@ -569,34 +569,34 @@
     
     if(isInEditMode){
       // Entrar no modo edição
-      document.getElementById('enterEditBtn').style.display = 'none';
       document.getElementById('exitEditBtn').style.display = 'block';
+      document.getElementById('enterEditBtn').style.display = 'none';
       document.getElementById('adminEventsBtn').style.display = 'block';
       document.getElementById('downloadHTMLBtn').style.display = 'block';
+      document.getElementById('githubBtn').style.display = 'block';
       document.getElementById('closeAdminBtn').style.display = 'block';
+      document.getElementById('modeToggle').style.display = 'block';
       
-      // Recarregar dados do localStorage
-      try { 
-        loadCustomEventsToDOM(); 
-        if(window._boa && window._boa.refresh) window._boa.refresh();
-      } catch(e){ console.warn('Erro ao recarregar dados:', e); }
+      setViewMode('edit');
       
-      // Rolar para o topo
       window.scrollTo(0, 0);
       
-      alert('✏️ Modo Edição Ativado!\n\nAgora você pode editar eventos.\n\nClique em "Sair do Modo Edição" para voltar a ver como público.');
+      alert('✏️ Modo Edição Ativado!\n\nVocê pode:\n✏️ Editar eventos\n🗑️ Deletar eventos\n➕ Adicionar novos\n\nAo terminar, clique "Sair do Modo Edição"');
     } else {
       // Sair do modo edição
       document.getElementById('exitEditBtn').style.display = 'none';
       document.getElementById('enterEditBtn').style.display = 'block';
       document.getElementById('adminEventsBtn').style.display = 'none';
       document.getElementById('downloadHTMLBtn').style.display = 'none';
+      document.getElementById('githubBtn').style.display = 'none';
       document.getElementById('closeAdminBtn').style.display = 'none';
+      document.getElementById('modeToggle').style.display = 'none';
       
       var panel = document.getElementById('eventsPanel');
-      panel.classList.remove('show');
+      if(panel) panel.classList.remove('show');
       
-      // Rolar para o topo
+      setViewMode('public');
+      
       window.scrollTo(0, 0);
       
       alert('✅ Você voltou a ver o site como o público vê!');
