@@ -103,809 +103,585 @@
   <a class="fab-whatsapp" href="https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i><span>Grupo VIP</span></a>
 
   <script>
+  /* =====================================================
+     ADMIN + EVENTOS
+  ===================================================== */
 
+  // ── Senha Admin ──────────────────────────────────────
   function requestAdminPassword(){
-    const senha = prompt('🔐 Digite a senha do admin:');
-    
-    if(senha === null) return; // Cancelou
-    
-    if(senha === 'admin123'){
-      activateAdmin();
-    } else {
-      alert('❌ Senha incorreta!');
-    }
+    var senha = prompt('🔐 Digite a senha do admin:');
+    if(senha === null) return;
+    if(senha === 'admin123') activateAdmin();
+    else alert('❌ Senha incorreta!');
   }
 
   function activateAdmin(){
     document.getElementById('adminEventsBtn').style.display = 'block';
     document.getElementById('downloadHTMLBtn').style.display = 'block';
-    document.getElementById('closeAdminBtn').style.display = 'block';
-    alert('✅ Painel de admin ativado!');
-  }
-
-  // Carregar eventos customizados
-  function loadCustomEventsToDOM(){
-    const saved = localStorage.getItem('customEvents');
-    const events = saved ? JSON.parse(saved) : [];
-    const source = document.getElementById('events-source');
-    if(!source) return;
-    
-    events.forEach((evt) => {
-      const dateISO = evt.date ? evt.date + 'T' + (evt.time || '19:00:00') + '-03:00' : '';
-      const [year, month, day] = (evt.date || '2026-01-01').split('-');
-      const MESES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-      const monthAbbr = MESES_ABR[parseInt(month) - 1].toUpperCase();
-      
-      const cardHTML = `
-        <div class="event-card" data-nome="${evt.nome || ''}" data-data="${evt.data || ''}" data-local="${evt.local || ''}" data-link="${evt.link || ''}" data-date="${dateISO}">
-          <a href="${evt.link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper ${evt.image ? '' : 'no-image'}">
-            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}" style="display:block !important;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:translate(${evt.imageOffsetX || 0}px, ${evt.imageOffsetY || 0}px) scale(${(evt.imageZoom || 100)/100});">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
-            <div class="event-image-fallback" aria-hidden="true" ${evt.image ? 'style="display:none;"' : ''}>
-              <div><div class="fallback-title">${evt.nome || 'Evento'}</div></div>
-            </div>
-            <div class="date-badge"><div class="day">${day}</div><div class="month">${monthAbbr}</div></div>
-            ${evt.discount ? `<div class="discount-badge">${evt.discount}</div>` : ''}
-            ${evt.link ? `<div class="promo-badge"><i class="fas fa-tag"></i> Compre aqui</div>` : ''}
-          </a>
-          <div class="event-content">
-            <div class="artist-title">${evt.nome || 'Evento'}</div>
-            ${evt.subtitle ? `<div class="event-subtitle">${evt.subtitle}</div>` : ''}
-            ${evt.local ? `<div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(evt.local)}" target="_blank">${evt.local}</a></div></div></div>` : ''}
-            <div class="event-actions">
-              <a class="btn-ticket" href="${evt.link || '#'}" target="_blank"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a>
-              <button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = cardHTML;
-      source.appendChild(tempDiv.firstElementChild);
-    });
-  }
-
-  function toggleEventsPanel(){
-    const panel = document.getElementById('eventsPanel');
-    if(panel.style.display === 'none'){
-      panel.style.display = 'block';
-      renderExistingEvents();
-    } else {
-      panel.style.display = 'none';
-    }
+    document.getElementById('closeAdminBtn').style.display  = 'block';
+    var raw = localStorage.getItem('customEvents');
+    var evts = raw ? JSON.parse(raw) : [];
+    alert('✅ Admin ativado! ' + evts.length + ' evento(s) salvo(s).');
   }
 
   function closeAdminPanel(){
-    document.getElementById('eventsPanel').style.display = 'none';
-    document.getElementById('adminEventsBtn').style.display = 'none';
-    document.getElementById('downloadHTMLBtn').style.display = 'none';
-    document.getElementById('closeAdminBtn').style.display = 'none';
-    
-    // Limpar o campo de busca (que pode conter "admin")
-    const searchInput = document.querySelector('.search-wrapper input');
-    if(searchInput){
-      searchInput.value = '';
-    }
-    
-    // Resetar filtro para "Todos os eventos"
-    const filterBtn = document.querySelector('[data-filter="all"]');
-    if(filterBtn){
-      filterBtn.click();
-    }
-    
-    // Re-renderizar eventos atualizados
-    setTimeout(() => {
-      applyFilters();
+    document.getElementById('eventsPanel').style.display      = 'none';
+    document.getElementById('adminEventsBtn').style.display   = 'none';
+    document.getElementById('downloadHTMLBtn').style.display  = 'none';
+    document.getElementById('closeAdminBtn').style.display    = 'none';
+    var si = document.querySelector('.search-wrapper input');
+    if(si) si.value = '';
+    setTimeout(function(){
+      if(window._boa){ window._boa.refresh(); }
     }, 100);
-    
-    alert('✅ Painel de admin fechado! Eventos atualizados! 👇');
+    alert('✅ Painel fechado!');
   }
 
-  function downloadUpdatedHTML(){
-    const source = document.getElementById('events-source');
-    if(!source){
-      alert('⚠️ Erro: não consegui encontrar os eventos!');
+  function toggleEventsPanel(){
+    var p = document.getElementById('eventsPanel');
+    if(p.style.display === 'none' || p.style.display === ''){
+      p.style.display = 'block';
+      renderExistingEvents();
+    } else {
+      p.style.display = 'none';
+    }
+  }
+
+  // ── localStorage helpers ──────────────────────────────
+  function getCustomEvents(){
+    try { var r = localStorage.getItem('customEvents'); return r ? JSON.parse(r) : []; }
+    catch(e){ return []; }
+  }
+  function saveCustomEvents(arr){
+    try { localStorage.setItem('customEvents', JSON.stringify(arr)); } catch(e){}
+  }
+  function getSavedImages(){
+    try { var r = localStorage.getItem('eventImages'); return r ? JSON.parse(r) : {}; }
+    catch(e){ return {}; }
+  }
+  function saveSavedImages(obj){
+    try { localStorage.setItem('eventImages', JSON.stringify(obj)); } catch(e){}
+  }
+
+  // ── Injetar eventos custom no events-source ────────────
+  function loadCustomEventsToDOM(){
+    var source = document.getElementById('events-source');
+    if(!source) return;
+    // remove cards custom anteriores para evitar duplicatas
+    var old = source.querySelectorAll('.event-card[data-custom]');
+    for(var i=0;i<old.length;i++) old[i].remove();
+
+    var events = getCustomEvents();
+    var MESES_ABR = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+
+    events.forEach(function(evt){
+      var dateISO = evt.date ? evt.date + 'T' + (evt.time || '19:00:00') + '-03:00' : '';
+      var parts   = (evt.date || '2026-01-01').split('-');
+      var ano=parts[0], mes=parts[1], dia=parts[2];
+      var monthAbbr = MESES_ABR[parseInt(mes)-1];
+      var imgTag = evt.image
+        ? '<img src="'+evt.image+'" alt="'+evt.nome+'" style="display:block;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transform:translate('+(evt.imageOffsetX||0)+'px,'+(evt.imageOffsetY||0)+'px) scale('+((evt.imageZoom||100)/100)+');">'
+        : '<img src="" alt="'+evt.nome+'">';
+      var html = '<div class="event-card" data-custom="1"'
+        +' data-nome="'+evt.nome+'"'
+        +' data-data="'+evt.data+'"'
+        +' data-local="'+(evt.local||'')+'"'
+        +' data-link="'+(evt.link||'')+'"'
+        +' data-date="'+dateISO+'">'
+        +'<a href="'+(evt.link||'#')+'" target="_blank" class="event-image-wrapper'+(evt.image?'':' no-image')+'">'
+        +imgTag
+        +'<div class="event-image-fallback" '+(evt.image?'style="display:none"':'')+' aria-hidden="true"><div><div class="fallback-title">'+evt.nome+'</div></div></div>'
+        +'<div class="date-badge"><div class="day">'+dia+'</div><div class="month">'+monthAbbr+'</div></div>'
+        +(evt.discount?'<div class="discount-badge">'+evt.discount+'</div>':'')
+        +'<div class="promo-badge"><i class="fas fa-tag"></i> Compre aqui</div>'
+        +'</a>'
+        +'<div class="event-content">'
+        +'<div class="artist-title">'+evt.nome+'</div>'
+        +(evt.subtitle?'<div class="event-subtitle">'+evt.subtitle+'</div>':'')
+        +(evt.local?'<div class="event-location"><i class="fas fa-map-pin"></i><div><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(evt.local)+'" target="_blank">'+evt.local+'</a></div></div>':'')
+        +'<div class="event-actions">'
+        +'<a class="btn-ticket" href="'+(evt.link||'#')+'" target="_blank"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a>'
+        +'<button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button>'
+        +'</div></div></div>';
+      var tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      source.appendChild(tmp.firstElementChild);
+    });
+  }
+
+  // ── Aplicar imagens salvas aos eventos originais ────────
+  function loadSavedImages(){
+    var images = getSavedImages();
+    var keys = Object.keys(images);
+    if(!keys.length) return;
+    document.querySelectorAll('[data-img]').forEach(function(card){
+      var n = card.getAttribute('data-img');
+      if(!images[n]) return;
+      var img     = card.querySelector('img');
+      var wrapper = card.querySelector('.event-image-wrapper');
+      var fb      = card.querySelector('.event-image-fallback');
+      if(img){ img.setAttribute('src', images[n]); img.style.display='block'; }
+      if(wrapper) wrapper.classList.remove('no-image');
+      if(fb){ fb.hidden=true; fb.style.display='none'; }
+    });
+  }
+
+  // ── Listar eventos no painel admin ─────────────────────
+  function renderExistingEvents(){
+    var source = document.getElementById('events-source');
+    var container = document.getElementById('existingEventsList');
+    if(!source||!container) return;
+    var cards = source.querySelectorAll('.event-card');
+    if(!cards.length){
+      container.innerHTML='<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento</p>';
       return;
     }
+    var html='';
+    for(var i=0;i<cards.length;i++){
+      var c = cards[i];
+      var nome  = c.getAttribute('data-nome')||'Evento';
+      var data  = c.getAttribute('data-data')||'';
+      var local = c.getAttribute('data-local')||'';
+      html+='<div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">'
+        +'<div style="font-weight:700;font-size:13px;color:#FF2A6D;">'+nome+'</div>'
+        +'<div style="font-size:11px;color:#666;">📅 '+data+'</div>'
+        +'<div style="font-size:11px;color:#666;margin-bottom:8px;">📍 '+local+'</div>'
+        +'<div style="display:flex;gap:6px;">'
+        +'<button onclick="editEventDialog('+i+')" style="background:#0066cc;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">✏️ Editar</button>'
+        +'<button onclick="deleteEventFromSite('+i+')" style="background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">🗑️ Deletar</button>'
+        +'</div></div>';
+    }
+    container.innerHTML = html;
+  }
 
-    // Pegar o HTML atual da página
-    let htmlContent = document.documentElement.outerHTML;
-    
-    // Pegar o novo conteúdo do #events-source (com todos os eventos)
-    const newEventsHTML = source.innerHTML;
-    
-    // Substituir o conteúdo de #events-source no HTML
-    const oldEventsPattern = /<div id="events-source"[\s\S]*?<\/div>/;
-    const newEventsDiv = `<div id="events-source" style="display:none">\n${newEventsHTML}\n    </div>`;
-    
+  // ── Deletar evento ─────────────────────────────────────
+  function deleteEventFromSite(idx){
+    var source = document.getElementById('events-source');
+    var cards  = source.querySelectorAll('.event-card');
+    var card   = cards[idx];
+    var nome   = card.getAttribute('data-nome')||'Evento';
+    if(!confirm('⚠️ Deletar "'+nome+'"?')) return;
+    // remove do customEvents se for custom
+    var events = getCustomEvents();
+    var updated = events.filter(function(e){ return e.nome!==nome; });
+    if(updated.length < events.length) saveCustomEvents(updated);
+    card.remove();
+    renderExistingEvents();
+    if(window._boa) window._boa.refresh();
+    alert('✅ Evento deletado!');
+  }
+
+  // ── Adicionar novo evento ──────────────────────────────
+  function addNewEvent(){
+    var nome     = document.getElementById('newEventName').value.trim();
+    var subtitle = document.getElementById('newEventSubtitle').value.trim();
+    var dateInput= document.getElementById('newEventDate').value;
+    var timeInput= document.getElementById('newEventTime').value;
+    var local    = document.getElementById('newEventLocal').value.trim();
+    var link     = document.getElementById('newEventLink').value.trim();
+    var discount = document.getElementById('newEventDiscount').value.trim();
+    var image    = window.selectedEventImage || null;
+
+    if(!nome||!dateInput){ alert('⚠️ Preencha nome e data!'); return; }
+
+    var DIAS  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    var parts = dateInput.split('-');
+    var ano=parts[0], mes=parts[1], dia=parts[2];
+    var dtObj  = new Date(+ano, +mes-1, +dia);
+    var diaSem = DIAS[dtObj.getDay()];
+    var hora   = '';
+    if(timeInput){ var tp=timeInput.split(':'); hora=tp[1]==='00'?tp[0]+'h':tp[0]+'h'+tp[1]; }
+    var dataCompleta = dia+'/'+mes+' • '+diaSem+(hora?' • '+hora:'');
+
+    var events = getCustomEvents();
+    events.push({ nome:nome, subtitle:subtitle, data:dataCompleta, date:dateInput,
+      time:timeInput, dayWeek:diaSem, local:local, link:link, discount:discount,
+      image:image, imageOffsetX:0, imageOffsetY:0, imageZoom:100 });
+    saveCustomEvents(events);
+
+    // Limpar campos
+    ['newEventName','newEventSubtitle','newEventDate','newEventTime',
+     'newEventLocal','newEventLink','newEventDiscount'].forEach(function(id){
+      document.getElementById(id).value='';
+    });
+    document.getElementById('imagePreview').innerHTML='📸 Clique aqui para adicionar imagem';
+    window.selectedEventImage=null;
+
+    // Recarregar
+    loadCustomEventsToDOM();
+    if(window._boa) window._boa.refresh();
+    renderExistingEvents();
+    alert('✅ Evento "'+nome+'" adicionado!');
+  }
+
+  // ── Editar evento ──────────────────────────────────────
+  function editEventDialog(idx){
+    var source = document.getElementById('events-source');
+    var cards  = source.querySelectorAll('.event-card');
+    var card   = cards[idx];
+
+    var currentNome     = card.getAttribute('data-nome')||'';
+    var currentData     = card.getAttribute('data-data')||'';
+    var currentLocal    = card.getAttribute('data-local')||'';
+    var currentLink     = card.getAttribute('data-link')||'';
+    var currentDateISO  = card.getAttribute('data-date')||'';
+    var subtitleEl      = card.querySelector('.event-subtitle');
+    var subtitle        = subtitleEl ? subtitleEl.textContent : '';
+    var discEl          = card.querySelector('.discount-badge');
+    var currentDiscount = discEl ? discEl.textContent.trim() : '';
+    var currentImgSrc   = (card.querySelector('img')||{}).getAttribute ? card.querySelector('img').getAttribute('src')||'' : '';
+
+    var isoDate='', isoTime='';
+    var m = currentDateISO.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
+    if(m){ isoDate=m[1]; isoTime=m[2]; }
+
+    var modal = document.createElement('div');
+    modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);display:flex;align-items:flex-start;justify-content:center;z-index:10000;overflow-y:auto;padding:16px;';
+    var dialog = document.createElement('div');
+    dialog.style.cssText='background:#fff;border-radius:12px;padding:20px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.3);margin:auto;';
+
+    function esc(s){ return (s||'').replace(/"/g,'&quot;'); }
+
+    dialog.innerHTML=
+      '<div style="font-size:18px;font-weight:800;color:#FF2A6D;margin-bottom:14px;">✏️ Editar Evento</div>'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📝 Nome</label>'
+      +'<input id="eNome" value="'+esc(currentNome)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">🎤 Subtítulo</label>'
+      +'<input id="eSub" value="'+esc(subtitle)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📅 Data</label>'
+      +'<input id="eDate" type="date" value="'+isoDate+'" style="width:100%;padding:9px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">🕐 Hora</label>'
+      +'<input id="eTime" type="time" value="'+isoTime+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📍 Local</label>'
+      +'<input id="eLocal" value="'+esc(currentLocal)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">🔗 Link</label>'
+      +'<input id="eLink" value="'+esc(currentLink)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">💰 Desconto</label>'
+      +'<input id="eDisc" value="'+esc(currentDiscount)+'" placeholder="-10%" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📸 Foto</label>'
+      +'<div id="ePrev" onclick="document.getElementById(\'eFile\').click();" style="width:100%;height:120px;background:#f0f0f0;border:2px dashed #fee822;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;margin-bottom:6px;">'
+      +(currentImgSrc?'<img src="'+currentImgSrc+'" style="width:100%;height:100%;object-fit:cover;">':'<span style="color:#999;font-size:12px;">📸 Clique para adicionar foto</span>')
+      +'</div>'
+      +'<input id="eFile" type="file" accept="image/*" style="display:none;">'
+      +'<div id="eRepos" style="display:'+(currentImgSrc?'block':'none')+';background:#f9f9f9;padding:10px;border-radius:6px;border:1px solid #fee822;margin-bottom:10px;">'
+      +'<div style="font-size:11px;font-weight:700;margin-bottom:6px;">🔍 Ajustar foto:</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:11px;font-weight:700;min-width:35px;">Zoom</span><input type="range" id="eZoom" min="50" max="250" value="100" style="flex:1;"><span id="eZoomLbl" style="font-size:11px;min-width:35px;">100%</span></div>'
+      +'<div style="font-size:10px;color:#888;margin-bottom:5px;">Arraste para reposicionar:</div>'
+      +'<div id="eEditor" style="width:100%;height:140px;background:#ddd;border:2px solid #fee822;border-radius:6px;overflow:hidden;cursor:grab;position:relative;user-select:none;">'
+      +'<img id="eEditorImg" src="'+(currentImgSrc||'')+'" style="position:absolute;top:0;left:0;width:100%;height:auto;transform-origin:center top;"></div>'
+      +'<div style="display:flex;gap:8px;margin-top:6px;">'
+      +'<button id="eRemove" style="flex:1;background:#ff6b6b;color:#fff;border:none;padding:7px;border-radius:5px;font-weight:700;cursor:pointer;font-size:11px;">🗑️ Remover</button>'
+      +'<button id="eReset" style="flex:1;background:#4CAF50;color:#fff;border:none;padding:7px;border-radius:5px;font-weight:700;cursor:pointer;font-size:11px;">↺ Resetar</button>'
+      +'</div></div>'
+      +'<div style="display:flex;gap:10px;">'
+      +'<button id="eSave" style="flex:1;background:#4CAF50;color:#fff;border:none;padding:12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">💾 Salvar</button>'
+      +'<button id="eCancel" style="flex:1;background:#999;color:#fff;border:none;padding:12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">✕ Cancelar</button>'
+      +'</div>';
+
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+
+    var selImg = currentImgSrc || null;
+    var ox=0, oy=0, zoom=100, dragging=false;
+
+    function applyT(){ var i=document.getElementById('eEditorImg'); if(i) i.style.transform='translate('+ox+'px,'+oy+'px) scale('+zoom/100+')'; }
+
+    function setupEditor(src){
+      var img=document.getElementById('eEditorImg');
+      var ed=document.getElementById('eEditor');
+      var repos=document.getElementById('eRepos');
+      if(!img||!ed) return;
+      img.src=src; repos.style.display='block';
+      ox=0;oy=0;zoom=100;
+      document.getElementById('eZoom').value=100;
+      document.getElementById('eZoomLbl').textContent='100%';
+      applyT();
+      ed.onmousedown=ed.ontouchstart=function(e){
+        dragging=true; ed.style.cursor='grabbing';
+        var isT=e.type==='touchstart';
+        var sx=isT?e.touches[0].clientX:e.clientX, sy=isT?e.touches[0].clientY:e.clientY;
+        var sox=ox, soy=oy;
+        function mv(e2){ if(!dragging)return; var cx=isT?e2.touches[0].clientX:e2.clientX, cy=isT?e2.touches[0].clientY:e2.clientY; ox=sox+(cx-sx); oy=soy+(cy-sy); applyT(); }
+        function up(){ dragging=false; ed.style.cursor='grab'; document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up); }
+        document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+        document.addEventListener('touchmove',mv,{passive:false}); document.addEventListener('touchend',up);
+        e.preventDefault();
+      };
+    }
+    if(currentImgSrc) setupEditor(currentImgSrc);
+
+    document.getElementById('eZoom').oninput=function(){ zoom=parseInt(this.value); document.getElementById('eZoomLbl').textContent=zoom+'%'; applyT(); };
+    document.getElementById('eRemove').onclick=function(){ selImg=null; document.getElementById('ePrev').innerHTML='<span style="color:#999;font-size:12px;">📸 Clique para adicionar foto</span>'; document.getElementById('eRepos').style.display='none'; document.getElementById('eFile').value=''; };
+    document.getElementById('eReset').onclick=function(){ ox=0;oy=0;zoom=100; document.getElementById('eZoom').value=100; document.getElementById('eZoomLbl').textContent='100%'; applyT(); };
+    document.getElementById('eFile').onchange=function(e){
+      var f=e.target.files[0]; if(!f) return;
+      if(f.size>3*1024*1024){ alert('⚠️ Máximo 3MB'); return; }
+      var r=new FileReader();
+      r.onload=function(ev){ selImg=ev.target.result; document.getElementById('ePrev').innerHTML='<img src="'+selImg+'" style="width:100%;height:100%;object-fit:cover;">'; setupEditor(selImg); };
+      r.readAsDataURL(f);
+    };
+    document.getElementById('eCancel').onclick=function(){ document.body.removeChild(modal); };
+
+    document.getElementById('eSave').onclick=function(){
+      var novoNome = document.getElementById('eNome').value.trim();
+      var novoSub  = document.getElementById('eSub').value.trim();
+      var novoDate = document.getElementById('eDate').value;
+      var novoTime = document.getElementById('eTime').value;
+      var novoLoc  = document.getElementById('eLocal').value.trim();
+      var novoLink = document.getElementById('eLink').value.trim();
+      var novoDisc = document.getElementById('eDisc').value.trim();
+      if(!novoNome||!novoDate){ alert('⚠️ Preencha nome e data!'); return; }
+
+      var DIAS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+      var MESES_ABR=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+      var p=novoDate.split('-'), ano=p[0], mes=p[1], dia=p[2];
+      var dtObj=new Date(+ano,+mes-1,+dia);
+      var diaSem=DIAS[dtObj.getDay()];
+      var horaStr='';
+      if(novoTime){ var tp=novoTime.split(':'); horaStr=tp[1]==='00'?tp[0]+'h':tp[0]+'h'+tp[1]; }
+      var novaData = dia+'/'+mes+' • '+diaSem+(horaStr?' • '+horaStr:'');
+      var novoISO  = novoDate+'T'+(novoTime||'19:00')+':00-03:00';
+      var finalT   = 'translate('+ox+'px,'+oy+'px) scale('+zoom/100+')';
+
+      // Atualizar card no DOM
+      card.setAttribute('data-nome',  novoNome);
+      card.setAttribute('data-data',  novaData);
+      card.setAttribute('data-local', novoLoc);
+      card.setAttribute('data-link',  novoLink);
+      card.setAttribute('data-date',  novoISO);
+      card.querySelector('.event-datetime') && card.querySelector('.event-datetime').remove();
+
+      var at=card.querySelector('.artist-title'); if(at) at.textContent=novoNome;
+      var se=card.querySelector('.event-subtitle');
+      if(novoSub){ if(!se){se=document.createElement('div');se.className='event-subtitle';at&&at.parentNode.insertBefore(se,at.nextSibling);}se.textContent=novoSub; }else if(se) se.remove();
+
+      var de=card.querySelector('.discount-badge');
+      if(novoDisc){ if(!de){de=document.createElement('div');de.className='discount-badge';card.querySelector('.event-image-wrapper')&&card.querySelector('.event-image-wrapper').appendChild(de);}de.textContent=novoDisc; }else if(de) de.remove();
+
+      var le=card.querySelector('.event-location');
+      if(novoLoc){
+        var mu='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(novoLoc);
+        if(!le){le=document.createElement('div');le.className='event-location';le.innerHTML='<i class="fas fa-map-pin"></i><div><a href="'+mu+'" target="_blank">'+novoLoc+'</a></div>';card.querySelector('.event-content')&&card.querySelector('.event-content').appendChild(le);}
+        else{var a=le.querySelector('a');if(a){a.href=mu;a.textContent=novoLoc;}}
+      }else if(le) le.remove();
+
+      var tb=card.querySelector('.btn-ticket'); if(tb) tb.href=novoLink||'#';
+      var wl=card.querySelector('.event-image-wrapper'); if(wl) wl.href=novoLink||'#';
+
+      // Foto
+      if(selImg!==null){
+        var img=card.querySelector('img');
+        if(img){ img.setAttribute('src',selImg||''); img.style.display=selImg?'block':'none'; if(selImg) img.style.transform=finalT; }
+        var fb=card.querySelector('.event-image-fallback');
+        var wr=card.querySelector('.event-image-wrapper');
+        if(selImg){ if(fb){fb.hidden=true;fb.style.display='none';} if(wr) wr.classList.remove('no-image'); }
+        else{ if(fb){fb.hidden=false;fb.style.display='';} if(wr) wr.classList.add('no-image'); }
+        // Salvar em eventImages (eventos originais)
+        var imgNum=card.getAttribute('data-img');
+        if(imgNum&&selImg){ var imgs=getSavedImages(); imgs[imgNum]=selImg; saveSavedImages(imgs); }
+      }
+
+      // Salvar em customEvents (eventos adicionados pelo admin)
+      var evts=getCustomEvents();
+      var ei=evts.findIndex(function(e){ return e.nome===currentNome; });
+      if(ei!==-1){
+        evts[ei]=Object.assign({},evts[ei],{
+          nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
+          time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
+          image:selImg!==null?selImg:evts[ei].image,
+          imageOffsetX:ox, imageOffsetY:oy, imageZoom:zoom
+        });
+        saveCustomEvents(evts);
+      }
+
+      var dayEl=card.querySelector('.date-badge .day'), monEl=card.querySelector('.date-badge .month');
+      if(dayEl) dayEl.textContent=dia;
+      if(monEl) monEl.textContent=MESES_ABR[+mes-1];
+
+      document.body.removeChild(modal);
+      alert('✅ Salvo!');
+      setTimeout(function(){ if(window._boa) window._boa.refresh(); renderExistingEvents(); }, 100);
+    };
+  }
+
+  // ── Download HTML ──────────────────────────────────────
+  function downloadUpdatedHTML(){
+    var source = document.getElementById('events-source');
+    if(!source){ alert('Erro: events-source não encontrado'); return; }
+    var htmlContent = document.documentElement.outerHTML;
+    var newEventsHTML = source.innerHTML;
+    var oldEventsPattern = /<div id="events-source"[\s\S]*?<\/div>/;
+    var newEventsDiv = '<div id="events-source" style="display:none">\n'+newEventsHTML+'\n    </div>';
     htmlContent = htmlContent.replace(oldEventsPattern, newEventsDiv);
-    
-    // Detectar se é mobile
-    const isMobile = /iPhone|iPad|iPod|Android|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if(isMobile){
-      // Mobile: mostrar modal com opção de copiar
       showHTMLModal(htmlContent);
     } else {
-      // Desktop: baixar arquivo normalmente
-      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      
-      link.setAttribute('href', url);
-      link.setAttribute('download', `index_atualizado_${new Date().toISOString().slice(0,10)}.html`);
-      link.style.visibility = 'hidden';
-      
-      document.body.appendChild(link);
+      var blob = new Blob([htmlContent],{type:'text/html;charset=utf-8;'});
+      var link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'index_atualizado_'+new Date().toISOString().slice(0,10)+'.html';
       link.click();
-      document.body.removeChild(link);
-      
-      alert(`✅ HTML Atualizado baixado com sucesso!\n\nArquivo: index_atualizado_${new Date().toISOString().slice(0,10)}.html\n\nAgora todos os seus eventos novos estarão permanentes!\n\n👉 Use este arquivo no lugar do antigo!`);
+      alert('✅ HTML baixado!');
     }
   }
 
   function showHTMLModal(htmlContent){
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10001;
-      padding: 10px;
-    `;
-    
-    const dialog = document.createElement('div');
-    dialog.style.cssText = `
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-      width: 100%;
-    `;
-    
-    dialog.innerHTML = `
-      <div style="font-size: 16px; font-weight: 800; color: #FF2A6D; margin-bottom: 16px; text-align: center;">📱 HTML Atualizado (Mobile)</div>
-      
-      <div style="background: #f5f5f5; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #FF2A6D;">
-        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-          <strong>✅ Pronto para publicar!</strong><br>
-          Copie o código abaixo e compartilhe com seu computador.
-        </div>
-      </div>
-      
-      <div style="position: relative; margin-bottom: 12px;">
-        <textarea id="htmlCodeArea" readonly style="width: 100%; height: 200px; padding: 12px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; background: #f9f9f9;"></textarea>
-        <div style="font-size: 11px; color: #999; margin-top: 6px; text-align: right;">Clique para selecionar e copiar</div>
-      </div>
-      
-      <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-        <button id="copyHTMLBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">📋 Copiar HTML</button>
-        <button id="shareHTMLBtn" style="flex: 1; background: #25D366; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">💬 Compartilhar</button>
-      </div>
-      
-      <div style="display: flex; gap: 10px;">
-        <button id="closeHTMLModal" style="flex: 1; background: #999; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">✕ Fechar</button>
-      </div>
-      
-      <div style="background: #fff3cd; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 11px; color: #856404;">
-        <strong>📌 Como usar:</strong><br>
-        1️⃣ Copie o código<br>
-        2️⃣ Compartilhe no WhatsApp/Email<br>
-        3️⃣ No computador, abra um editor de texto<br>
-        4️⃣ Cole o código<br>
-        5️⃣ Salve como "index.html"<br>
-        6️⃣ Substitua o arquivo antigo<br>
-        7️⃣ Pronto! Novos eventos aparecem para todos! ✅
-      </div>
-    `;
-    
-    modal.appendChild(dialog);
-    document.body.appendChild(modal);
-    
-    // Preencher textarea com HTML
-    const htmlArea = document.getElementById('htmlCodeArea');
-    htmlArea.value = htmlContent;
-    
-    // Botão Copiar
-    document.getElementById('copyHTMLBtn').onclick = () => {
-      htmlArea.select();
-      document.execCommand('copy');
-      alert('✅ HTML copiado para a área de transferência!');
-    };
-    
-    // Botão Compartilhar
-    document.getElementById('shareHTMLBtn').onclick = () => {
-      const filename = `index_atualizado_${new Date().toISOString().slice(0,10)}.html`;
-      
-      // Tentar usar Web Share API (melhor para mobile)
-      if(navigator.share){
-        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8;' });
-        const file = new File([blob], filename, { type: 'text/html' });
-        
-        navigator.share({
-          title: '🎉 HTML BOA Atualizado',
-          text: '✅ HTML com todos os novos eventos cadastrados!\n\n👉 Salve como index.html e substitua o arquivo antigo no seu site.\n\nOs eventos aparecerão para TODOS os clientes! 🎊',
-          files: [file]
-        }).catch(err => {
-          // Se falhar, abrir WhatsApp
-          const msg = encodeURIComponent(`🎉 HTML ATUALIZADO BOA\n\n✅ HTML com todos os novos eventos!\n\n👉 Salve como index.html e substitua o arquivo antigo.\n\n(Código do HTML está acima nesta conversa)`);
-          window.open(`https://wa.me/?text=${msg}`, '_blank');
-        });
-      } else {
-        // Se não tiver Web Share API, abrir WhatsApp
-        const msg = encodeURIComponent(`🎉 HTML ATUALIZADO BOA\n\n✅ HTML com todos os novos eventos!\n\n👉 Salve como index.html e substitua o arquivo antigo.\n\n(Copie o código da mensagem anterior)`);
-        window.open(`https://wa.me/?text=${msg}`, '_blank');
-      }
-    };
-    
-    // Botão Fechar
-    document.getElementById('closeHTMLModal').onclick = () => {
-      document.body.removeChild(modal);
-    };
+    var modal=document.createElement('div');
+    modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:10001;padding:10px;';
+    var d=document.createElement('div');
+    d.style.cssText='background:#fff;border-radius:12px;padding:20px;width:100%;max-height:90vh;overflow-y:auto;';
+    d.innerHTML='<div style="font-size:16px;font-weight:800;color:#FF2A6D;margin-bottom:12px;">📱 HTML Atualizado</div>'
+      +'<textarea id="htmlArea" readonly style="width:100%;height:180px;padding:10px;border:1px solid #e0e0e0;border-radius:6px;font-size:10px;font-family:monospace;box-sizing:border-box;background:#f9f9f9;"></textarea>'
+      +'<div style="display:flex;gap:10px;margin-top:10px;">'
+      +'<button id="copyBtn" style="flex:1;background:#4CAF50;color:#fff;border:none;padding:11px;border-radius:6px;font-weight:700;cursor:pointer;">📋 Copiar</button>'
+      +'<button id="closeBtn" style="flex:1;background:#999;color:#fff;border:none;padding:11px;border-radius:6px;font-weight:700;cursor:pointer;">✕ Fechar</button>'
+      +'</div>';
+    modal.appendChild(d); document.body.appendChild(modal);
+    document.getElementById('htmlArea').value=htmlContent;
+    document.getElementById('copyBtn').onclick=function(){ document.getElementById('htmlArea').select(); document.execCommand('copy'); alert('✅ Copiado!'); };
+    document.getElementById('closeBtn').onclick=function(){ document.body.removeChild(modal); };
   }
 
-  function renderExistingEvents(){
-    const source = document.getElementById('events-source');
-    const container = document.getElementById('existingEventsList');
-    if(!source || !container) return;
-    
-    const cards = source.querySelectorAll('.event-card');
-    if(cards.length === 0){
-      container.innerHTML = '<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento cadastrado</p>';
-      return;
-    }
-    
-    let html = '';
-    cards.forEach((card, idx) => {
-      const nome = card.getAttribute('data-nome') || 'Evento';
-      const data = card.getAttribute('data-data') || '';
-      const local = card.getAttribute('data-local') || '';
-      html += `
-        <div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">
-          <div style="font-weight:700;font-size:13px;color:#FF2A6D;margin-bottom:2px;">${nome}</div>
-          <div style="font-size:11px;color:#666;margin-bottom:2px;">📅 ${data}</div>
-          <div style="font-size:11px;color:#666;margin-bottom:10px;">📍 ${local}</div>
-          <div style="display:flex;gap:6px;">
-            <button onclick="editEventDialog(${idx})" style="background:#0066cc;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">✏️ Editar</button>
-            <button onclick="deleteEventFromSite(${idx})" style="background:#f44336;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">🗑️ Deletar</button>
-          </div>
-        </div>
-      `;
-    });
-    
-    container.innerHTML = html;
-  }
-
-  function editEventDialog(idx){
-    const source = document.getElementById('events-source');
-    const cards = source.querySelectorAll('.event-card');
-    const card = cards[idx];
-
-    const currentNome  = card.getAttribute('data-nome') || '';
-    const currentData  = card.getAttribute('data-data') || '';
-    const currentLocal = card.getAttribute('data-local') || '';
-    const currentLink  = card.getAttribute('data-link') || '';
-    const currentDateISO = card.getAttribute('data-date') || ''; // ex: 2026-03-22T14:00:00-03:00
-    const subtitle     = card.querySelector('.event-subtitle')?.textContent || '';
-    const discountBadge = card.querySelector('.discount-badge');
-    const currentDiscount = discountBadge ? discountBadge.textContent.trim() : '';
-    // usa getAttribute para não pegar URL da página quando src=""
-    const currentImgSrc = card.querySelector('img')?.getAttribute('src') || '';
-
-    // Extrair date e time do ISO para pré-preencher os pickers
-    let isoDatePart = '', isoTimePart = '';
-    if(currentDateISO){
-      const m = currentDateISO.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
-      if(m){ isoDatePart = m[1]; isoTimePart = m[2]; }
-    }
-
-    const modal = document.createElement('div');
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:10000;overflow-y:auto;';
-
-    const dialog = document.createElement('div');
-    dialog.style.cssText = 'background:white;border-radius:12px;padding:20px;max-width:420px;width:calc(100% - 32px);margin:20px auto;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-
-    dialog.innerHTML = `
-      <div style="font-size:18px;font-weight:800;color:#FF2A6D;margin-bottom:16px;">✏️ Editar Evento</div>
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">📝 Nome do Evento</label>
-      <input type="text" id="editNome" value="${currentNome.replace(/"/g,'&quot;')}" style="width:100%;padding:10px;margin-bottom:12px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">🎤 Subtítulo</label>
-      <input type="text" id="editSubtitle" value="${subtitle.replace(/"/g,'&quot;')}" style="width:100%;padding:10px;margin-bottom:12px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">📅 Data</label>
-      <input type="date" id="editDatePicker" value="${isoDatePart}" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">🕐 Hora</label>
-      <input type="time" id="editTimePicker" value="${isoTimePart}" style="width:100%;padding:10px;margin-bottom:12px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">📍 Local</label>
-      <input type="text" id="editLocal" value="${currentLocal.replace(/"/g,'&quot;')}" style="width:100%;padding:10px;margin-bottom:12px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">🔗 Link de Ingresso</label>
-      <input type="text" id="editLink" value="${currentLink.replace(/"/g,'&quot;')}" style="width:100%;padding:10px;margin-bottom:12px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">💰 Desconto</label>
-      <input type="text" id="editDiscount" value="${currentDiscount.replace(/"/g,'&quot;')}" placeholder="Ex: -10%" style="width:100%;padding:10px;margin-bottom:12px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">
-
-      <label style="display:block;font-weight:700;font-size:12px;margin-bottom:4px;color:#333;">📸 Foto do Evento</label>
-      <div id="editImagePreview" style="width:100%;height:120px;background:#f0f0f0;border:2px dashed #fee822;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#999;overflow:hidden;cursor:pointer;margin-bottom:12px;position:relative;" onclick="document.getElementById('editEventImage').click();">
-        ${currentImgSrc ? `<img src="${currentImgSrc}" style="width:100%;height:100%;object-fit:cover;">` : '📸 Clique para adicionar foto'}
-      </div>
-      <input type="file" id="editEventImage" accept="image/*" style="display:none;">
-
-      <div style="display:flex;gap:10px;">
-        <button id="editSaveBtn" style="flex:1;background:#4CAF50;color:white;border:none;padding:12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">💾 Salvar</button>
-        <button id="editCancelBtn" style="flex:1;background:#999;color:white;border:none;padding:12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">✕ Cancelar</button>
-      </div>
-    `;
-
-    modal.appendChild(dialog);
-    document.body.appendChild(modal);
-
-    let editSelectedImage = currentImgSrc || null; // mantém a foto atual se existir
-
-    // Preview ao selecionar nova foto
-    document.getElementById('editEventImage').addEventListener('change', function(e){
-      const file = e.target.files[0];
-      if(!file) return;
-      if(file.size > 2 * 1024 * 1024){ alert('⚠️ Imagem muito grande! Máximo 2MB.'); return; }
-      const reader = new FileReader();
-      reader.onload = ev => {
-        editSelectedImage = ev.target.result;
-        const prev = document.getElementById('editImagePreview');
-        prev.innerHTML = `<img src="${editSelectedImage}" style="width:100%;height:100%;object-fit:cover;">`;
-        prev.style.border = '2px solid #4CAF50';
+  // ── Preview imagem novo evento ─────────────────────────
+  document.addEventListener('DOMContentLoaded', function(){
+    var si=document.getElementById('search');
+    if(si) si.addEventListener('input',function(){ if(this.value.toLowerCase().includes('admin')){ this.value=''; requestAdminPassword(); } });
+    var fi=document.getElementById('newEventImage');
+    if(fi) fi.addEventListener('change',function(e){
+      var f=e.target.files[0]; if(!f) return;
+      if(f.size>3*1024*1024){ alert('⚠️ Máximo 3MB'); return; }
+      var r=new FileReader();
+      r.onload=function(ev){
+        window.selectedEventImage=ev.target.result;
+        var p=document.getElementById('imagePreview');
+        p.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:100%;object-fit:cover;">';
+        p.style.border='2px solid #4CAF50';
       };
-      reader.readAsDataURL(file);
+      r.readAsDataURL(f);
     });
-
-    document.getElementById('editCancelBtn').onclick = () => document.body.removeChild(modal);
-
-    document.getElementById('editSaveBtn').onclick = () => {
-      const novoNome     = document.getElementById('editNome').value.trim();
-      const novoSubtitle = document.getElementById('editSubtitle').value.trim();
-      const novoLocal    = document.getElementById('editLocal').value.trim();
-      const novoLink     = document.getElementById('editLink').value.trim();
-      const novoDiscount = document.getElementById('editDiscount').value.trim();
-      const novoDatePick = document.getElementById('editDatePicker').value; // "2026-04-12"
-      const novoTimePick = document.getElementById('editTimePicker').value; // "16:00"
-
-      if(!novoNome || !novoDatePick){
-        alert('⚠️ Preencha pelo menos nome e data!');
-        return;
-      }
-
-      // Montar ISO e data formatada
-      const DIAS_LONGO  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-      const MESES_ABR   = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
-      const [ano, mes, dia] = novoDatePick.split('-');
-      const dtObj     = new Date(+ano, +mes - 1, +dia);
-      const diaSem    = DIAS_LONGO[dtObj.getDay()];
-      let horaStr = '';
-      if(novoTimePick){
-        const [hh, mm] = novoTimePick.split(':');
-        horaStr = mm === '00' ? hh + 'h' : hh + 'h' + mm;
-      }
-      const novaData    = dia + '/' + mes + ' • ' + diaSem + (horaStr ? ' • ' + horaStr : '');
-      const novoIso     = novoDatePick + 'T' + (novoTimePick || '19:00') + ':00-03:00';
-      const mesAbr      = MESES_ABR[+mes - 1];
-
-      // ── Atualizar atributos do card ──
-      card.setAttribute('data-nome',  novoNome);
-      card.setAttribute('data-data',  novaData);
-      card.setAttribute('data-local', novoLocal);
-      card.setAttribute('data-link',  novoLink);
-      card.setAttribute('data-date',  novoIso); // <-- ISO atualizado
-
-      // Badge de data (dia e mês)
-      const dayEl = card.querySelector('.date-badge .day');
-      const monEl = card.querySelector('.date-badge .month');
-      if(dayEl) dayEl.textContent = dia;
-      if(monEl) monEl.textContent = mesAbr;
-
-      // Títulos
-      const artistTitle = card.querySelector('.artist-title');
-      if(artistTitle) artistTitle.textContent = novoNome;
-
-      let subtitle_el = card.querySelector('.event-subtitle');
-      if(novoSubtitle){
-        if(!subtitle_el){
-          subtitle_el = document.createElement('div');
-          subtitle_el.className = 'event-subtitle';
-          artistTitle && artistTitle.parentNode.insertBefore(subtitle_el, artistTitle.nextSibling);
-        }
-        subtitle_el.textContent = novoSubtitle;
-      } else if(subtitle_el){ subtitle_el.remove(); }
-
-      // Desconto
-      let discEl = card.querySelector('.discount-badge');
-      if(novoDiscount){
-        if(!discEl){ discEl = document.createElement('div'); discEl.className = 'discount-badge'; card.querySelector('.event-image-wrapper').appendChild(discEl); }
-        discEl.textContent = novoDiscount;
-      } else if(discEl){ discEl.remove(); }
-
-      // Local
-      let locDiv = card.querySelector('.event-location');
-      if(novoLocal){
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(novoLocal)}`;
-        if(!locDiv){
-          locDiv = document.createElement('div'); locDiv.className = 'event-location';
-          locDiv.innerHTML = `<i class="fas fa-map-pin"></i><div><div><a href="${mapsUrl}" target="_blank">${novoLocal}</a></div></div>`;
-          card.querySelector('.event-content').appendChild(locDiv);
-        } else {
-          const a = locDiv.querySelector('a');
-          if(a){ a.href = mapsUrl; a.textContent = novoLocal; }
-        }
-      } else if(locDiv){ locDiv.remove(); }
-
-      // Links dos botões
-      const ticketBtn = card.querySelector('.btn-ticket');
-      if(ticketBtn) ticketBtn.href = novoLink || '#';
-      const wrapperLink = card.querySelector('.event-image-wrapper');
-      if(wrapperLink) wrapperLink.href = novoLink || '#';
-
-      // ── Foto ──
-      if(editSelectedImage){
-        const img = card.querySelector('img');
-        if(img){
-          img.src = editSelectedImage;
-          img.setAttribute('src', editSelectedImage);
-          img.style.display = 'block';
-        }
-        const fallback = card.querySelector('.event-image-fallback');
-        if(fallback){ fallback.hidden = true; fallback.style.display = 'none'; }
-        const wrapper = card.querySelector('.event-image-wrapper');
-        if(wrapper) wrapper.classList.remove('no-image');
-
-        // Salvar no eventImages (eventos originais com data-img)
-        const imgNum = card.getAttribute('data-img');
-        if(imgNum){
-          try {
-            const imgs = JSON.parse(localStorage.getItem('eventImages') || '{}');
-            imgs[imgNum] = editSelectedImage;
-            localStorage.setItem('eventImages', JSON.stringify(imgs));
-          } catch(e){ console.warn('eventImages save failed:', e); }
-        }
-      }
-
-      // ── Salvar no customEvents (eventos adicionados pelo admin) ──
-      try {
-        const saved  = localStorage.getItem('customEvents');
-        const events = saved ? JSON.parse(saved) : [];
-        // busca por nome OU por nome original (antes de editar)
-        let eventIndex = events.findIndex(e => e.nome === currentNome && e.data === currentData);
-        if(eventIndex === -1) eventIndex = events.findIndex(e => e.nome === currentNome);
-        if(eventIndex === -1) eventIndex = events.findIndex(e => e.data === currentData);
-
-        if(eventIndex !== -1){
-          events[eventIndex] = {
-            ...events[eventIndex],
-            nome:     novoNome,
-            subtitle: novoSubtitle,
-            data:     novaData,
-            date:     novoDatePick, // ISO date atualizado!
-            time:     novoTimePick,
-            dayWeek:  diaSem,
-            local:    novoLocal,
-            link:     novoLink,
-            discount: novoDiscount,
-            image:    editSelectedImage || events[eventIndex].image || null,
-          };
-          localStorage.setItem('customEvents', JSON.stringify(events));
-        }
-      } catch(e){ console.warn('customEvents save failed:', e); }
-
-      document.body.removeChild(modal);
-      alert('✅ Evento atualizado com sucesso!');
-
-      setTimeout(() => {
-        ALL_CARDS = getCards();
-        applyFilters();
-        renderExistingEvents();
-      }, 100);
-    };
-
-  function deleteEventFromSite(idx){
-    const source = document.getElementById('events-source');
-    const cards = source.querySelectorAll('.event-card');
-    const card = cards[idx];
-    const eventName = card.getAttribute('data-nome') || 'Evento';
-    
-    if(!confirm(`⚠️ Deletar "${eventName}"?\n\nEsta ação não pode ser desfeita!`)) return;
-    
-    // Tentar remover do localStorage também se for evento customizado
-    const saved = localStorage.getItem('customEvents');
-    if(saved){
-      const events = JSON.parse(saved);
-      const updated = events.filter(e => e.nome !== eventName);
-      if(updated.length < events.length){
-        localStorage.setItem('customEvents', JSON.stringify(updated));
-      }
-    }
-    
-    card.remove();
-    
-    localStorage.setItem('boaEventsDeleted', 'true');
-    
-    alert('✅ Evento deletado com sucesso!');
-    
-    renderExistingEvents();
-  }
-  document.addEventListener('DOMContentLoaded', () => {
-    // Detector de "admin" no campo de busca
-    const searchInput = document.getElementById('search');
-    if(searchInput){
-      searchInput.addEventListener('input', function(){
-        if(this.value.toLowerCase().includes('admin')){
-          // Limpa o campo
-          this.value = '';
-          // Pede a senha
-          requestAdminPassword();
-        }
-      });
-    }
-
-    const imageInput = document.getElementById('newEventImage');
-    if(imageInput){
-      imageInput.addEventListener('change', function(e){
-        const file = e.target.files[0];
-        if(file){
-          // Verificar tamanho (máximo 2MB)
-          if(file.size > 2 * 1024 * 1024){
-            alert('⚠️ Imagem muito grande! Máximo 2MB.\n\nDica: Comprima a imagem antes de enviar.');
-            return;
-          }
-          
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const preview = document.getElementById('imagePreview');
-            const base64 = event.target.result;
-            
-            // Mostrar preview
-            preview.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;">`;
-            preview.style.border = '2px solid #4CAF50';
-            
-            // Salvar em variável global
-            window.selectedEventImage = base64;
-            console.log('✅ Imagem selecionada com sucesso!');
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    }
   });
 
-  function loadEventsList(){
-    const saved = localStorage.getItem('customEvents');
-    const events = saved ? JSON.parse(saved) : [];
-    const list = document.getElementById('eventsList');
-    list.innerHTML = '';
-    
-    if(events.length === 0){
-      list.innerHTML = '<div style="color:#999;text-align:center;padding:16px;font-size:12px;">Nenhum evento adicionado ainda</div>';
-      return;
-    }
-
-    events.forEach((evt, idx) => {
-      const item = document.createElement('div');
-      item.style.cssText = 'padding:12px;background:linear-gradient(135deg,#FFF0C2,#FFE0EA);border-radius:8px;margin-bottom:8px;border-left:4px solid #FF2A6D;';
-      item.innerHTML = `
-        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:2px;">${evt.nome}</div>
-        <div style="font-size:11px;color:#666;margin-bottom:2px;">🎤 ${evt.subtitle || 'Sem subtítulo'}</div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px;">📅 ${evt.data || evt.date}</div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px;">
-          📍 ${evt.local || 'Local não definido'} ${evt.discount ? ' • ' + evt.discount : ''}
-        </div>
-        <button onclick="deleteEvent(${idx})" style="background:#FF2A6D;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700;width:100%;">🗑️ Deletar</button>
-      `;
-      list.appendChild(item);
-    });
-  }
-
-  function addNewEvent(){
-    const nome = document.getElementById('newEventName').value.trim();
-    const subtitle = document.getElementById('newEventSubtitle').value.trim();
-    const dateInput = document.getElementById('newEventDate').value;
-    const timeInput = document.getElementById('newEventTime').value;
-    const local = document.getElementById('newEventLocal').value.trim();
-    const link = document.getElementById('newEventLink').value.trim();
-    const discount = document.getElementById('newEventDiscount').value.trim();
-    const image = window.selectedEventImage || null;
-
-    if(!nome || !dateInput){
-      alert('⚠️ Preencha pelo menos nome e data!');
-      return;
-    }
-
-    // Parsear data
-    const [year, month, day] = dateInput.split('-');
-    const eventDate = new Date(year, month - 1, day);
-    
-    // Dias da semana
-    const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-    const dayWeek = DIAS[eventDate.getDay()];
-    
-    // Formatar data como DD/MM
-    const dateParts = day + '/' + month;
-    
-    // Formatar hora como HHh ou HHhMM
-    let timeFormatted = '';
-    if(timeInput){
-      const [hours, minutes] = timeInput.split(':');
-      timeFormatted = minutes === '00' ? hours + 'h' : hours + 'h' + minutes;
-    }
-    
-    // Montar data completa: DD/MM • Dia da semana • HH:MM
-    const dataCompleta = dateParts + ' • ' + dayWeek + (timeFormatted ? ' • ' + timeFormatted : '');
-    
-    const saved = localStorage.getItem('customEvents');
-    const events = saved ? JSON.parse(saved) : [];
-    
-    events.push({
-      nome,
-      subtitle,
-      data: dataCompleta,
-      date: dateInput,
-      time: timeInput,
-      dayWeek,
-      local,
-      link,
-      discount,
-      image,
-      imageOffsetX: 0,
-      imageOffsetY: 0,
-      imageZoom: 100
-    });
-
-    localStorage.setItem('customEvents', JSON.stringify(events));
-    
-    console.log('✅ DEBUG: Novo evento criado!');
-    console.log('Nome:', nome);
-    console.log('Subtitle:', subtitle);
-    console.log('Local:', local);
-    console.log('Imagem (primeiros 50 chars):', image ? image.substring(0, 50) : 'NENHUMA');
-    console.log('localStorage customEvents:', localStorage.getItem('customEvents'));
-    
-    // Inserir o novo evento no DOM também (para editar)
-    const source = document.getElementById('events-source');
-    if(source){
-      const dateISO = dateInput + 'T' + (timeInput || '19:00:00') + '-03:00';
-      const MESES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-      const monthAbbr = MESES_ABR[parseInt(month) - 1].toUpperCase();
-      
-      const cardHTML = `
-        <div class="event-card" data-nome="${nome}" data-data="${dataCompleta}" data-local="${local}" data-link="${link}" data-date="${dateISO}">
-          <a href="${link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper ${image ? '' : 'no-image'}">
-            ${image ? `<img src="${image}" alt="Capa do evento ${nome}" style="display:block !important;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;">` : `<img src="" alt="Capa do evento ${nome}">`}
-            <div class="event-image-fallback" aria-hidden="true" ${image ? 'style="display:none;"' : ''}>
-              <div><div class="fallback-title">${nome}</div></div>
-            </div>
-            <div class="date-badge"><div class="day">${day}</div><div class="month">${monthAbbr}</div></div>
-            ${discount ? `<div class="discount-badge">${discount}</div>` : ''}
-            ${link ? `<div class="promo-badge"><i class="fas fa-tag"></i> Compre aqui</div>` : ''}
-          </a>
-          <div class="event-content">
-            <div class="artist-title">${nome}</div>
-            ${subtitle ? `<div class="event-subtitle">${subtitle}</div>` : ''}
-            ${local ? `<div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local)}" target="_blank">${local}</a></div></div></div>` : ''}
-            <div class="event-actions">
-              <a class="btn-ticket" href="${link || '#'}" target="_blank"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a>
-              <button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = cardHTML;
-      source.appendChild(tempDiv.firstElementChild);
-    }
-    
-    alert('✅ Evento adicionado com sucesso!');
-    
-    // Limpar campos
-    document.getElementById('newEventName').value = '';
-    document.getElementById('newEventSubtitle').value = '';
-    document.getElementById('newEventDate').value = '';
-    document.getElementById('newEventTime').value = '';
-    document.getElementById('newEventLocal').value = '';
-    document.getElementById('newEventLink').value = '';
-    document.getElementById('newEventDiscount').value = '';
-    document.getElementById('newEventImage').value = '';
-    document.getElementById('imagePreview').innerHTML = 'Clique para adicionar imagem';
-    window.selectedEventImage = null;
-    
-    // Atualizar a página SEM recarregar
-    setTimeout(() => {
-      ALL_CARDS = getCards();
-      applyFilters();
-      renderExistingEvents();
-    }, 100);
-  }
-
-  function deleteEvent(idx){
-    if(!confirm('Tem certeza que quer deletar esse evento?')) return;
-    
-    const saved = localStorage.getItem('customEvents');
-    const events = saved ? JSON.parse(saved) : [];
-    events.splice(idx, 1);
-    localStorage.setItem('customEvents', JSON.stringify(events));
-    alert('✅ Evento deletado com sucesso!');
-    loadEventsList();
-    location.reload();
-  }
-
-  function loadSavedImages(){
-    try {
-      const saved = localStorage.getItem('eventImages');
-      if(saved){
-        const images = JSON.parse(saved);
-        document.querySelectorAll('[data-img]').forEach(card => {
-          const imgNum = card.getAttribute('data-img');
-          const img = card.querySelector('img');
-          const wrapper = card.querySelector('.event-image-wrapper');
-          const fallback = card.querySelector('.event-image-fallback');
-          if(images[imgNum] && img){
-            img.src = images[imgNum];
-            img.setAttribute('src', images[imgNum]); // força o atributo também
-            img.style.display = 'block';
-            if(wrapper) wrapper.classList.remove('no-image'); // remove classe que esconde a img
-            if(fallback) { fallback.hidden = true; fallback.style.display = 'none'; }
-          }
-        });
-        console.log('✅ Imagens carregadas:', Object.keys(images).length);
-      }
-    } catch(e) {
-      console.error('Erro ao carregar imagens:', e);
-    }
-  }
-
+  // ── Motor principal (filtros, render) ──────────────────
   (function(){
-    const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-    const MESES_ABR=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-    const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-    const DIAS_LONGO=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
-    const pad2=n=>String(n).padStart(2,'0');
-    const keyYM=d=>d.getFullYear()+'-'+pad2(d.getMonth()+1);
-    const stripAccents=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
-    const source=document.getElementById('events-source');
-    const view=document.getElementById('events-view');
-    const searchInput=document.querySelector('.search-wrapper input');
-    const hoje=new Date();
-    const thisKey=keyYM(new Date(hoje.getFullYear(),hoje.getMonth(),1));
-    const nextKey=keyYM(new Date(hoje.getFullYear(),hoje.getMonth()+1,1));
-    let activeMonthFilter='all',searchQuery='';
-    const setupImageFallback=w=>{const img=w.querySelector('img');const fb=w.querySelector('.event-image-fallback');const showFallback=()=>{w.classList.add('no-image');if(fb)fb.hidden=false;};if(!img||!img.getAttribute('src')){showFallback();return;}img.addEventListener('error',showFallback);img.addEventListener('load',()=>{if(img.naturalWidth===0||img.naturalHeight===0)showFallback();});};
-    const ensureDateTimeLine=(node,dt)=>{if(node.querySelector('.event-datetime'))return;const content=node.querySelector('.event-content');if(!content)return;const h=pad2(dt.getHours()),m=pad2(dt.getMinutes()),hora=(m==='00')?(h+'h'):(h+'h'+m);const line=document.createElement('div');line.className='event-datetime';line.innerHTML='<i class="far fa-clock" aria-hidden="true"></i><span>'+DIAS[dt.getDay()]+' • '+hora+'</span>';const location=content.querySelector('.event-location');if(location)content.insertBefore(line,location);else content.appendChild(line);};
-    const getCards=()=>{const nodes=source.querySelectorAll('.event-card');const list=[];for(let i=0;i<nodes.length;i++){const node=nodes[i];const dt=new Date(node.getAttribute('data-date'));const cloned=node.cloneNode(true);const wrap=cloned.querySelector('.event-image-wrapper');if(wrap){const fbTitle=wrap.querySelector('.fallback-title');const nome=cloned.getAttribute('data-nome')||'';if(fbTitle)fbTitle.textContent=nome;setupImageFallback(wrap);}ensureDateTimeLine(cloned,dt);const nomeAttr=cloned.getAttribute('data-nome')||'';const dataAttr=cloned.getAttribute('data-data')||'';const localAttr=cloned.getAttribute('data-local')||'';const artistEl=cloned.querySelector('.artist-title');const artista=artistEl?artistEl.textContent:'';const subtitleEl=cloned.querySelector('.event-subtitle');const subtitulo=subtitleEl?subtitleEl.textContent:'';const diaNum=dt.getDate(),mesNum=dt.getMonth(),anoNum=dt.getFullYear(),dowNum=dt.getDay();const dataStr1=pad2(diaNum)+'/'+pad2(mesNum+1)+'/'+anoNum;const dataStr2=pad2(diaNum)+'/'+pad2(mesNum+1);const iso=anoNum+'-'+pad2(mesNum+1)+'-'+pad2(diaNum);const rawText=[artista,nomeAttr,subtitulo,localAttr,dataAttr,dataStr1,dataStr2,iso,MESES[mesNum],MESES_ABR[mesNum],DIAS_LONGO[dowNum],DIAS[dowNum]].join(' • ');const searchText=stripAccents(rawText).toLowerCase();list.push({node:cloned,date:dt,ym:keyYM(dt),searchText:searchText,meta:{dia:diaNum,mes:mesNum,ano:anoNum,dow:dowNum,ddmm:dataStr2,ddmmyyyy:dataStr1,iso:iso}});}list.sort((a,b)=>a.date-b.date);return list;};
-    let ALL_CARDS=[];
-    const parseSingleDate=s=>{s=s.trim();const mIso=s.match(/^(\d{4})[\/\.\-](\d{1,2})[\/\.\-](\d{1,2})$/);if(mIso){const y=+mIso[1],mo=+mIso[2]-1,d=+mIso[3];const dt=new Date(y,mo,d);if(dt&&dt.getMonth()===mo&&dt.getDate()===d)return dt;}const mLocal=s.match(/^(\d{1,2})[\/\.\-](\d{1,2})(?:[\/\.\-](\d{2,4}))?$/);if(mLocal){const d2=+mLocal[1],mo2=+mLocal[2]-1;let y2=mLocal[3]?+mLocal[3]:new Date().getFullYear();if(y2<100)y2=2000+y2;const dt2=new Date(y2,mo2,d2);if(dt2&&dt2.getMonth()===mo2&&dt2.getDate()===d2)return dt2;}return null;};
-    const extractFilters=qRaw=>{let q=stripAccents((qRaw||'').toLowerCase());let datePred=null;if(q.indexOf('fim de semana')!==-1||q.indexOf('final de semana')!==-1){datePred=it=>{const dw=it.meta.dow;return dw===0||dw===6;};q=q.replace(/fim de semana|final de semana/g,' ').trim();}const mRange=q.match(/(\d{1,2}[\/\.\-]\d{1,2}(?:[\/\.\-]\d{2,4})?)\s*(?:a|\-)\s*(\d{1,2}[\/\.\-]\d{1,2}(?:[\/\.\-]\d{2,4})?)/);if(mRange){let d1=parseSingleDate(mRange[1]),d2=parseSingleDate(mRange[2]);if(d1&&d2){if(d1.getTime()>d2.getTime()){const t=d1;d1=d2;d2=t;}d1.setHours(0,0,0,0);d2.setHours(23,59,59,999);const predRange=it=>new Date(it.date).getTime()>=d1.getTime()&&new Date(it.date).getTime()<=d2.getTime();datePred=datePred?it=>predRange(it)&&datePred(it):predRange;q=q.replace(mRange[0],' ').trim();}}const mSingle=q.match(/\b(\d{4}[\/\.\-]\d{1,2}[\/\.\-]\d{1,2}|\d{1,2}[\/\.\-]\d{1,2}(?:[\/\.\-]\d{2,4})?)\b/);if(mSingle){const d=parseSingleDate(mSingle[1]);if(d){d.setHours(0,0,0,0);const tgt=d.getTime();const predSingle=it=>{const dd=new Date(it.date);dd.setHours(0,0,0,0);return dd.getTime()===tgt;};datePred=datePred?it=>predSingle(it)&&datePred(it):predSingle;q=q.replace(mSingle[0],' ').trim();}}const words=q.split(/\s+/).filter(Boolean);return {text:words.join(' ').trim(),datePred};};
-    const bindShare=()=>{const btns=view.querySelectorAll('.btn-share');for(let i=0;i<btns.length;i++){btns[i].onclick=function(){const card=this.closest('.event-card');const nome=(card.getAttribute('data-nome')||'').trim();const data=(card.getAttribute('data-data')||'').trim();const local=(card.getAttribute('data-local')||'').trim();const link=(card.getAttribute('data-link')||'').trim();const msg='confira "'+nome+'" em "'+data+'" no "'+local+'". Aproveita o desconto do código BOA: '+link;window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');};} };
-    const render=list=>{view.innerHTML='';if(!list.length){const msg=document.createElement('div');msg.className='no-results';msg.textContent='Nenhum evento encontrado.';view.appendChild(msg);return bindShare();}const grid=document.createElement('div');grid.className='events-grid';for(let i=0;i<list.length;i++)grid.appendChild(list[i].node);view.appendChild(grid);bindShare();};
-    const applyFilters=()=>{const byMonth=ALL_CARDS.filter(it=>activeMonthFilter==='all'||it.ym===activeMonthFilter);if(!searchQuery.trim()){render(byMonth);return;}const ext=extractFilters(searchQuery);const text=(ext.text||'').trim();const datePred=ext.datePred;let filtered=byMonth;if(text){const tokens=stripAccents(text).toLowerCase().split(/\s+/).filter(Boolean);filtered=filtered.filter(it=>tokens.every(t=>it.searchText.indexOf(t)!==-1));}if(datePred)filtered=filtered.filter(datePred);if(!text&&!datePred)filtered=byMonth.filter(it=>it.searchText.indexOf(stripAccents(searchQuery.trim()).toLowerCase())!==-1);render(filtered);};
-    const setActive=btn=>{document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');};
-    document.getElementById('filters').addEventListener('click',e=>{const btn=e.target.closest('.filter-btn');if(!btn)return;const f=btn.getAttribute('data-filter');activeMonthFilter=f==='all'?'all':(f==='this'?thisKey:nextKey);setActive(btn);applyFilters();});
-    if(searchInput)searchInput.addEventListener('input',function(){searchQuery=this.value||'';applyFilters();});
-    // Carregar eventos e imagens IMEDIATAMENTE (fora do setTimeout)
-    // para que o painel admin já encontre os eventos ao abrir
-    loadCustomEventsToDOM();
-    loadSavedImages();
-    setTimeout(() => {
-      ALL_CARDS = getCards();
+    var MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    var MESES_ABR=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    var DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var DIAS_LONGO=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+    function pad2(n){ return String(n).padStart(2,'0'); }
+    function keyYM(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1); }
+    function stripAccents(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+
+    var source = document.getElementById('events-source');
+    var view   = document.getElementById('events-view');
+    var searchInput = document.querySelector('.search-wrapper input');
+    var hoje   = new Date();
+    var thisKey = keyYM(new Date(hoje.getFullYear(),hoje.getMonth(),1));
+    var nextKey = keyYM(new Date(hoje.getFullYear(),hoje.getMonth()+1,1));
+    var activeMonthFilter='all', searchQuery='';
+    var ALL_CARDS=[];
+
+    function setupFallback(w){
+      var img=w.querySelector('img');
+      var fb=w.querySelector('.event-image-fallback');
+      var noImg=function(){ w.classList.add('no-image'); if(fb) fb.hidden=false; };
+      if(!img||!img.getAttribute('src')){ noImg(); return; }
+      img.addEventListener('error', noImg);
+      img.addEventListener('load', function(){ if(img.naturalWidth===0) noImg(); });
+    }
+
+    function ensureDateLine(node,dt){
+      if(node.querySelector('.event-datetime')) return;
+      var content=node.querySelector('.event-content'); if(!content) return;
+      var h=pad2(dt.getHours()),mn=pad2(dt.getMinutes());
+      var hora=mn==='00'?h+'h':h+'h'+mn;
+      var line=document.createElement('div'); line.className='event-datetime';
+      line.innerHTML='<i class="far fa-clock"></i><span>'+DIAS[dt.getDay()]+' • '+hora+'</span>';
+      var loc=content.querySelector('.event-location');
+      if(loc) content.insertBefore(line,loc); else content.appendChild(line);
+    }
+
+    function getCards(){
+      var nodes=source.querySelectorAll('.event-card');
+      var list=[];
+      for(var i=0;i<nodes.length;i++){
+        var node=nodes[i];
+        var dt=new Date(node.getAttribute('data-date'));
+        if(isNaN(dt.getTime())) continue; // skip invalid dates
+        var cloned=node.cloneNode(true);
+        var wrap=cloned.querySelector('.event-image-wrapper');
+        if(wrap){ var ft=wrap.querySelector('.fallback-title'); if(ft) ft.textContent=cloned.getAttribute('data-nome')||''; setupFallback(wrap); }
+        ensureDateLine(cloned,dt);
+        var nome=cloned.getAttribute('data-nome')||'';
+        var dataA=cloned.getAttribute('data-data')||'';
+        var local=cloned.getAttribute('data-local')||'';
+        var artEl=cloned.querySelector('.artist-title');
+        var subEl=cloned.querySelector('.event-subtitle');
+        var dNum=dt.getDate(),mNum=dt.getMonth(),yNum=dt.getFullYear(),wNum=dt.getDay();
+        var raw=[artEl?artEl.textContent:'',nome,subEl?subEl.textContent:'',local,dataA,
+          pad2(dNum)+'/'+pad2(mNum+1)+'/'+yNum, pad2(dNum)+'/'+pad2(mNum+1),
+          yNum+'-'+pad2(mNum+1)+'-'+pad2(dNum),
+          MESES[mNum],MESES_ABR[mNum],DIAS_LONGO[wNum],DIAS[wNum]].join(' • ');
+        list.push({ node:cloned, date:dt, ym:keyYM(dt), searchText:stripAccents(raw).toLowerCase(),
+          meta:{dia:dNum,mes:mNum,ano:yNum,dow:wNum} });
+      }
+      list.sort(function(a,b){ return a.date-b.date; });
+      return list;
+    }
+
+    function bindShare(){
+      var btns=view.querySelectorAll('.btn-share');
+      for(var i=0;i<btns.length;i++){
+        btns[i].onclick=function(){
+          var c=this.closest('.event-card');
+          var msg='confira "'+c.getAttribute('data-nome')+'" em "'+c.getAttribute('data-data')+'" no "'+c.getAttribute('data-local')+'". Código BOA: '+c.getAttribute('data-link');
+          window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+        };
+      }
+    }
+
+    function render(list){
+      view.innerHTML='';
+      if(!list.length){ var msg=document.createElement('div'); msg.className='no-results'; msg.textContent='Nenhum evento encontrado.'; view.appendChild(msg); return; }
+      var grid=document.createElement('div'); grid.className='events-grid';
+      for(var i=0;i<list.length;i++) grid.appendChild(list[i].node);
+      view.appendChild(grid);
+      bindShare();
+    }
+
+    function applyFilters(){
+      var byMonth=ALL_CARDS.filter(function(it){ return activeMonthFilter==='all'||it.ym===activeMonthFilter; });
+      if(!searchQuery.trim()){ render(byMonth); return; }
+      var q=stripAccents(searchQuery.trim()).toLowerCase();
+      var tokens=q.split(/\s+/).filter(Boolean);
+      var filtered=byMonth.filter(function(it){ return tokens.every(function(t){ return it.searchText.indexOf(t)!==-1; }); });
+      render(filtered);
+    }
+
+    function refresh(){
+      ALL_CARDS=getCards();
       applyFilters();
-    }, 50);
+    }
+
+    // Expor refresh ao global
+    window._boa={ refresh:refresh };
+
+    document.getElementById('filters').addEventListener('click',function(e){
+      var btn=e.target.closest('.filter-btn'); if(!btn) return;
+      var f=btn.getAttribute('data-filter');
+      activeMonthFilter=f==='all'?'all':(f==='this'?thisKey:nextKey);
+      document.querySelectorAll('#filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      applyFilters();
+    });
+    if(searchInput) searchInput.addEventListener('input',function(){ searchQuery=this.value||''; applyFilters(); });
+
+    // Inicialização — cada etapa isolada para não travar o resto
+    try { loadCustomEventsToDOM(); } catch(e){ console.warn('loadCustomEventsToDOM:', e); }
+    try { loadSavedImages(); } catch(e){ console.warn('loadSavedImages:', e); }
+    try { ALL_CARDS=getCards(); } catch(e){ console.warn('getCards:', e); ALL_CARDS=[]; }
+    applyFilters();
+
   })();
   </script>
 
