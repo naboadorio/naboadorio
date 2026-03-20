@@ -52,18 +52,16 @@
         <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">➕ Novo Evento Completo:</div>
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;font-size:11px;color:#666;">
-          <strong>📝 Informações Básicas:</strong>
+          <strong>📝 Informações do Evento:</strong>
         </div>
         <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventArtist" placeholder="Artista/Banda" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventSubtitle" placeholder="Subtítulo (Ex: Rock/MPB)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventSubtitle" placeholder="Subtítulo/Artista (Ex: Banda XYZ)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📅 Data e Hora:</strong>
         </div>
-        <input type="text" id="newEventDate" placeholder="Data (Ex: 25/05)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventDayWeek" placeholder="Dia da semana (Ex: Sábado)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventTime" placeholder="Horário (Ex: 19h)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="time" id="newEventTime" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📍 Local e Links:</strong>
@@ -386,10 +384,9 @@
       const item = document.createElement('div');
       item.style.cssText = 'padding:12px;background:linear-gradient(135deg,#FFF0C2,#FFE0EA);border-radius:8px;margin-bottom:8px;border-left:4px solid #FF2A6D;';
       item.innerHTML = `
-        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:4px;">${evt.nome}</div>
-        <div style="font-size:11px;color:#666;margin-bottom:6px;">
-          🎤 ${evt.artista || 'Sem artista'} • 📅 ${evt.date} ${evt.dayWeek ? '• ' + evt.dayWeek : ''} ${evt.time ? '• ' + evt.time : ''}
-        </div>
+        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:2px;">${evt.nome}</div>
+        <div style="font-size:11px;color:#666;margin-bottom:2px;">🎤 ${evt.subtitle || 'Sem subtítulo'}</div>
+        <div style="font-size:11px;color:#666;margin-bottom:6px;">📅 ${evt.data || evt.date}</div>
         <div style="font-size:11px;color:#666;margin-bottom:6px;">
           📍 ${evt.local || 'Local não definido'} ${evt.discount ? ' • ' + evt.discount : ''}
         </div>
@@ -401,31 +398,50 @@
 
   function addNewEvent(){
     const nome = document.getElementById('newEventName').value.trim();
-    const artist = document.getElementById('newEventArtist').value.trim();
     const subtitle = document.getElementById('newEventSubtitle').value.trim();
-    const date = document.getElementById('newEventDate').value.trim();
-    const dayWeek = document.getElementById('newEventDayWeek').value.trim();
-    const time = document.getElementById('newEventTime').value.trim();
+    const dateInput = document.getElementById('newEventDate').value;
+    const timeInput = document.getElementById('newEventTime').value;
     const local = document.getElementById('newEventLocal').value.trim();
     const link = document.getElementById('newEventLink').value.trim();
     const discount = document.getElementById('newEventDiscount').value.trim();
     const image = window.selectedEventImage || null;
 
-    if(!nome || !date){
+    if(!nome || !dateInput){
       alert('⚠️ Preencha pelo menos nome e data!');
       return;
     }
 
+    // Parsear data
+    const [year, month, day] = dateInput.split('-');
+    const eventDate = new Date(year, month - 1, day);
+    
+    // Dias da semana
+    const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    const dayWeek = DIAS[eventDate.getDay()];
+    
+    // Formatar data como DD/MM
+    const dateParts = day + '/' + month;
+    
+    // Formatar hora como HHh ou HHhMM
+    let timeFormatted = '';
+    if(timeInput){
+      const [hours, minutes] = timeInput.split(':');
+      timeFormatted = minutes === '00' ? hours + 'h' : hours + 'h' + minutes;
+    }
+    
+    // Montar data completa: DD/MM • Dia da semana • HH:MM
+    const dataCompleta = dateParts + ' • ' + dayWeek + (timeFormatted ? ' • ' + timeFormatted : '');
+    
     const saved = localStorage.getItem('customEvents');
     const events = saved ? JSON.parse(saved) : [];
     
     events.push({
       nome,
-      artist,
       subtitle,
-      date,
+      data: dataCompleta,
+      date: dateInput,
+      time: timeInput,
       dayWeek,
-      time,
       local,
       link,
       discount,
@@ -437,10 +453,8 @@
     
     // Limpar campos
     document.getElementById('newEventName').value = '';
-    document.getElementById('newEventArtist').value = '';
     document.getElementById('newEventSubtitle').value = '';
     document.getElementById('newEventDate').value = '';
-    document.getElementById('newEventDayWeek').value = '';
     document.getElementById('newEventTime').value = '';
     document.getElementById('newEventLocal').value = '';
     document.getElementById('newEventLink').value = '';
@@ -449,7 +463,7 @@
     document.getElementById('imagePreview').innerHTML = 'Clique para adicionar imagem';
     window.selectedEventImage = null;
     
-    loadEventsList();
+    // Recarregar página para ver os eventos
     location.reload();
   }
 
