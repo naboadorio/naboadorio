@@ -205,7 +205,10 @@
       document.getElementById('closeAdminBtn').style.display = 'none';
       document.getElementById('previewPublicBtn').style.display = 'none';
       document.getElementById('exitPreviewBtn').style.display = 'block';
-      document.getElementById('eventsPanel').classList.remove('show');
+      // Fechar o painel de edição com style.display para garantir
+      var panel = document.getElementById('eventsPanel');
+      panel.classList.remove('show');
+      panel.style.display = 'none !important';
       alert('👁️ Modo Preview Ativado!\n\nVocê está vendo o site como um visitante normal.\n\nClique em "Sair do Preview" para voltar ao modo admin.');
     } else {
       // Sair do modo preview
@@ -215,6 +218,9 @@
       document.getElementById('downloadHTMLBtn').style.display = 'block';
       document.getElementById('closeAdminBtn').style.display = 'block';
       document.getElementById('previewPublicBtn').style.display = 'block';
+      // Remover o style.display para que o CSS da classe funcione
+      var panel = document.getElementById('eventsPanel');
+      panel.style.display = '';
       alert('✅ Saiu do modo preview!\n\nVocê voltou ao modo admin.');
     }
   }
