@@ -270,6 +270,25 @@
     var events = getCustomEvents();
     var MESES_ABR = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 
+    // Remover eventos originais que foram editados (evitar duplicatas)
+    var editedOriginals = {};
+    events.forEach(function(evt){
+      if(evt.isEditedOriginal){
+        editedOriginals[evt.originalNome] = true;
+      }
+    });
+
+    // Encontrar e remover eventos originais que foram editados
+    var cardsToRemove = [];
+    var allCards = source.querySelectorAll('.event-card:not([data-custom])');
+    for(var i=0; i<allCards.length; i++){
+      var nome = allCards[i].getAttribute('data-nome');
+      if(editedOriginals[nome]){
+        cardsToRemove.push(allCards[i]);
+      }
+    }
+    cardsToRemove.forEach(function(card){ card.remove(); });
+
     events.forEach(function(evt){
       var dateISO = evt.date ? evt.date + 'T' + (evt.time || '19:00:00') + '-03:00' : '';
       var parts   = (evt.date || '2026-01-01').split('-');
@@ -581,11 +600,22 @@
       var evts=getCustomEvents();
       var ei=evts.findIndex(function(e){ return e.nome===currentNome; });
       if(ei!==-1){
+        // Evento já existe em customEvents - atualizar
         evts[ei]=Object.assign({},evts[ei],{
           nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
           time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
           image:selImg!==null?selImg:evts[ei].image,
           imageOffsetX:ox, imageOffsetY:oy, imageZoom:zoom
+        });
+        saveCustomEvents(evts);
+      } else {
+        // Evento original está sendo editado - salvar como customEvent
+        evts.push({
+          nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
+          time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
+          image:selImg||null,
+          imageOffsetX:ox, imageOffsetY:oy, imageZoom:zoom,
+          isEditedOriginal:true, originalNome:currentNome
         });
         saveCustomEvents(evts);
       }
