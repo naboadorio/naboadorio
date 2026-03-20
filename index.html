@@ -670,6 +670,23 @@
         img.src = editSelectedImage;
         img.style.display = 'block';
         img.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageZoom/100})`;
+        
+        // Salvar imagem no eventImages para eventos originais (com data-img)
+        const imgNum = card.getAttribute('data-img');
+        if(imgNum){
+          try {
+            const savedImages = localStorage.getItem('eventImages');
+            const images = savedImages ? JSON.parse(savedImages) : {};
+            images[imgNum] = editSelectedImage;
+            localStorage.setItem('eventImages', JSON.stringify(images));
+            console.log('✅ Imagem salva no eventImages, chave:', imgNum);
+          } catch(e) { console.error('Erro ao salvar imagem:', e); }
+        }
+        
+        // Ocultar fallback se existir
+        const fallback = card.querySelector('.event-image-fallback');
+        if(fallback) fallback.style.display = 'none';
+        card.querySelector('.event-image-wrapper')?.classList.remove('no-image');
       }
       
       const fallbackTitle = card.querySelector('.fallback-title');
@@ -994,8 +1011,8 @@
     if(searchInput)searchInput.addEventListener('input',function(){searchQuery=this.value||'';applyFilters();});
     setTimeout(() => {
       loadCustomEventsToDOM();
-      ALL_CARDS = getCards();
-      loadSavedImages();
+      loadSavedImages();      // ← aplicar imagens ANTES de clonar os cards
+      ALL_CARDS = getCards(); // ← clona os cards já com as imagens aplicadas
       applyFilters();
     }, 50);
   })();
