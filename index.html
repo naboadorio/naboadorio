@@ -722,6 +722,7 @@
       alert('✅ Evento atualizado com sucesso!');
       
       setTimeout(() => {
+        ALL_CARDS = getCards(); // re-clona os cards com a imagem atualizada
         applyFilters();
         renderExistingEvents();
       }, 100);
@@ -970,9 +971,14 @@
         document.querySelectorAll('[data-img]').forEach(card => {
           const imgNum = card.getAttribute('data-img');
           const img = card.querySelector('img');
-          if(images[imgNum]){
+          const wrapper = card.querySelector('.event-image-wrapper');
+          const fallback = card.querySelector('.event-image-fallback');
+          if(images[imgNum] && img){
             img.src = images[imgNum];
+            img.setAttribute('src', images[imgNum]); // força o atributo também
             img.style.display = 'block';
+            if(wrapper) wrapper.classList.remove('no-image'); // remove classe que esconde a img
+            if(fallback) { fallback.hidden = true; fallback.style.display = 'none'; }
           }
         });
         console.log('✅ Imagens carregadas:', Object.keys(images).length);
@@ -1009,10 +1015,12 @@
     const setActive=btn=>{document.querySelectorAll('#filters .filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');};
     document.getElementById('filters').addEventListener('click',e=>{const btn=e.target.closest('.filter-btn');if(!btn)return;const f=btn.getAttribute('data-filter');activeMonthFilter=f==='all'?'all':(f==='this'?thisKey:nextKey);setActive(btn);applyFilters();});
     if(searchInput)searchInput.addEventListener('input',function(){searchQuery=this.value||'';applyFilters();});
+    // Carregar eventos e imagens IMEDIATAMENTE (fora do setTimeout)
+    // para que o painel admin já encontre os eventos ao abrir
+    loadCustomEventsToDOM();
+    loadSavedImages();
     setTimeout(() => {
-      loadCustomEventsToDOM();
-      loadSavedImages();      // ← aplicar imagens ANTES de clonar os cards
-      ALL_CARDS = getCards(); // ← clona os cards já com as imagens aplicadas
+      ALL_CARDS = getCards();
       applyFilters();
     }, 50);
   })();
