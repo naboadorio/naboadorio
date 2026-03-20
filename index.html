@@ -199,28 +199,37 @@
     
     if(isInPreviewMode){
       // Entrar no modo preview
-      document.body.setAttribute('data-preview', 'true');
-      document.getElementById('adminEventsBtn').style.display = 'none';
-      document.getElementById('downloadHTMLBtn').style.display = 'none';
-      document.getElementById('closeAdminBtn').style.display = 'none';
-      document.getElementById('previewPublicBtn').style.display = 'none';
-      document.getElementById('exitPreviewBtn').style.display = 'block';
-      // Fechar o painel de edição com style.display para garantir
+      // Esconder TUDO que é admin de forma agressiva
+      document.getElementById('adminEventsBtn').style.display = 'none !important';
+      document.getElementById('downloadHTMLBtn').style.display = 'none !important';
+      document.getElementById('closeAdminBtn').style.display = 'none !important';
+      document.getElementById('previewPublicBtn').style.display = 'none !important';
+      document.getElementById('exitPreviewBtn').style.display = 'block !important';
+      
       var panel = document.getElementById('eventsPanel');
-      panel.classList.remove('show');
       panel.style.display = 'none !important';
+      panel.style.visibility = 'hidden !important';
+      panel.style.height = '0 !important';
+      panel.style.overflow = 'hidden !important';
+      
+      // Rolar para o topo
+      window.scrollTo(0, 0);
+      
       alert('👁️ Modo Preview Ativado!\n\nVocê está vendo o site como um visitante normal.\n\nClique em "Sair do Preview" para voltar ao modo admin.');
     } else {
       // Sair do modo preview
-      document.body.removeAttribute('data-preview');
-      document.getElementById('exitPreviewBtn').style.display = 'none';
-      document.getElementById('adminEventsBtn').style.display = 'block';
-      document.getElementById('downloadHTMLBtn').style.display = 'block';
-      document.getElementById('closeAdminBtn').style.display = 'block';
-      document.getElementById('previewPublicBtn').style.display = 'block';
-      // Remover o style.display para que o CSS da classe funcione
+      document.getElementById('exitPreviewBtn').style.display = 'none !important';
+      document.getElementById('adminEventsBtn').style.display = 'block !important';
+      document.getElementById('downloadHTMLBtn').style.display = 'block !important';
+      document.getElementById('closeAdminBtn').style.display = 'block !important';
+      document.getElementById('previewPublicBtn').style.display = 'block !important';
+      
       var panel = document.getElementById('eventsPanel');
       panel.style.display = '';
+      panel.style.visibility = 'visible';
+      panel.style.height = '';
+      panel.style.overflow = '';
+      
       alert('✅ Saiu do modo preview!\n\nVocê voltou ao modo admin.');
     }
   }
