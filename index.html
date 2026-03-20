@@ -1170,5 +1170,149 @@
   })();
   </script>
 
+
+<!-- PUBLICAÇÃO UI -->
+<div id="publishStatus" style="
+position:fixed;
+bottom:80px;
+right:16px;
+background:#fff;
+padding:8px 12px;
+border-radius:20px;
+font-size:12px;
+box-shadow:0 2px 10px rgba(0,0,0,0.2);
+z-index:9999;">
+🟢 Publicado
+</div>
+
+<button id="publishFloatingBtn"
+onclick="publishAll()"
+style="
+display:none;
+position:fixed;
+bottom:20px;
+right:16px;
+background:#FF2A6D;
+color:#fff;
+border:none;
+padding:14px 18px;
+border-radius:50px;
+font-weight:800;
+cursor:pointer;
+z-index:9999;
+box-shadow:0 6px 20px rgba(255,42,109,.4);">
+💾 Publicar alterações
+</button>
+
+
+<script>
+// ===== CONTROLE DE PUBLICAÇÃO =====
+let hasUnpublishedChanges = false;
+
+function markAsChanged(){
+  hasUnpublishedChanges = true;
+  updatePublishUI();
+  autoSave();
+}
+
+function markAsPublished(){
+  hasUnpublishedChanges = false;
+  updatePublishUI();
+  localStorage.removeItem('draftEvents');
+}
+
+function updatePublishUI(){
+  let btn = document.getElementById('publishFloatingBtn');
+  let status = document.getElementById('publishStatus');
+  if(!btn || !status) return;
+
+  if(hasUnpublishedChanges){
+    btn.style.display = 'flex';
+    status.innerHTML = '🟡 Alterações não publicadas';
+  } else {
+    btn.style.display = 'none';
+    status.innerHTML = '🟢 Publicado';
+  }
+}
+
+// AUTO SAVE
+function autoSave(){
+  localStorage.setItem('draftEvents', JSON.stringify(eventsData));
+}
+
+function restoreDraft(){
+  let draft = localStorage.getItem('draftEvents');
+  if(draft){
+    if(confirm('🔄 Existe uma versão não publicada. Deseja restaurar?')){
+      let data = JSON.parse(draft);
+      eventsData.splice(0, eventsData.length, ...data);
+      renderEventsFromData();
+      renderExistingEvents();
+      markAsChanged();
+    }
+  }
+}
+
+window.addEventListener('load', restoreDraft);
+
+// ALERTA SAÍDA
+window.addEventListener('beforeunload', function (e) {
+  if (hasUnpublishedChanges) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// DOWNLOAD
+const oldDownload = downloadUpdatedHTML;
+downloadUpdatedHTML = function(){
+  var eventsJSON = JSON.stringify(eventsData, null, 2);
+  var htmlDoc = document.documentElement.outerHTML;
+  htmlDoc = htmlDoc.replace(/const eventsData = \[[\s\S]*?\];/, 'const eventsData = ' + eventsJSON + ';');
+
+  var blob = new Blob([htmlDoc], {type: 'text/html'});
+  var url = URL.createObjectURL(blob);
+
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'index-atualizado.html';
+  link.click();
+  URL.revokeObjectURL(url);
+
+  markAsPublished();
+}
+
+// GITHUB
+const oldPush = pushToGitHub;
+pushToGitHub = function(){
+  if(!confirm('🚀 Publicar no GitHub agora?')) return;
+  oldPush();
+  setTimeout(markAsPublished, 2000);
+}
+
+// PUBLICAR
+function publishAll(){
+  let option = confirm('OK = GitHub | Cancelar = Baixar HTML');
+  if(option){
+    pushToGitHub();
+  } else {
+    downloadUpdatedHTML();
+  }
+}
+
+// HOOKS CRUD
+const oldAdd = addNewEvent;
+addNewEvent = function(){
+  oldAdd();
+  markAsChanged();
+}
+
+const oldDelete = deleteEvent;
+deleteEvent = function(id){
+  oldDelete(id);
+  markAsChanged();
+}
+</script>
+
 </body>
 </html>
