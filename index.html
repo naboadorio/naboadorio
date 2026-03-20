@@ -249,7 +249,7 @@
   // ── Injetar eventos custom no events-source ────────────
   function loadCustomEventsToDOM(){
     // Não carrega eventos customizados se estiver em modo preview
-    if(previewMode) return;
+    if(localStorage.getItem('previewMode') === 'true') return;
     
     var source = document.getElementById('events-source');
     if(!source) return;
