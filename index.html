@@ -23,7 +23,8 @@
       #adminEventsBtn,
       #downloadHTMLBtn,
       #closeAdminBtn,
-      #previewPublicBtn {
+      #previewPublicBtn,
+      #exitPreviewBtn {
         display: none !important;
       }
     }
@@ -51,6 +52,8 @@
     <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
 
     <button onclick="togglePreviewMode()" style="background:#6c63ff;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="previewPublicBtn">👁️ Visualizar como Público</button>
+
+    <button onclick="togglePreviewMode()" style="background:#ff6b6b;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="exitPreviewBtn">✕ Sair do Preview</button>
 
     <div class="image-upload-panel" id="eventsPanel" style="display:none;">
       <div class="upload-title">📅 Gerenciar Eventos</div>
@@ -206,8 +209,15 @@
   if(previewMode){
     isPreviewMode = true;
     document.body.setAttribute('data-preview', 'true');
-    document.getElementById('previewPublicBtn').textContent = '✏️ Voltar ao Editor';
+    // Mostrar botão de sair do preview
+    document.getElementById('exitPreviewBtn').style.display = 'block';
+    document.getElementById('previewPublicBtn').style.display = 'none';
+  } else {
+    // Modo editor - mostrar botão de visualizar como público
+    isPreviewMode = false;
+    document.body.setAttribute('data-preview', 'false');
     document.getElementById('previewPublicBtn').style.display = 'block';
+    document.getElementById('exitPreviewBtn').style.display = 'none';
   }
 
   function toggleEventsPanel(){
