@@ -139,7 +139,7 @@
       const cardHTML = `
         <div class="event-card" data-nome="${evt.nome || ''}" data-data="${evt.data || ''}" data-local="${evt.local || ''}" data-link="${evt.link || ''}" data-date="${dateISO}">
           <a href="${evt.link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
-            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}" style="display:block;width:100%;height:100%;object-fit:cover;">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
+            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}" style="display:block;width:100%;height:100%;object-fit:cover;transform:translate(${evt.imageOffsetX || 0}px, ${evt.imageOffsetY || 0}px) scale(${(evt.imageZoom || 100)/100});">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
             <div class="event-image-fallback" aria-hidden="true">
               <div><div class="fallback-title">${evt.nome || 'Evento'}</div></div>
             </div>
@@ -464,19 +464,29 @@
         </div>
         <input type="file" id="editEventImage" accept="image/*" style="display:none;">
         
-        ${currentImg || false ? `
-          <div style="margin-top: 8px; display: none;" id="imageZoomContainer">
-            <label style="display: block; font-weight: 700; font-size: 11px; margin-bottom: 6px; color: #333;">🔍 Zoom da Imagem:</label>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <input type="range" id="imageZoom" min="50" max="200" value="100" style="flex: 1; cursor: pointer;">
-              <span id="zoomValue" style="font-size: 11px; color: #666; min-width: 35px;">100%</span>
-            </div>
-            <p style="font-size: 10px; color: #999; margin-top: 4px;">Arraste a imagem para reposicionar</p>
-            <div id="imageEditor" style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 6px; overflow: hidden; margin-top: 8px; cursor: grab; position: relative;">
-              <img id="editorImage" src="" style="position: absolute; width: 100%; height: auto; cursor: grab;">
-            </div>
+        <div id="imageEditorContainer" style="display: none;">
+          <label style="display: block; font-weight: 700; font-size: 11px; margin-bottom: 6px; color: #333;">🔍 Reposicionar Imagem:</label>
+          
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 700;">Zoom:</span>
+            <input type="range" id="imageZoom" min="50" max="200" value="100" style="flex: 1; cursor: pointer;">
+            <span id="zoomValue" style="font-size: 11px; color: #666; min-width: 35px; text-align: right;">100%</span>
           </div>
-        ` : ''}
+          
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 11px; font-weight: 700;">Posição:</span>
+            <span style="font-size: 10px; color: #666; flex: 1;">↕️ Arraste para cima/baixo • ↔️ Esquerda/direita</span>
+          </div>
+          
+          <div id="imageEditor" style="width: 100%; height: 150px; background: #f0f0f0; border: 2px solid #fee822; border-radius: 6px; overflow: hidden; cursor: grab; position: relative; user-select: none;">
+            <img id="editorImage" src="" style="position: absolute; width: 100%; height: auto; top: 0; left: 0; cursor: grab;">
+          </div>
+          
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <button id="clearImageBtn" style="flex: 1; background: #ff6b6b; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px;">🗑️ Remover foto</button>
+            <button id="resetImageBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px;">↺ Resetar</button>
+          </div>
+        </div>
       </div>
 
       <div style="display: flex; gap: 10px;">
@@ -488,49 +498,47 @@
     modal.appendChild(dialog);
     document.body.appendChild(modal);
     
-    // Lidar com seleção de imagem
-    const editImageInput = document.getElementById('editEventImage');
-    const editImagePreview = document.getElementById('editImagePreview');
     let editSelectedImage = null;
     let imageOffsetX = 0;
     let imageOffsetY = 0;
     let imageZoom = 100;
     let isDragging = false;
     
+    const editImageInput = document.getElementById('editEventImage');
+    const editImagePreview = document.getElementById('editImagePreview');
+    const imageEditorContainer = document.getElementById('imageEditorContainer');
+    
     editImageInput.addEventListener('change', function(e){
       const file = e.target.files[0];
-      if(file){
-        if(file.size > 2 * 1024 * 1024){
-          alert('⚠️ Imagem muito grande! Máximo 2MB.');
-          return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          editSelectedImage = event.target.result;
-          editImagePreview.innerHTML = `<img src="${editSelectedImage}" style="width:100%; height:100%; object-fit:cover;">`;
-          editImagePreview.style.border = '2px solid #4CAF50';
-          
-          // Mostrar zoom container
-          const zoomContainer = dialog.querySelector('#imageZoomContainer');
-          if(zoomContainer){
-            zoomContainer.style.display = 'block';
-            const editorImg = dialog.querySelector('#editorImage');
-            editorImg.src = editSelectedImage;
-            setupImageEditor();
-          }
-        };
-        reader.readAsDataURL(file);
+      if(!file) return;
+      
+      if(file.size > 2 * 1024 * 1024){
+        alert('⚠️ Imagem muito grande! Máximo 2MB.');
+        return;
       }
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        editSelectedImage = event.target.result;
+        editImagePreview.innerHTML = `<img src="${editSelectedImage}" style="width:100%; height:100%; object-fit:cover;">`;
+        editImagePreview.style.border = '2px solid #4CAF50';
+        
+        imageEditorContainer.style.display = 'block';
+        imageOffsetX = 0;
+        imageOffsetY = 0;
+        imageZoom = 100;
+        setupImageEditor();
+      };
+      reader.readAsDataURL(file);
     });
     
     function setupImageEditor(){
-      const editor = dialog.querySelector('#imageEditor');
-      const editorImg = dialog.querySelector('#editorImage');
-      const zoomInput = dialog.querySelector('#imageZoom');
-      const zoomValue = dialog.querySelector('#zoomValue');
+      const editor = document.getElementById('imageEditor');
+      const editorImg = document.getElementById('editorImage');
+      const zoomInput = document.getElementById('imageZoom');
+      const zoomValue = document.getElementById('zoomValue');
       
-      if(!editor || !editorImg) return;
+      editorImg.src = editSelectedImage;
       
       zoomInput.addEventListener('input', function(){
         imageZoom = parseInt(this.value);
@@ -540,32 +548,53 @@
       
       editor.addEventListener('mousedown', (e) => {
         isDragging = true;
+        editor.style.cursor = 'grabbing';
         const rect = editor.getBoundingClientRect();
-        const startX = e.clientX - rect.left;
-        const startY = e.clientY - rect.top;
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startOffsetX = imageOffsetX;
+        const startOffsetY = imageOffsetY;
         
-        document.addEventListener('mousemove', onDrag);
-        document.addEventListener('mouseup', () => {
-          isDragging = false;
-          document.removeEventListener('mousemove', onDrag);
-        });
-        
-        function onDrag(e2){
+        function onMouseMove(e2){
           if(!isDragging) return;
-          const currentX = e2.clientX - rect.left;
-          const currentY = e2.clientY - rect.top;
-          imageOffsetX += currentX - startX;
-          imageOffsetY += currentY - startY;
+          imageOffsetX = startOffsetX + (e2.clientX - startX);
+          imageOffsetY = startOffsetY + (e2.clientY - startY);
           updateImageDisplay();
         }
+        
+        function onMouseUp(){
+          isDragging = false;
+          editor.style.cursor = 'grab';
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+        
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
       });
+      
+      document.getElementById('clearImageBtn').onclick = () => {
+        editSelectedImage = null;
+        imageEditorContainer.style.display = 'none';
+        editImagePreview.innerHTML = '📸 Clique para adicionar foto';
+        editImagePreview.style.border = '2px dashed #fee822';
+        editImageInput.value = '';
+      };
+      
+      document.getElementById('resetImageBtn').onclick = () => {
+        imageOffsetX = 0;
+        imageOffsetY = 0;
+        imageZoom = 100;
+        document.getElementById('imageZoom').value = 100;
+        document.getElementById('zoomValue').textContent = '100%';
+        updateImageDisplay();
+      };
       
       updateImageDisplay();
     }
     
     function updateImageDisplay(){
-      const editorImg = dialog.querySelector('#editorImage');
-      if(!editorImg) return;
+      const editorImg = document.getElementById('editorImage');
       editorImg.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageZoom/100})`;
     }
     
@@ -582,93 +611,76 @@
         return;
       }
       
-      // Atualizar atributos
+      // Atualizar no DOM
       card.setAttribute('data-nome', novoNome);
       card.setAttribute('data-data', novaData);
       card.setAttribute('data-local', novoLocal);
       card.setAttribute('data-link', novoLink);
       
-      // Atualizar título
       const artistTitle = card.querySelector('.artist-title');
       if(artistTitle) artistTitle.textContent = novoNome;
       
-      // Atualizar subtítulo
       let subtitle_el = card.querySelector('.event-subtitle');
       if(novoSubtitle){
         if(!subtitle_el){
           subtitle_el = document.createElement('div');
           subtitle_el.className = 'event-subtitle';
-          const artistEl = card.querySelector('.artist-title');
-          if(artistEl) artistEl.parentNode.insertBefore(subtitle_el, artistEl.nextSibling);
+          artistTitle.parentNode.insertBefore(subtitle_el, artistTitle.nextSibling);
         }
         subtitle_el.textContent = novoSubtitle;
       } else if(subtitle_el){
         subtitle_el.remove();
       }
       
-      // Atualizar desconto
       let discountBadge = card.querySelector('.discount-badge');
       if(novoDiscount){
         if(!discountBadge){
           discountBadge = document.createElement('div');
           discountBadge.className = 'discount-badge';
-          const imageWrapper = card.querySelector('.event-image-wrapper');
-          if(imageWrapper) imageWrapper.appendChild(discountBadge);
+          card.querySelector('.event-image-wrapper').appendChild(discountBadge);
         }
         discountBadge.textContent = novoDiscount;
       } else if(discountBadge){
         discountBadge.remove();
       }
       
-      // Atualizar local
       let locationDiv = card.querySelector('.event-location');
       if(novoLocal){
         if(!locationDiv){
           locationDiv = document.createElement('div');
           locationDiv.className = 'event-location';
           locationDiv.innerHTML = `<i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(novoLocal)}" target="_blank">${novoLocal}</a></div></div>`;
-          const eventContent = card.querySelector('.event-content');
-          if(eventContent) eventContent.appendChild(locationDiv);
+          card.querySelector('.event-content').appendChild(locationDiv);
         } else {
           const link = locationDiv.querySelector('a');
-          if(link){
-            link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(novoLocal)}`;
-            link.textContent = novoLocal;
-          }
+          link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(novoLocal)}`;
+          link.textContent = novoLocal;
         }
       } else if(locationDiv){
         locationDiv.remove();
       }
       
-      // Atualizar links
       const ticketBtn = card.querySelector('.btn-ticket');
       if(ticketBtn) ticketBtn.href = novoLink || '#';
       
-      const imageWrapper = card.querySelector('.event-image-wrapper');
-      if(imageWrapper) imageWrapper.href = novoLink || '#';
+      card.querySelector('.event-image-wrapper').href = novoLink || '#';
       
-      // Atualizar imagem
       if(editSelectedImage){
         const img = card.querySelector('img');
-        if(img){
-          img.src = editSelectedImage;
-          img.style.display = 'block';
-          img.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageZoom/100})`;
-        }
+        img.src = editSelectedImage;
+        img.style.display = 'block';
+        img.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageZoom/100})`;
       }
       
       const fallbackTitle = card.querySelector('.fallback-title');
       if(fallbackTitle) fallbackTitle.textContent = novoNome;
       
-      // SALVAR NO LOCALSTORAGE TAMBÉM!
+      // SALVAR NO LOCALSTORAGE
       const saved = localStorage.getItem('customEvents');
       const events = saved ? JSON.parse(saved) : [];
-      
-      // Procurar pelo nome antigo
       const eventIndex = events.findIndex(e => e.nome === currentNome && e.data === currentData);
       
       if(eventIndex !== -1){
-        // Atualizar evento customizado existente
         events[eventIndex] = {
           nome: novoNome,
           subtitle: novoSubtitle,
@@ -679,27 +691,20 @@
           local: novoLocal,
           link: novoLink,
           discount: novoDiscount,
-          image: editSelectedImage || events[eventIndex].image || null
+          image: editSelectedImage || events[eventIndex].image || null,
+          imageOffsetX: editSelectedImage ? imageOffsetX : (events[eventIndex].imageOffsetX || 0),
+          imageOffsetY: editSelectedImage ? imageOffsetY : (events[eventIndex].imageOffsetY || 0),
+          imageZoom: editSelectedImage ? imageZoom : (events[eventIndex].imageZoom || 100)
         };
         localStorage.setItem('customEvents', JSON.stringify(events));
-      } else {
-        // Se não achou no localStorage, pode ser um evento original
-        // Nesse caso, não salva no localStorage (é um evento hardcoded)
       }
       
-      localStorage.setItem('boaEventsEdited', 'true');
-      
-      console.log('✅ DEBUG: Evento editado!');
-      console.log('Nome:', novoNome);
-      console.log('Subtitle:', novoSubtitle);
-      console.log('Local:', novoLocal);
-      console.log('localStorage customEvents:', localStorage.getItem('customEvents'));
+      console.log('✅ Evento salvo:', events[eventIndex]);
       
       document.body.removeChild(modal);
-      alert('✅ Evento atualizado com sucesso!\n\n💾 Alterações salvas!');
+      alert('✅ Evento atualizado com sucesso!');
       
       setTimeout(() => {
-        loadSavedImages();
         applyFilters();
         renderExistingEvents();
       }, 100);
@@ -856,7 +861,10 @@
       local,
       link,
       discount,
-      image
+      image,
+      imageOffsetX: 0,
+      imageOffsetY: 0,
+      imageZoom: 100
     });
 
     localStorage.setItem('customEvents', JSON.stringify(events));
