@@ -29,6 +29,8 @@
 
     <button onclick="toggleEventsPanel()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;">📅 Gerenciar Eventos</button>
 
+    <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
+
     <div class="image-upload-panel" id="uploadPanel">
       <div class="upload-title">Selecione suas imagens:</div>
       <div class="upload-inputs" id="uploadInputs"></div>
@@ -117,6 +119,7 @@
     if(secretCode.includes('admin')){
       document.getElementById('adminBtn').style.display = 'block';
       document.getElementById('adminEventsBtn').style.display = 'block';
+      document.getElementById('closeAdminBtn').style.display = 'block';
       secretCode = '';
       alert('✅ Painel de admin ativado!');
     }
@@ -181,6 +184,15 @@
     } else {
       panel.style.display = 'none';
     }
+  }
+
+  function closeAdminPanel(){
+    document.getElementById('uploadPanel').style.display = 'none';
+    document.getElementById('eventsPanel').style.display = 'none';
+    document.getElementById('adminBtn').style.display = 'none';
+    document.getElementById('adminEventsBtn').style.display = 'none';
+    document.getElementById('closeAdminBtn').style.display = 'none';
+    alert('✅ Painel de admin fechado!');
   }
 
   function renderExistingEvents(){
@@ -300,19 +312,63 @@
         return;
       }
       
+      // Atualizar todos os atributos
       card.setAttribute('data-nome', novoNome);
       card.setAttribute('data-data', novaData);
       card.setAttribute('data-local', novoLocal);
       card.setAttribute('data-link', novoLink);
       
-      card.querySelector('.artist-title').textContent = novoNome;
+      // Atualizar título do evento
+      const artistTitle = card.querySelector('.artist-title');
+      if(artistTitle) artistTitle.textContent = novoNome;
       
-      const subtitle_el = card.querySelector('.event-subtitle');
-      if(subtitle_el) subtitle_el.textContent = novoSubtitle;
+      // Atualizar subtítulo
+      let subtitle_el = card.querySelector('.event-subtitle');
+      if(novoSubtitle){
+        if(!subtitle_el){
+          subtitle_el = document.createElement('div');
+          subtitle_el.className = 'event-subtitle';
+          const artistEl = card.querySelector('.artist-title');
+          if(artistEl) artistEl.parentNode.insertBefore(subtitle_el, artistEl.nextSibling);
+        }
+        subtitle_el.textContent = novoSubtitle;
+      } else if(subtitle_el){
+        subtitle_el.remove();
+      }
       
-      const locationDiv = card.querySelector('.event-location div div');
-      if(locationDiv) locationDiv.textContent = novoLocal;
+      // Atualizar local
+      let locationDiv = card.querySelector('.event-location');
+      if(novoLocal){
+        if(!locationDiv){
+          locationDiv = document.createElement('div');
+          locationDiv.className = 'event-location';
+          locationDiv.innerHTML = `<i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(novoLocal)}" target="_blank">${novoLocal}</a></div></div>`;
+          const eventContent = card.querySelector('.event-content');
+          if(eventContent) eventContent.appendChild(locationDiv);
+        } else {
+          const link = locationDiv.querySelector('a');
+          if(link){
+            link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(novoLocal)}`;
+            link.textContent = novoLocal;
+          }
+        }
+      } else if(locationDiv){
+        locationDiv.remove();
+      }
       
+      // Atualizar link do botão
+      const ticketBtn = card.querySelector('.btn-ticket');
+      if(ticketBtn){
+        ticketBtn.href = novoLink || '#';
+      }
+      
+      // Atualizar link do card
+      const imageWrapper = card.querySelector('.event-image-wrapper');
+      if(imageWrapper){
+        imageWrapper.href = novoLink || '#';
+      }
+      
+      // Atualizar fallback title
       const fallbackTitle = card.querySelector('.fallback-title');
       if(fallbackTitle) fallbackTitle.textContent = novoNome;
       
