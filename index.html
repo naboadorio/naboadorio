@@ -169,11 +169,17 @@
   if(searchInput && !isMobile) {
     searchInput.addEventListener('input', function(){
       if(this.value.toLowerCase().trim() === 'admin'){
-        document.getElementById('adminEventsBtn').style.display = 'block';
-        document.getElementById('downloadHTMLBtn').style.display = 'block';
-        document.getElementById('closeAdminBtn').style.display = 'block';
-        document.getElementById('previewPublicBtn').style.display = 'block';
-        alert('🔓 Modo Admin Ativado!');
+        // Pedir senha
+        var senha = prompt('🔐 Digite a senha do admin:');
+        if(senha && senha === 'BOA123') { // Mude BOA123 pela senha que quiser
+          document.getElementById('adminEventsBtn').style.display = 'block';
+          document.getElementById('downloadHTMLBtn').style.display = 'block';
+          document.getElementById('closeAdminBtn').style.display = 'block';
+          document.getElementById('previewPublicBtn').style.display = 'block';
+          alert('🔓 Modo Admin Ativado!');
+        } else if(senha !== null) {
+          alert('❌ Senha incorreta!');
+        }
         this.value = ''; // Limpar o campo
       }
     });
