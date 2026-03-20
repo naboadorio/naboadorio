@@ -190,34 +190,9 @@
     });
   }
 
-  // Botão para visualizar como público
+  // Botão para visualizar como público - Desabilitado por enquanto
   function togglePreviewMode(){
-    isPreviewMode = !isPreviewMode;
-    if(isPreviewMode){
-      // Entra no modo público - salva estado e recarrega sem localStorage visível
-      localStorage.setItem('previewMode', 'true');
-      location.reload();
-    } else {
-      // Volta ao editor
-      localStorage.removeItem('previewMode');
-      location.reload();
-    }
-  }
-
-  // Verificar se deve carregar em modo preview
-  var previewMode = localStorage.getItem('previewMode') === 'true';
-  if(previewMode){
-    isPreviewMode = true;
-    document.body.setAttribute('data-preview', 'true');
-    // Mostrar botão de sair do preview
-    document.getElementById('exitPreviewBtn').style.display = 'block';
-    document.getElementById('previewPublicBtn').style.display = 'none';
-  } else {
-    // Modo editor - mostrar botão de visualizar como público
-    isPreviewMode = false;
-    document.body.setAttribute('data-preview', 'false');
-    document.getElementById('previewPublicBtn').style.display = 'block';
-    document.getElementById('exitPreviewBtn').style.display = 'none';
+    alert('💡 Use este botão depois que subir o HTML atualizado no GitHub!\n\nFluxo:\n1. Edite eventos\n2. Clique "📥 Baixar HTML Atualizado"\n3. Suba no GitHub\n4. Aí use o preview para ver como fica público');
   }
 
   function toggleEventsPanel(){
@@ -248,9 +223,6 @@
 
   // ── Injetar eventos custom no events-source ────────────
   function loadCustomEventsToDOM(){
-    // Não carrega eventos customizados se estiver em modo preview
-    if(localStorage.getItem('previewMode') === 'true') return;
-    
     var source = document.getElementById('events-source');
     if(!source) return;
     // remove cards custom anteriores para evitar duplicatas
