@@ -397,6 +397,7 @@
     const subtitle = card.querySelector('.event-subtitle')?.textContent || '';
     const discountBadge = card.querySelector('.discount-badge');
     const currentDiscount = discountBadge ? discountBadge.textContent : '';
+    const currentImg = card.querySelector('img')?.src || '';
     
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -410,6 +411,7 @@
       align-items: center;
       justify-content: center;
       z-index: 10000;
+      overflow-y: auto;
     `;
     
     const dialog = document.createElement('div');
@@ -417,9 +419,8 @@
       background: white;
       border-radius: 12px;
       padding: 20px;
-      max-width: 400px;
-      max-height: 80vh;
-      overflow-y: auto;
+      max-width: 420px;
+      margin: 20px auto;
       box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     `;
     
@@ -427,58 +428,78 @@
       <div style="font-size: 18px; font-weight: 800; color: #FF2A6D; margin-bottom: 16px;">✏️ Editar Evento</div>
       
       <div style="margin-bottom: 12px;">
-        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Nome do Evento</label>
-        <input type="text" id="editNome" value="${currentNome}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">📝 Nome do Evento</label>
+        <input type="text" id="editNome" value="${currentNome}" style="width: 100%; padding: 10px; border: 2px solid #fee822; border-radius: 6px; font-family: Nunito; font-size: 13px; box-sizing: border-box;">
       </div>
       
       <div style="margin-bottom: 12px;">
-        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Subtítulo</label>
-        <input type="text" id="editSubtitle" value="${subtitle}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">🎤 Subtítulo</label>
+        <input type="text" id="editSubtitle" value="${subtitle}" style="width: 100%; padding: 10px; border: 2px solid #fee822; border-radius: 6px; font-family: Nunito; font-size: 13px; box-sizing: border-box;">
       </div>
       
       <div style="margin-bottom: 12px;">
-        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Data e Hora</label>
-        <input type="text" id="editData" value="${currentData}" placeholder="Ex: 04/04 • Sábado • 19h" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">📅 Data e Hora</label>
+        <input type="text" id="editData" value="${currentData}" placeholder="Ex: 04/04 • Sábado • 19h" style="width: 100%; padding: 10px; border: 2px solid #fee822; border-radius: 6px; font-family: Nunito; font-size: 13px; box-sizing: border-box;">
       </div>
       
       <div style="margin-bottom: 12px;">
-        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Local</label>
-        <input type="text" id="editLocal" value="${currentLocal}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">📍 Local</label>
+        <input type="text" id="editLocal" value="${currentLocal}" style="width: 100%; padding: 10px; border: 2px solid #fee822; border-radius: 6px; font-family: Nunito; font-size: 13px; box-sizing: border-box;">
       </div>
       
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Link de Ingresso</label>
-        <input type="text" id="editLink" value="${currentLink}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">🔗 Link de Ingresso</label>
+        <input type="text" id="editLink" value="${currentLink}" style="width: 100%; padding: 10px; border: 2px solid #fee822; border-radius: 6px; font-family: Nunito; font-size: 13px; box-sizing: border-box;">
       </div>
       
-      <div style="margin-bottom: 16px;">
-        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Desconto</label>
-        <input type="text" id="editDiscount" value="${currentDiscount}" placeholder="Ex: -10%" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">💰 Desconto</label>
+        <input type="text" id="editDiscount" value="${currentDiscount}" placeholder="Ex: -10%" style="width: 100%; padding: 10px; border: 2px solid #fee822; border-radius: 6px; font-family: Nunito; font-size: 13px; box-sizing: border-box;">
       </div>
 
       <div style="margin-bottom: 16px;">
         <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">📸 Foto do Evento</label>
-        <div id="editImagePreview" style="margin-top: 8px; width: 100%; height: 100px; background: #f0f0f0; border: 2px dashed #e0e0e0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; overflow: hidden; cursor: pointer; transition: all 0.3s; margin-bottom: 8px;" onclick="document.getElementById('editEventImage').click();">📸 Clique para adicionar/mudar foto</div>
+        <div id="editImagePreview" style="width: 100%; height: 120px; background: #f0f0f0; border: 2px dashed #fee822; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; overflow: hidden; cursor: pointer; transition: all 0.3s; margin-bottom: 8px; position: relative;" onclick="document.getElementById('editEventImage').click();">
+          ${currentImg ? `<img src="${currentImg}" style="width:100%; height:100%; object-fit:cover;">` : '📸 Clique para adicionar/mudar foto'}
+        </div>
         <input type="file" id="editEventImage" accept="image/*" style="display:none;">
+        
+        ${currentImg || false ? `
+          <div style="margin-top: 8px; display: none;" id="imageZoomContainer">
+            <label style="display: block; font-weight: 700; font-size: 11px; margin-bottom: 6px; color: #333;">🔍 Zoom da Imagem:</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="range" id="imageZoom" min="50" max="200" value="100" style="flex: 1; cursor: pointer;">
+              <span id="zoomValue" style="font-size: 11px; color: #666; min-width: 35px;">100%</span>
+            </div>
+            <p style="font-size: 10px; color: #999; margin-top: 4px;">Arraste a imagem para reposicionar</p>
+            <div id="imageEditor" style="width: 100%; height: 120px; background: #f0f0f0; border-radius: 6px; overflow: hidden; margin-top: 8px; cursor: grab; position: relative;">
+              <img id="editorImage" src="" style="position: absolute; width: 100%; height: auto; cursor: grab;">
+            </div>
+          </div>
+        ` : ''}
       </div>
 
       <div style="display: flex; gap: 10px;">
-        <button id="editSaveBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">💾 Salvar</button>
-        <button id="editCancelBtn" style="flex: 1; background: #999; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">✕ Cancelar</button>
+        <button id="editSaveBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px;">💾 Salvar Alterações</button>
+        <button id="editCancelBtn" style="flex: 1; background: #999; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px;">✕ Cancelar</button>
       </div>
     `;
     
     modal.appendChild(dialog);
     document.body.appendChild(modal);
     
-    // Lidar com seleção de imagem no modal de edição
+    // Lidar com seleção de imagem
     const editImageInput = document.getElementById('editEventImage');
+    const editImagePreview = document.getElementById('editImagePreview');
     let editSelectedImage = null;
+    let imageOffsetX = 0;
+    let imageOffsetY = 0;
+    let imageZoom = 100;
+    let isDragging = false;
     
     editImageInput.addEventListener('change', function(e){
       const file = e.target.files[0];
       if(file){
-        // Verificar tamanho (máximo 2MB)
         if(file.size > 2 * 1024 * 1024){
           alert('⚠️ Imagem muito grande! Máximo 2MB.');
           return;
@@ -487,14 +508,66 @@
         const reader = new FileReader();
         reader.onload = (event) => {
           editSelectedImage = event.target.result;
-          const preview = document.getElementById('editImagePreview');
-          preview.innerHTML = `<img src="${editSelectedImage}" style="width:100%; height:100%; object-fit:cover;">`;
-          preview.style.border = '2px solid #4CAF50';
-          console.log('✅ Imagem de edição selecionada!');
+          editImagePreview.innerHTML = `<img src="${editSelectedImage}" style="width:100%; height:100%; object-fit:cover;">`;
+          editImagePreview.style.border = '2px solid #4CAF50';
+          
+          // Mostrar zoom container
+          const zoomContainer = dialog.querySelector('#imageZoomContainer');
+          if(zoomContainer){
+            zoomContainer.style.display = 'block';
+            const editorImg = dialog.querySelector('#editorImage');
+            editorImg.src = editSelectedImage;
+            setupImageEditor();
+          }
         };
         reader.readAsDataURL(file);
       }
     });
+    
+    function setupImageEditor(){
+      const editor = dialog.querySelector('#imageEditor');
+      const editorImg = dialog.querySelector('#editorImage');
+      const zoomInput = dialog.querySelector('#imageZoom');
+      const zoomValue = dialog.querySelector('#zoomValue');
+      
+      if(!editor || !editorImg) return;
+      
+      zoomInput.addEventListener('input', function(){
+        imageZoom = parseInt(this.value);
+        zoomValue.textContent = imageZoom + '%';
+        updateImageDisplay();
+      });
+      
+      editor.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        const rect = editor.getBoundingClientRect();
+        const startX = e.clientX - rect.left;
+        const startY = e.clientY - rect.top;
+        
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', () => {
+          isDragging = false;
+          document.removeEventListener('mousemove', onDrag);
+        });
+        
+        function onDrag(e2){
+          if(!isDragging) return;
+          const currentX = e2.clientX - rect.left;
+          const currentY = e2.clientY - rect.top;
+          imageOffsetX += currentX - startX;
+          imageOffsetY += currentY - startY;
+          updateImageDisplay();
+        }
+      });
+      
+      updateImageDisplay();
+    }
+    
+    function updateImageDisplay(){
+      const editorImg = dialog.querySelector('#editorImage');
+      if(!editorImg) return;
+      editorImg.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageZoom/100})`;
+    }
     
     document.getElementById('editSaveBtn').onclick = () => {
       const novoNome = document.getElementById('editNome').value.trim();
@@ -509,13 +582,13 @@
         return;
       }
       
-      // Atualizar todos os atributos
+      // Atualizar atributos
       card.setAttribute('data-nome', novoNome);
       card.setAttribute('data-data', novaData);
       card.setAttribute('data-local', novoLocal);
       card.setAttribute('data-link', novoLink);
       
-      // Atualizar título do evento
+      // Atualizar título
       const artistTitle = card.querySelector('.artist-title');
       if(artistTitle) artistTitle.textContent = novoNome;
       
@@ -567,37 +640,64 @@
         locationDiv.remove();
       }
       
-      // Atualizar link do botão
+      // Atualizar links
       const ticketBtn = card.querySelector('.btn-ticket');
-      if(ticketBtn){
-        ticketBtn.href = novoLink || '#';
-      }
+      if(ticketBtn) ticketBtn.href = novoLink || '#';
       
-      // Atualizar link do card
       const imageWrapper = card.querySelector('.event-image-wrapper');
-      if(imageWrapper){
-        imageWrapper.href = novoLink || '#';
-      }
+      if(imageWrapper) imageWrapper.href = novoLink || '#';
       
-      // Atualizar imagem se uma nova foi selecionada
+      // Atualizar imagem
       if(editSelectedImage){
         const img = card.querySelector('img');
         if(img){
           img.src = editSelectedImage;
           img.style.display = 'block';
+          img.style.transform = `translate(${imageOffsetX}px, ${imageOffsetY}px) scale(${imageZoom/100})`;
         }
       }
       
-      // Atualizar fallback title
       const fallbackTitle = card.querySelector('.fallback-title');
       if(fallbackTitle) fallbackTitle.textContent = novoNome;
       
+      // SALVAR NO LOCALSTORAGE TAMBÉM!
+      const saved = localStorage.getItem('customEvents');
+      const events = saved ? JSON.parse(saved) : [];
+      
+      // Procurar pelo nome antigo
+      const eventIndex = events.findIndex(e => e.nome === currentNome && e.data === currentData);
+      
+      if(eventIndex !== -1){
+        // Atualizar evento customizado existente
+        events[eventIndex] = {
+          nome: novoNome,
+          subtitle: novoSubtitle,
+          data: novaData,
+          date: events[eventIndex].date,
+          time: events[eventIndex].time,
+          dayWeek: events[eventIndex].dayWeek,
+          local: novoLocal,
+          link: novoLink,
+          discount: novoDiscount,
+          image: editSelectedImage || events[eventIndex].image || null
+        };
+        localStorage.setItem('customEvents', JSON.stringify(events));
+      } else {
+        // Se não achou no localStorage, pode ser um evento original
+        // Nesse caso, não salva no localStorage (é um evento hardcoded)
+      }
+      
       localStorage.setItem('boaEventsEdited', 'true');
       
-      document.body.removeChild(modal);
-      alert('✅ Evento atualizado com sucesso!');
+      console.log('✅ DEBUG: Evento editado!');
+      console.log('Nome:', novoNome);
+      console.log('Subtitle:', novoSubtitle);
+      console.log('Local:', novoLocal);
+      console.log('localStorage customEvents:', localStorage.getItem('customEvents'));
       
-      // Re-renderizar a página para mostrar as mudanças
+      document.body.removeChild(modal);
+      alert('✅ Evento atualizado com sucesso!\n\n💾 Alterações salvas!');
+      
       setTimeout(() => {
         loadSavedImages();
         applyFilters();
@@ -760,6 +860,12 @@
     });
 
     localStorage.setItem('customEvents', JSON.stringify(events));
+    
+    console.log('✅ DEBUG: Novo evento criado!');
+    console.log('Nome:', nome);
+    console.log('Subtitle:', subtitle);
+    console.log('Local:', local);
+    console.log('localStorage customEvents:', localStorage.getItem('customEvents'));
     
     // Inserir o novo evento no DOM também (para editar)
     const source = document.getElementById('events-source');
