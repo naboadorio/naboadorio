@@ -43,22 +43,27 @@
         <div id="eventsList" style="max-height:220px;overflow-y:auto;"></div>
       </div>
 
+      <div style="border-top:2px solid #fee822;padding-top:12px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">✏️ Editar Eventos Existentes:</div>
+        <div id="existingEventsList" style="max-height:250px;overflow-y:auto;">
+          <p style="color:#999;font-size:12px;">Carregando eventos...</p>
+        </div>
+      </div>
+
       <div style="border-top:2px solid #fee822;padding-top:12px;">
         <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">➕ Novo Evento Completo:</div>
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;font-size:11px;color:#666;">
-          <strong>📝 Informações Básicas:</strong>
+          <strong>📝 Informações do Evento:</strong>
         </div>
         <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventArtist" placeholder="Artista/Banda" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventSubtitle" placeholder="Subtítulo (Ex: Rock/MPB)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventSubtitle" placeholder="Subtítulo/Artista (Ex: Banda XYZ)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📅 Data e Hora:</strong>
         </div>
-        <input type="text" id="newEventDate" placeholder="Data (Ex: 25/05)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventDayWeek" placeholder="Dia da semana (Ex: Sábado)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="text" id="newEventTime" placeholder="Horário (Ex: 19h)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="time" id="newEventTime" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📍 Local e Links:</strong>
@@ -138,9 +143,256 @@
     if(panel.style.display === 'none'){
       panel.style.display = 'block';
       loadEventsList();
+      renderExistingEvents();
     } else {
       panel.style.display = 'none';
     }
+  }
+
+  function renderExistingEvents(){
+    const source = document.getElementById('events-source');
+    const container = document.getElementById('existingEventsList');
+    if(!source || !container) return;
+    
+    const cards = source.querySelectorAll('.event-card');
+    if(cards.length === 0){
+      container.innerHTML = '<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento cadastrado</p>';
+      return;
+    }
+    
+    let html = '';
+    cards.forEach((card, idx) => {
+      const nome = card.getAttribute('data-nome') || 'Evento';
+      const data = card.getAttribute('data-data') || '';
+      const local = card.getAttribute('data-local') || '';
+      html += `
+        <div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">
+          <div style="font-weight:700;font-size:13px;color:#FF2A6D;margin-bottom:2px;">${nome}</div>
+          <div style="font-size:11px;color:#666;margin-bottom:2px;">📅 ${data}</div>
+          <div style="font-size:11px;color:#666;margin-bottom:10px;">📍 ${local}</div>
+          <div style="display:flex;gap:6px;">
+            <button onclick="editEventDialog(${idx})" style="background:#0066cc;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">✏️ Editar</button>
+            <button onclick="deleteEventFromSite(${idx})" style="background:#f44336;color:#fff;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">🗑️ Deletar</button>
+          </div>
+        </div>
+      `;
+    });
+    
+    container.innerHTML = html;
+  }
+
+  function editEventDialog(idx){
+    const source = document.getElementById('events-source');
+    const cards = source.querySelectorAll('.event-card');
+    const card = cards[idx];
+    
+    const currentNome = card.getAttribute('data-nome') || '';
+    const currentData = card.getAttribute('data-data') || '';
+    const currentLocal = card.getAttribute('data-local') || '';
+    const currentLink = card.getAttribute('data-link') || '';
+    
+    const subtitle = card.querySelector('.event-subtitle')?.textContent || '';
+    
+    // Criar modal de edição
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    `;
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    `;
+    
+    dialog.innerHTML = `
+      <div style="font-size: 18px; font-weight: 800; color: #FF2A6D; margin-bottom: 16px;">✏️ Editar Evento</div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Nome do Evento</label>
+        <input type="text" id="editNome" value="${currentNome}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Subtítulo</label>
+        <input type="text" id="editSubtitle" value="${subtitle}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Data e Hora</label>
+        <input type="text" id="editData" value="${currentData}" placeholder="Ex: 04/04 • Sábado • 19h" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      </div>
+      
+      <div style="margin-bottom: 12px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Local</label>
+        <input type="text" id="editLocal" value="${currentLocal}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      </div>
+      
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Link de Ingresso</label>
+        <input type="text" id="editLink" value="${currentLink}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      </div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button id="editSaveBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">💾 Salvar</button>
+        <button id="editCancelBtn" style="flex: 1; background: #999; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">✕ Cancelar</button>
+      </div>
+    `;
+    
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+    
+    // Event listeners
+    document.getElementById('editSaveBtn').onclick = () => {
+      const novoNome = document.getElementById('editNome').value.trim();
+      const novoSubtitle = document.getElementById('editSubtitle').value.trim();
+      const novaData = document.getElementById('editData').value.trim();
+      const novoLocal = document.getElementById('editLocal').value.trim();
+      const novoLink = document.getElementById('editLink').value.trim();
+      
+      if(!novoNome || !novaData){
+        alert('⚠️ Preencha nome e data!');
+        return;
+      }
+      
+      // Atualizar atributos
+      card.setAttribute('data-nome', novoNome);
+      card.setAttribute('data-data', novaData);
+      card.setAttribute('data-local', novoLocal);
+      card.setAttribute('data-link', novoLink);
+      
+      // Atualizar textos visuais
+      card.querySelector('.artist-title').textContent = novoNome;
+      
+      const subtitle_el = card.querySelector('.event-subtitle');
+      if(subtitle_el) subtitle_el.textContent = novoSubtitle;
+      
+      const locationDiv = card.querySelector('.event-location div div');
+      if(locationDiv) locationDiv.textContent = novoLocal;
+      
+      const fallbackTitle = card.querySelector('.fallback-title');
+      if(fallbackTitle) fallbackTitle.textContent = novoNome;
+      
+      // Salvar no localStorage
+      localStorage.setItem('boaEventsEdited', 'true');
+      
+      document.body.removeChild(modal);
+      alert('✅ Evento atualizado com sucesso!');
+      renderExistingEvents();
+      applyFilters();
+    };
+    
+    document.getElementById('editCancelBtn').onclick = () => {
+      document.body.removeChild(modal);
+    };
+  }
+
+  function deleteEventFromSite(idx){
+    const source = document.getElementById('events-source');
+    const cards = source.querySelectorAll('.event-card');
+    const card = cards[idx];
+    const eventName = card.getAttribute('data-nome') || 'Evento';
+    
+    if(!confirm(`⚠️ Deletar "${eventName}"?\n\nEsta ação não pode ser desfeita!`)) return;
+    
+    // Remover do DOM
+    card.remove();
+    
+    // Salvar que foi deletado
+    localStorage.setItem('boaEventsDeleted', 'true');
+    
+    alert('✅ Evento deletado com sucesso!');
+    
+    // Recarregar lista
+    renderExistingEvents();
+    applyFilters();
+  }
+
+  function saveImages(){
+    const uploadInputs = document.querySelectorAll('#uploadInputs .upload-item input[type="file"]');
+    let savedCount = 0;
+    let totalFiles = 0;
+    
+    uploadInputs.forEach((input) => {
+      if(input.files.length > 0){
+        totalFiles++;
+        const imgIndex = input.getAttribute('data-img');
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          imageStorage[imgIndex] = e.target.result;
+          localStorage.setItem('boaImages', JSON.stringify(imageStorage));
+          savedCount++;
+          
+          // Se todas foram carregadas
+          if(savedCount === totalFiles){
+            alert('✅ Imagens salvas com sucesso!');
+            loadSavedImages();
+            applyFilters();
+            toggleUploadPanel();
+          }
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    });
+    
+    if(totalFiles === 0){
+      alert('⚠️ Selecione pelo menos uma imagem!');
+      return;
+    }
+  }
+
+  function loadSavedImages(){
+    const saved = localStorage.getItem('boaImages');
+    if(saved){
+      Object.assign(imageStorage, JSON.parse(saved));
+    }
+    
+    // Aplicar imagens aos cartões
+    Object.keys(imageStorage).forEach(imgIndex => {
+      const cards = document.querySelectorAll('.event-card[data-img="' + imgIndex + '"]');
+      cards.forEach(card => {
+        const img = card.querySelector('.event-image-wrapper img');
+        const fallback = card.querySelector('.event-image-fallback');
+        if(img && imageStorage[imgIndex]){
+          img.src = imageStorage[imgIndex];
+          img.style.display = 'block';
+          if(fallback) fallback.style.display = 'none';
+          card.querySelector('.event-image-wrapper').classList.remove('no-image');
+        }
+      });
+    });
+  }
+
+  function generateUploadInputs(){
+    const container = document.getElementById('uploadInputs');
+    container.innerHTML = '';
+    const eventCards = document.querySelectorAll('.event-card');
+    
+    eventCards.forEach((card) => {
+      const imgIndex = card.getAttribute('data-img');
+      const nome = card.getAttribute('data-nome') || 'Evento';
+      const item = document.createElement('div');
+      item.className = 'upload-item';
+      item.innerHTML = `
+        <label style="flex-shrink:0;width:auto;min-width:140px;font-size:11px;font-weight:700;color:#666;white-space:nowrap;">${nome}:</label>
+        <input type="file" accept="image/*" data-img="${imgIndex}">
+      `;
+      container.appendChild(item);
+    });
   }
 
   // Preview de imagem
@@ -178,9 +430,12 @@
       const item = document.createElement('div');
       item.style.cssText = 'padding:12px;background:linear-gradient(135deg,#FFF0C2,#FFE0EA);border-radius:8px;margin-bottom:8px;border-left:4px solid #FF2A6D;';
       item.innerHTML = `
-        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:4px;">${evt.nome}</div>
+        <div style="font-weight:700;font-size:13px;color:#1a1a1a;margin-bottom:2px;">${evt.nome}</div>
         <div style="font-size:11px;color:#666;margin-bottom:6px;">
-          🎤 ${evt.artista || 'Sem artista'} • 📅 ${evt.date} ${evt.dayWeek ? '• ' + evt.dayWeek : ''} ${evt.time ? '• ' + evt.time : ''}
+          🎤 ${evt.subtitle || 'Sem subtítulo'}
+        </div>
+        <div style="font-size:11px;color:#666;margin-bottom:6px;">
+          📅 ${evt.data || evt.date}
         </div>
         <div style="font-size:11px;color:#666;margin-bottom:6px;">
           📍 ${evt.local || 'Local não definido'} ${evt.discount ? ' • ' + evt.discount : ''}
@@ -193,31 +448,50 @@
 
   function addNewEvent(){
     const nome = document.getElementById('newEventName').value.trim();
-    const artist = document.getElementById('newEventArtist').value.trim();
     const subtitle = document.getElementById('newEventSubtitle').value.trim();
-    const date = document.getElementById('newEventDate').value.trim();
-    const dayWeek = document.getElementById('newEventDayWeek').value.trim();
-    const time = document.getElementById('newEventTime').value.trim();
+    const dateInput = document.getElementById('newEventDate').value;
+    const timeInput = document.getElementById('newEventTime').value;
     const local = document.getElementById('newEventLocal').value.trim();
     const link = document.getElementById('newEventLink').value.trim();
     const discount = document.getElementById('newEventDiscount').value.trim();
     const image = window.selectedEventImage || null;
 
-    if(!nome || !date){
+    if(!nome || !dateInput){
       alert('⚠️ Preencha pelo menos nome e data!');
       return;
     }
 
+    // Parsear data
+    const [year, month, day] = dateInput.split('-');
+    const eventDate = new Date(year, month - 1, day);
+    
+    // Dias da semana
+    const DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    const dayWeek = DIAS[eventDate.getDay()];
+    
+    // Formatar data como DD/MM
+    const dateParts = day + '/' + month;
+    
+    // Formatar hora como HHh ou HHhMM
+    let timeFormatted = '';
+    if(timeInput){
+      const [hours, minutes] = timeInput.split(':');
+      timeFormatted = minutes === '00' ? hours + 'h' : hours + 'h' + minutes;
+    }
+    
+    // Montar data completa: DD/MM • Dia da semana • HH:MM
+    const dataCompleta = dateParts + ' • ' + dayWeek + (timeFormatted ? ' • ' + timeFormatted : '');
+    
     const saved = localStorage.getItem('customEvents');
     const events = saved ? JSON.parse(saved) : [];
     
     events.push({
       nome,
-      artist,
       subtitle,
-      date,
+      data: dataCompleta,
+      date: dateInput,
+      time: timeInput,
       dayWeek,
-      time,
       local,
       link,
       discount,
@@ -229,10 +503,8 @@
     
     // Limpar campos
     document.getElementById('newEventName').value = '';
-    document.getElementById('newEventArtist').value = '';
     document.getElementById('newEventSubtitle').value = '';
     document.getElementById('newEventDate').value = '';
-    document.getElementById('newEventDayWeek').value = '';
     document.getElementById('newEventTime').value = '';
     document.getElementById('newEventLocal').value = '';
     document.getElementById('newEventLink').value = '';
