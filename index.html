@@ -237,6 +237,8 @@
     const currentLocal = card.getAttribute('data-local') || '';
     const currentLink = card.getAttribute('data-link') || '';
     const subtitle = card.querySelector('.event-subtitle')?.textContent || '';
+    const discountBadge = card.querySelector('.discount-badge');
+    const currentDiscount = discountBadge ? discountBadge.textContent : '';
     
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -291,7 +293,10 @@
         <input type="text" id="editLink" value="${currentLink}" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
       </div>
       
-      <div style="display: flex; gap: 10px;">
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">Desconto</label>
+        <input type="text" id="editDiscount" value="${currentDiscount}" placeholder="Ex: -10%" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-family: Nunito; font-size: 12px; box-sizing: border-box;">
+      </div>
         <button id="editSaveBtn" style="flex: 1; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">💾 Salvar</button>
         <button id="editCancelBtn" style="flex: 1; background: #999; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 12px;">✕ Cancelar</button>
       </div>
@@ -306,6 +311,7 @@
       const novaData = document.getElementById('editData').value.trim();
       const novoLocal = document.getElementById('editLocal').value.trim();
       const novoLink = document.getElementById('editLink').value.trim();
+      const novoDiscount = document.getElementById('editDiscount').value.trim();
       
       if(!novoNome || !novaData){
         alert('⚠️ Preencha nome e data!');
@@ -334,6 +340,20 @@
         subtitle_el.textContent = novoSubtitle;
       } else if(subtitle_el){
         subtitle_el.remove();
+      }
+      
+      // Atualizar desconto
+      let discountBadge = card.querySelector('.discount-badge');
+      if(novoDiscount){
+        if(!discountBadge){
+          discountBadge = document.createElement('div');
+          discountBadge.className = 'discount-badge';
+          const imageWrapper = card.querySelector('.event-image-wrapper');
+          if(imageWrapper) imageWrapper.appendChild(discountBadge);
+        }
+        discountBadge.textContent = novoDiscount;
+      } else if(discountBadge){
+        discountBadge.remove();
       }
       
       // Atualizar local
