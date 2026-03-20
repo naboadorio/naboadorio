@@ -38,14 +38,9 @@
     <div class="image-upload-panel" id="eventsPanel" style="display:none;">
       <div class="upload-title">📅 Gerenciar Eventos</div>
       
-      <div style="margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:var(--primary);">Seus Eventos:</div>
-        <div id="eventsList" style="max-height:220px;overflow-y:auto;"></div>
-      </div>
-
       <div style="border-top:2px solid #fee822;padding-top:12px;margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">✏️ Editar Eventos Existentes:</div>
-        <div id="existingEventsList" style="max-height:250px;overflow-y:auto;border:1px solid #fee822;border-radius:6px;padding:10px;"></div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">✏️ Editar Eventos (Originais e Novos):</div>
+        <div id="existingEventsList" style="max-height:300px;overflow-y:auto;border:1px solid #fee822;border-radius:6px;padding:10px;"></div>
       </div>
 
       <div style="border-top:2px solid #fee822;padding-top:12px;">
@@ -182,7 +177,6 @@
     const panel = document.getElementById('eventsPanel');
     if(panel.style.display === 'none'){
       panel.style.display = 'block';
-      loadEventsList();
       renderExistingEvents();
     } else {
       panel.style.display = 'none';
@@ -342,6 +336,16 @@
     
     if(!confirm(`⚠️ Deletar "${eventName}"?\n\nEsta ação não pode ser desfeita!`)) return;
     
+    // Tentar remover do localStorage também se for evento customizado
+    const saved = localStorage.getItem('customEvents');
+    if(saved){
+      const events = JSON.parse(saved);
+      const updated = events.filter(e => e.nome !== eventName);
+      if(updated.length < events.length){
+        localStorage.setItem('customEvents', JSON.stringify(updated));
+      }
+    }
+    
     card.remove();
     
     localStorage.setItem('boaEventsDeleted', 'true');
@@ -449,6 +453,42 @@
     });
 
     localStorage.setItem('customEvents', JSON.stringify(events));
+    
+    // Inserir o novo evento no DOM também (para editar)
+    const source = document.getElementById('events-source');
+    if(source){
+      const dateISO = dateInput + 'T' + (timeInput || '19:00:00') + '-03:00';
+      const MESES_ABR = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+      const monthAbbr = MESES_ABR[parseInt(month) - 1].toUpperCase();
+      
+      const cardHTML = `
+        <div class="event-card" data-nome="${nome}" data-data="${dataCompleta}" data-local="${local}" data-link="${link}" data-date="${dateISO}">
+          <a href="${link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
+            ${image ? `<img src="${image}" alt="Capa do evento ${nome}">` : `<img src="" alt="Capa do evento ${nome}">`}
+            <div class="event-image-fallback" aria-hidden="true">
+              <div><div class="fallback-title">${nome}</div></div>
+            </div>
+            <div class="date-badge"><div class="day">${day}</div><div class="month">${monthAbbr}</div></div>
+            ${discount ? `<div class="discount-badge">${discount}</div>` : ''}
+            ${link ? `<div class="promo-badge"><i class="fas fa-tag"></i> Compre aqui</div>` : ''}
+          </a>
+          <div class="event-content">
+            <div class="artist-title">${nome}</div>
+            ${subtitle ? `<div class="event-subtitle">${subtitle}</div>` : ''}
+            ${local ? `<div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local)}" target="_blank">${local}</a></div></div></div>` : ''}
+            <div class="event-actions">
+              <a class="btn-ticket" href="${link || '#'}" target="_blank"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a>
+              <button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = cardHTML;
+      source.appendChild(tempDiv.firstElementChild);
+    }
+    
     alert('✅ Evento adicionado com sucesso!');
     
     // Limpar campos
