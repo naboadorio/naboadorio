@@ -25,24 +25,11 @@
       <button class="filter-btn" data-filter="next">Próximo mês</button>
     </div>
     
-    <button onclick="toggleUploadPanel()" id="adminBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;">📸 Adicionar Imagens dos Eventos</button>
-
     <button onclick="toggleEventsPanel()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;">📅 Gerenciar Eventos</button>
 
-    <button onclick="downloadUpdatedHTML()" style="background:#ff9800;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="downloadHTMLBtn">📥 Baixar HTML Atualizado (com eventos novos)</button>
-
-    <button onclick="exportEvents()" style="background:#0066cc;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="exportBtn">📥 Exportar Eventos (Backup)</button>
-
-    <button onclick="triggerImport()" style="background:#0066cc;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="importBtn">📤 Importar Eventos (Restaurar)</button>
-    <input type="file" id="importFile" accept=".json" style="display:none;">
+    <button onclick="downloadUpdatedHTML()" style="background:#ff9800;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="downloadHTMLBtn">📥 Baixar HTML Atualizado</button>
 
     <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
-
-    <div class="image-upload-panel" id="uploadPanel">
-      <div class="upload-title">Selecione suas imagens:</div>
-      <div class="upload-inputs" id="uploadInputs"></div>
-      <button class="upload-btn" onclick="saveImages()">✅ Salvar Imagens</button>
-    </div>
 
     <div class="image-upload-panel" id="eventsPanel" style="display:none;">
       <div class="upload-title">📅 Gerenciar Eventos</div>
@@ -77,14 +64,13 @@
           <strong>🎉 Promoção:</strong>
         </div>
         <input type="text" id="newEventDiscount" placeholder="Desconto (Ex: -10%)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📸 Foto do Evento:</strong>
         </div>
-        <input type="file" id="newEventImage" accept="image/*" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <div id="imagePreview" style="width:100%;height:120px;background:#f9f9f9;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;overflow:hidden;">
-          Clique para adicionar imagem
+        <div id="imagePreview" style="width:100%;height:120px;background:#f9f9f9;border:2px dashed #fee822;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;overflow:hidden;cursor:pointer;transition:all 0.3s;" onclick="document.getElementById('newEventImage').click();">
+          📸 Clique aqui para adicionar imagem
         </div>
+        <input type="file" id="newEventImage" accept="image/*" style="display:none;">
         
         <button class="upload-btn" onclick="addNewEvent()">✅ Adicionar Evento Completo</button>
       </div>
@@ -117,24 +103,25 @@
   <a class="fab-whatsapp" href="https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i><span>Grupo VIP</span></a>
 
   <script>
-  const imageStorage = {};
-  let secretCode = '';
 
-  // Ativar painel por 5 cliques no logo
-  document.addEventListener('keypress', (e) => {
-    secretCode += e.key.toLowerCase();
-    if(secretCode.includes('admin')){
-      document.getElementById('adminBtn').style.display = 'block';
-      document.getElementById('adminEventsBtn').style.display = 'block';
-      document.getElementById('downloadHTMLBtn').style.display = 'block';
-      document.getElementById('exportBtn').style.display = 'block';
-      document.getElementById('importBtn').style.display = 'block';
-      document.getElementById('closeAdminBtn').style.display = 'block';
-      secretCode = '';
-      alert('✅ Painel de admin ativado!');
+  function requestAdminPassword(){
+    const senha = prompt('🔐 Digite a senha do admin:');
+    
+    if(senha === null) return; // Cancelou
+    
+    if(senha === 'admin123'){
+      activateAdmin();
+    } else {
+      alert('❌ Senha incorreta!');
     }
-    if(secretCode.length > 10) secretCode = secretCode.slice(-10);
-  });
+  }
+
+  function activateAdmin(){
+    document.getElementById('adminEventsBtn').style.display = 'block';
+    document.getElementById('downloadHTMLBtn').style.display = 'block';
+    document.getElementById('closeAdminBtn').style.display = 'block';
+    alert('✅ Painel de admin ativado!');
+  }
 
   // Carregar eventos customizados
   function loadCustomEventsToDOM(){
@@ -152,7 +139,7 @@
       const cardHTML = `
         <div class="event-card" data-nome="${evt.nome || ''}" data-data="${evt.data || ''}" data-local="${evt.local || ''}" data-link="${evt.link || ''}" data-date="${dateISO}">
           <a href="${evt.link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
-            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
+            ${evt.image ? `<img src="${evt.image}" alt="Capa do evento ${evt.nome || ''}" style="display:block;width:100%;height:100%;object-fit:cover;">` : `<img src="" alt="Capa do evento ${evt.nome || ''}">`}
             <div class="event-image-fallback" aria-hidden="true">
               <div><div class="fallback-title">${evt.nome || 'Evento'}</div></div>
             </div>
@@ -178,14 +165,6 @@
     });
   }
 
-  function toggleUploadPanel(){
-    const panel = document.getElementById('uploadPanel');
-    panel.classList.toggle('show');
-    if(panel.classList.contains('show')){
-      generateUploadInputs();
-    }
-  }
-
   function toggleEventsPanel(){
     const panel = document.getElementById('eventsPanel');
     if(panel.style.display === 'none'){
@@ -197,15 +176,29 @@
   }
 
   function closeAdminPanel(){
-    document.getElementById('uploadPanel').style.display = 'none';
     document.getElementById('eventsPanel').style.display = 'none';
-    document.getElementById('adminBtn').style.display = 'none';
     document.getElementById('adminEventsBtn').style.display = 'none';
     document.getElementById('downloadHTMLBtn').style.display = 'none';
-    document.getElementById('exportBtn').style.display = 'none';
-    document.getElementById('importBtn').style.display = 'none';
     document.getElementById('closeAdminBtn').style.display = 'none';
-    alert('✅ Painel de admin fechado!');
+    
+    // Limpar o campo de busca (que pode conter "admin")
+    const searchInput = document.querySelector('.search-wrapper input');
+    if(searchInput){
+      searchInput.value = '';
+    }
+    
+    // Resetar filtro para "Todos os eventos"
+    const filterBtn = document.querySelector('[data-filter="all"]');
+    if(filterBtn){
+      filterBtn.click();
+    }
+    
+    // Re-renderizar eventos atualizados
+    setTimeout(() => {
+      applyFilters();
+    }, 100);
+    
+    alert('✅ Painel de admin fechado! Eventos atualizados! 👇');
   }
 
   function downloadUpdatedHTML(){
@@ -360,78 +353,6 @@
     };
   }
 
-  function exportEvents(){
-    const customEvents = localStorage.getItem('customEvents');
-    const events = customEvents ? JSON.parse(customEvents) : [];
-    
-    if(events.length === 0){
-      alert('⚠️ Nenhum evento customizado para exportar!');
-      return;
-    }
-
-    const dataStr = JSON.stringify(events, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `eventos_boa_${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    
-    alert('✅ Eventos exportados com sucesso!\n\nArquivo: eventos_boa_' + new Date().toISOString().slice(0,10) + '.json\n\nGuarde este arquivo em um local seguro!');
-  }
-
-  function triggerImport(){
-    document.getElementById('importFile').click();
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const importInput = document.getElementById('importFile');
-    if(importInput){
-      importInput.addEventListener('change', importEvents);
-    }
-  });
-
-  function importEvents(e){
-    const file = e.target.files[0];
-    if(!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const imported = JSON.parse(event.target.result);
-        
-        if(!Array.isArray(imported)){
-          alert('⚠️ Arquivo inválido! Deve ser um array de eventos.');
-          return;
-        }
-
-        const existing = localStorage.getItem('customEvents');
-        const currentEvents = existing ? JSON.parse(existing) : [];
-        
-        const merged = [...currentEvents];
-        let added = 0;
-        
-        imported.forEach(evt => {
-          if(!merged.some(e => e.nome === evt.nome && e.data === evt.data)){
-            merged.push(evt);
-            added++;
-          }
-        });
-
-        localStorage.setItem('customEvents', JSON.stringify(merged));
-        alert(`✅ Importação concluída!\n\nEventos adicionados: ${added}\nEventos duplicados ignorados: ${imported.length - added}`);
-        
-        location.reload();
-      } catch(err){
-        alert('⚠️ Erro ao importar arquivo:\n' + err.message);
-      }
-    };
-    reader.readAsText(file);
-  }
-
   function renderExistingEvents(){
     const source = document.getElementById('events-source');
     const container = document.getElementById('existingEventsList');
@@ -537,8 +458,8 @@
 
       <div style="margin-bottom: 16px;">
         <label style="display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: #333;">📸 Foto do Evento</label>
-        <input type="file" id="editEventImage" accept="image/*" style="width: 100%; padding: 8px 10px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 12px; box-sizing: border-box;">
-        <div id="editImagePreview" style="margin-top: 8px; width: 100%; height: 80px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; overflow: hidden;">Clique para adicionar foto</div>
+        <div id="editImagePreview" style="margin-top: 8px; width: 100%; height: 100px; background: #f0f0f0; border: 2px dashed #e0e0e0; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; overflow: hidden; cursor: pointer; transition: all 0.3s; margin-bottom: 8px;" onclick="document.getElementById('editEventImage').click();">📸 Clique para adicionar/mudar foto</div>
+        <input type="file" id="editEventImage" accept="image/*" style="display:none;">
       </div>
 
       <div style="display: flex; gap: 10px;">
@@ -557,11 +478,19 @@
     editImageInput.addEventListener('change', function(e){
       const file = e.target.files[0];
       if(file){
+        // Verificar tamanho (máximo 2MB)
+        if(file.size > 2 * 1024 * 1024){
+          alert('⚠️ Imagem muito grande! Máximo 2MB.');
+          return;
+        }
+        
         const reader = new FileReader();
         reader.onload = (event) => {
           editSelectedImage = event.target.result;
           const preview = document.getElementById('editImagePreview');
           preview.innerHTML = `<img src="${editSelectedImage}" style="width:100%; height:100%; object-fit:cover;">`;
+          preview.style.border = '2px solid #4CAF50';
+          console.log('✅ Imagem de edição selecionada!');
         };
         reader.readAsDataURL(file);
       }
@@ -708,17 +637,42 @@
     renderExistingEvents();
   }
   document.addEventListener('DOMContentLoaded', () => {
+    // Detector de "admin" no campo de busca
+    const searchInput = document.getElementById('search');
+    if(searchInput){
+      searchInput.addEventListener('input', function(){
+        if(this.value.toLowerCase().includes('admin')){
+          // Limpa o campo
+          this.value = '';
+          // Pede a senha
+          requestAdminPassword();
+        }
+      });
+    }
+
     const imageInput = document.getElementById('newEventImage');
     if(imageInput){
       imageInput.addEventListener('change', function(e){
         const file = e.target.files[0];
         if(file){
+          // Verificar tamanho (máximo 2MB)
+          if(file.size > 2 * 1024 * 1024){
+            alert('⚠️ Imagem muito grande! Máximo 2MB.\n\nDica: Comprima a imagem antes de enviar.');
+            return;
+          }
+          
           const reader = new FileReader();
           reader.onload = (event) => {
             const preview = document.getElementById('imagePreview');
-            preview.innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+            const base64 = event.target.result;
+            
+            // Mostrar preview
+            preview.innerHTML = `<img src="${base64}" style="width:100%;height:100%;object-fit:cover;">`;
+            preview.style.border = '2px solid #4CAF50';
+            
             // Salvar em variável global
-            window.selectedEventImage = event.target.result;
+            window.selectedEventImage = base64;
+            console.log('✅ Imagem selecionada com sucesso!');
           };
           reader.readAsDataURL(file);
         }
@@ -817,7 +771,7 @@
       const cardHTML = `
         <div class="event-card" data-nome="${nome}" data-data="${dataCompleta}" data-local="${local}" data-link="${link}" data-date="${dateISO}">
           <a href="${link || '#'}" target="_blank" rel="noopener noreferrer" class="event-image-wrapper">
-            ${image ? `<img src="${image}" alt="Capa do evento ${nome}">` : `<img src="" alt="Capa do evento ${nome}">`}
+            ${image ? `<img src="${image}" alt="Capa do evento ${nome}" style="display:block;width:100%;height:100%;object-fit:cover;">` : `<img src="" alt="Capa do evento ${nome}">`}
             <div class="event-image-fallback" aria-hidden="true">
               <div><div class="fallback-title">${nome}</div></div>
             </div>
@@ -870,51 +824,6 @@
     alert('✅ Evento deletado com sucesso!');
     loadEventsList();
     location.reload();
-  }
-
-  function generateUploadInputs(){
-    const container = document.getElementById('uploadInputs');
-    container.innerHTML = '';
-    for(let i = 1; i <= 6; i++){
-      const item = document.createElement('div');
-      item.className = 'upload-item';
-      item.innerHTML = `<label style="width:80px;font-size:11px;font-weight:700;">evento${i}.png</label><input type="file" id="img${i}" accept="image/*" onchange="previewImage(${i})">`;
-      container.appendChild(item);
-    }
-  }
-
-  function previewImage(index){
-    const input = document.getElementById(`img${index}`);
-    if(!input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imageStorage[index] = e.target.result;
-      input.style.borderColor = '#25D366';
-      // Mostra a imagem em tempo real
-      const cards = document.querySelectorAll(`[data-img="${index}"]`);
-      cards.forEach(card => {
-        const img = card.querySelector('img');
-        if(img) {
-          img.src = e.target.result;
-          img.style.display = 'block';
-        }
-      });
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-
-  function saveImages(){
-    if(Object.keys(imageStorage).length === 0){
-      alert('⚠️ Nenhuma imagem selecionada!');
-      return;
-    }
-    try {
-      localStorage.setItem('eventImages', JSON.stringify(imageStorage));
-      alert('✅ Imagens salvas com sucesso!\n\nImagens adicionadas: ' + Object.keys(imageStorage).length + '\n\nAs imagens continuarão aqui mesmo se você fechar o site!');
-      document.getElementById('uploadPanel').classList.remove('show');
-    } catch(e) {
-      alert('⚠️ Erro ao salvar. Tente de novo ou use menos imagens.');
-    }
   }
 
   function loadSavedImages(){
@@ -972,5 +881,6 @@
     }, 50);
   })();
   </script>
+
 </body>
 </html>
