@@ -233,16 +233,10 @@
 
   function pushToGitHub(){
     var token = getGitHubToken();
-    if(!token){
-      showTokenModal(function(){ pushToGitHub(); });
-      return;
-    }
+    if(!token){ showTokenModal(function(){ pushToGitHub(); }); return; }
 
-    if(!confirm('🚀 Publicar todas as alterações no GitHub?\n\nO site será atualizado em alguns segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO)){
-      return;
-    }
+    if(!confirm('🚀 Publicar todas as alterações no GitHub?\n\nO site será atualizado em alguns segundos.')) return;
 
-    // Sincronizar DOM → eventsData antes de publicar
     syncEventsFromDOM();
 
     var loadingDiv = document.createElement('div');
@@ -253,46 +247,57 @@
 
     var fileContent = document.documentElement.outerHTML;
     var eventsJSON = JSON.stringify(eventsData, null, 2);
-    var regex = /const eventsData = \[\s*{[\s\S]*?}\s*\];/;
-    fileContent = fileContent.replace(regex, 'const eventsData = ' + eventsJSON + ';');
-
+    fileContent = fileContent.replace(/const eventsData = \[\s\S]*?\];/, 'const eventsData = ' + eventsJSON + ';');
     var encodedContent = btoa(unescape(encodeURIComponent(fileContent)));
-    var getUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE_PATH;
+    var apiBase = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO;
+    var authHeader = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
 
-    fetch(getUrl, {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
-    })
+    function removeLoading(){ var l=document.getElementById('githubLoading'); if(l) l.remove(); }
+
+    // Passo 1: descobrir o branch padrão do repo
+    fetch(apiBase, { headers: authHeader })
     .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(!data.sha) throw new Error('Arquivo index.html não encontrado no repositório');
-      var sha = data.sha;
-      var message = '📅 Atualização de eventos - ' + new Date().toLocaleString('pt-BR');
-      return fetch(getUrl, {
-        method: 'PUT',
-        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message, content: encodedContent, sha: sha })
+    .then(function(repoInfo){
+      if(repoInfo.message) throw new Error('Repo não encontrado ou token sem permissão: ' + repoInfo.message);
+      var branch = repoInfo.default_branch || 'main';
+
+      // Passo 2: buscar SHA do arquivo no branch certo
+      return fetch(apiBase + '/contents/' + GITHUB_FILE_PATH + '?ref=' + branch, { headers: authHeader })
+      .then(function(r){ return r.json(); })
+      .then(function(fileInfo){
+        if(!fileInfo.sha) throw new Error('index.html não encontrado no branch "' + branch + '"');
+
+        // Passo 3: commit do novo conteúdo
+        return fetch(apiBase + '/contents/' + GITHUB_FILE_PATH, {
+          method: 'PUT',
+          headers: Object.assign({'Content-Type':'application/json'}, authHeader),
+          body: JSON.stringify({
+            message: '📅 Atualização de eventos - ' + new Date().toLocaleString('pt-BR'),
+            content: encodedContent,
+            sha: fileInfo.sha,
+            branch: branch
+          })
+        });
       });
     })
     .then(function(response){
-      if(document.getElementById('githubLoading')) document.getElementById('githubLoading').remove();
+      removeLoading();
       if(response.ok){
         markAsPublished();
-        alert('✅ Publicado com sucesso!\n\nSeu site será atualizado em alguns segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO);
+        alert('✅ Publicado com sucesso!\n\nSite atualizado em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO);
       } else {
-        return response.json().then(function(error){
-          if(error.message && error.message.includes('Bad credentials')){
-            clearGitHubToken();
-            throw new Error('Token inválido ou expirado. Tente publicar novamente para inserir um novo token.');
-          }
-          throw new Error(error.message || 'Erro desconhecido');
+        return response.json().then(function(err){
+          if(err.message && err.message.includes('Bad credentials')) clearGitHubToken();
+          throw new Error(err.message || 'Erro desconhecido');
         });
       }
     })
     .catch(function(error){
-      if(document.getElementById('githubLoading')) document.getElementById('githubLoading').remove();
-      alert('❌ Erro ao publicar:\n\n' + error.message + '\n\nVerifique:\n• Token com permissão "repo"\n• Repositório: ' + GITHUB_OWNER + '/' + GITHUB_REPO + '\n• Arquivo index.html existe no repo');
+      removeLoading();
+      alert('❌ Erro ao publicar:\n\n' + error.message);
     });
   }
+
 
   function showTokenModal(onSuccess){
     var modal = document.createElement('div');
