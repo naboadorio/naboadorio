@@ -217,6 +217,35 @@
   function saveGitHubToken(t){ localStorage.setItem('boa_github_token', t.trim()); }
   function clearGitHubToken(){ localStorage.removeItem('boa_github_token'); }
 
+  // Sincroniza o estado atual do DOM de volta para eventsData antes de publicar
+  function syncEventsFromDOM(){
+    var MESES = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+    var cards = document.querySelectorAll('#events-source .event-card');
+    eventsData.splice(0, eventsData.length);
+    var id = 1;
+    cards.forEach(function(card){
+      var nome      = card.getAttribute('data-nome') || '';
+      var dataFmt   = card.getAttribute('data-data') || '';
+      var local     = card.getAttribute('data-local') || '';
+      var link      = card.getAttribute('data-link') || '';
+      var dateISO   = (card.getAttribute('data-date') || '').substring(0, 10);
+      var subEl     = card.querySelector('.event-subtitle');
+      var discEl    = card.querySelector('.discount-badge');
+      var imgEl     = card.querySelector('img');
+      eventsData.push({
+        id: id++,
+        nome: nome,
+        subtitulo: subEl ? subEl.textContent : '',
+        dataISO: dateISO,
+        dataFormatada: dataFmt,
+        local: local,
+        link: link,
+        desconto: discEl ? discEl.textContent.trim() : '',
+        imagem: (imgEl && imgEl.getAttribute('src') && imgEl.getAttribute('src').length > 5) ? imgEl.getAttribute('src') : ''
+      });
+    });
+  }
+
   function pushToGitHub(){
     var token = getGitHubToken();
     if(!token){
@@ -227,6 +256,9 @@
     if(!confirm('🚀 Publicar todas as alterações no GitHub?\n\nO site será atualizado em alguns segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO)){
       return;
     }
+
+    // Sincronizar DOM → eventsData antes de publicar
+    syncEventsFromDOM();
 
     var loadingDiv = document.createElement('div');
     loadingDiv.id = 'githubLoading';
@@ -257,7 +289,7 @@
       });
     })
     .then(function(response){
-      document.getElementById('githubLoading').remove();
+      if(document.getElementById('githubLoading')) document.getElementById('githubLoading').remove();
       if(response.ok){
         markAsPublished();
         alert('✅ Publicado com sucesso!\n\nSeu site será atualizado em alguns segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO);
@@ -265,7 +297,7 @@
         return response.json().then(function(error){
           if(error.message && error.message.includes('Bad credentials')){
             clearGitHubToken();
-            throw new Error('Token inválido ou expirado. O token foi removido — tente publicar novamente para inserir um novo.');
+            throw new Error('Token inválido ou expirado. Tente publicar novamente para inserir um novo token.');
           }
           throw new Error(error.message || 'Erro desconhecido');
         });
@@ -722,7 +754,8 @@
     card.remove();
     renderExistingEvents();
     if(window._boa) window._boa.refresh();
-    alert('✅ Evento deletado!');
+    markAsChanged();
+    alert('✅ Evento deletado! Clique em "💾 Publicar alterações" para publicar no site.');
   }
 
   // ── Adicionar novo evento ──────────────────────────────
@@ -765,7 +798,8 @@
     loadCustomEventsToDOM();
     if(window._boa) window._boa.refresh();
     renderExistingEvents();
-    alert('✅ Evento "'+nome+'" adicionado!');
+    markAsChanged();
+    alert('✅ Evento "'+nome+'" adicionado! Clique em "💾 Publicar alterações" para publicar no site.');
   }
 
   // ── Editar evento ──────────────────────────────────────
@@ -964,7 +998,8 @@
       if(monEl) monEl.textContent=MESES_ABR[+mes-1];
 
       document.body.removeChild(modal);
-      alert('✅ Salvo!');
+      markAsChanged();
+      alert('✅ Salvo! Clique em "💾 Publicar alterações" para publicar no site.');
       setTimeout(function(){ if(window._boa) window._boa.refresh(); renderExistingEvents(); }, 100);
     };
   }
