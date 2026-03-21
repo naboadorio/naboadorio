@@ -12,8 +12,6 @@
   <style>
     /* Esconder admin no celular */
     @media(max-width:767px) {
-      #enterEditBtn,
-      #exitEditBtn,
       #adminEventsBtn,
       #downloadHTMLBtn,
       #githubBtnRow,
@@ -60,19 +58,6 @@
     </div>
 
     <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
-
-    <button onclick="toggleEditMode()" style="background:#6c63ff;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="enterEditBtn">✏️ Entrar em Modo Edição</button>
-
-    <button onclick="toggleEditMode()" style="background:#ff6b6b;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="exitEditBtn">✕ Sair do Modo Edição</button>
-
-    <!-- TOGGLE MODO PÚBLICO/ADMIN -->
-    <div id="modeToggle" style="background:linear-gradient(135deg,#fff,#f9f9f9);padding:12px 16px;text-align:center;border-bottom:2px solid var(--secondary);display:none;">
-      <div style="font-size:11px;font-weight:700;color:var(--text-gray);margin-bottom:8px;text-transform:uppercase;">Modo de Visualização</div>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button onclick="setViewMode('public')" id="publicModeBtn" style="background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px;transition:all 0.3s;flex:1;">👁️ Modo Público</button>
-        <button onclick="setViewMode('edit')" id="editModeBtn" style="background:#fff;color:var(--primary);border:2px solid var(--primary);padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px;transition:all 0.3s;flex:1;">✏️ Modo Edição</button>
-      </div>
-    </div>
 
     <div class="image-upload-panel" id="eventsPanel">
       <div class="upload-title">📅 Gerenciar Eventos</div>
@@ -452,29 +437,6 @@
 
   function setViewMode(mode){
     currentViewMode = mode;
-    
-    var publicBtn = document.getElementById('publicModeBtn');
-    var editBtn = document.getElementById('editModeBtn');
-    var eventsPanel = document.getElementById('eventsPanel');
-    
-    if(mode === 'public'){
-      publicBtn.style.background = 'var(--primary)';
-      publicBtn.style.color = '#fff';
-      publicBtn.style.border = 'none';
-      editBtn.style.background = '#fff';
-      editBtn.style.color = 'var(--primary)';
-      editBtn.style.border = '2px solid var(--primary)';
-      eventsPanel.style.display = 'none';
-    } else {
-      publicBtn.style.background = '#fff';
-      publicBtn.style.color = 'var(--primary)';
-      publicBtn.style.border = '2px solid var(--primary)';
-      editBtn.style.background = 'var(--primary)';
-      editBtn.style.color = '#fff';
-      editBtn.style.border = 'none';
-      eventsPanel.style.display = 'block';
-    }
-    
     renderEventsFromData();
   }
 
@@ -499,10 +461,18 @@
     var senha = document.getElementById('adminPassword').value;
     if(senha === ADMIN_PASSWORD){
       closePasswordModal();
-      document.getElementById('modeToggle').style.display = 'block';
-      setViewMode('public');
-      toggleEventsPanel();
+      // Entrar direto no painel de edição
+      isInEditMode = true;
+      currentViewMode = 'edit';
+      document.getElementById('adminEventsBtn').style.display = 'block';
+      document.getElementById('downloadHTMLBtn').style.display = 'block';
+      document.getElementById('githubBtnRow').style.display = 'flex';
+      document.getElementById('closeAdminBtn').style.display = 'block';
+      document.getElementById('eventsPanel').classList.add('show');
+      renderEventsFromData();
       renderExistingEvents();
+      updatePublishUI();
+      window.scrollTo(0, 0);
     } else {
       alert('❌ Senha incorreta!');
       document.getElementById('adminPassword').value = '';
@@ -530,25 +500,17 @@
   var isPreviewMode = false;
   
   function closeAdminPanel(){
-    document.getElementById('eventsPanel').classList.remove('show');
-    document.getElementById('modeToggle').style.display = 'none';
-    document.getElementById('enterEditBtn').style.display = 'none';
-    document.getElementById('adminEventsBtn').style.display   = 'none';
-    document.getElementById('downloadHTMLBtn').style.display  = 'none';
-    document.getElementById('closeAdminBtn').style.display    = 'none';
-    document.getElementById('githubBtnRow').style.display = 'none';
-    
+    isInEditMode = false;
     currentViewMode = 'public';
+    document.getElementById('eventsPanel').classList.remove('show');
+    document.getElementById('adminEventsBtn').style.display = 'none';
+    document.getElementById('downloadHTMLBtn').style.display = 'none';
+    document.getElementById('githubBtnRow').style.display = 'none';
+    document.getElementById('closeAdminBtn').style.display = 'none';
+    updatePublishUI();
     renderEventsFromData();
-    
     var searchInput = document.querySelector('.search-wrapper input');
     if(searchInput) searchInput.value = '';
-    setTimeout(function(){
-      if(window._boa && window._boa.resetAllFilters){ 
-        window._boa.resetAllFilters();
-      }
-    }, 50);
-    alert('✅ Painel fechado!');
   }
 
   // Sistema de ativação de admin - Escrever "admin" na busca
@@ -564,45 +526,6 @@
 
   // Variável para rastrear modo edição
   var isInEditMode = false;
-
-  function toggleEditMode(){
-    isInEditMode = !isInEditMode;
-    
-    if(isInEditMode){
-      // Entrar no modo edição
-      document.getElementById('exitEditBtn').style.display = 'block';
-      document.getElementById('enterEditBtn').style.display = 'none';
-      document.getElementById('adminEventsBtn').style.display = 'block';
-      document.getElementById('downloadHTMLBtn').style.display = 'block';
-      document.getElementById('githubBtnRow').style.display = 'flex';
-      document.getElementById('closeAdminBtn').style.display = 'block';
-      document.getElementById('modeToggle').style.display = 'block';
-      
-      setViewMode('edit');
-      
-      window.scrollTo(0, 0);
-      
-      alert('✏️ Modo Edição Ativado!\n\nVocê pode:\n✏️ Editar eventos\n🗑️ Deletar eventos\n➕ Adicionar novos\n\nAo terminar, clique "Sair do Modo Edição"');
-    } else {
-      // Sair do modo edição
-      document.getElementById('exitEditBtn').style.display = 'none';
-      document.getElementById('enterEditBtn').style.display = 'block';
-      document.getElementById('adminEventsBtn').style.display = 'none';
-      document.getElementById('downloadHTMLBtn').style.display = 'none';
-      document.getElementById('githubBtnRow').style.display = 'none';
-      document.getElementById('closeAdminBtn').style.display = 'none';
-      document.getElementById('modeToggle').style.display = 'none';
-      
-      var panel = document.getElementById('eventsPanel');
-      if(panel) panel.classList.remove('show');
-      
-      setViewMode('public');
-      
-      window.scrollTo(0, 0);
-      
-      alert('✅ Você voltou a ver o site como o público vê!');
-    }
-  }
 
   function toggleEventsPanel(){
     var p = document.getElementById('eventsPanel');
@@ -1199,38 +1122,25 @@
 
 
 <!-- PUBLICAÇÃO UI -->
-<div id="publishStatus" style="
+<div id="publishBanner" style="
 display:none;
 position:fixed;
-bottom:80px;
-right:16px;
-background:#fff;
-padding:8px 12px;
-border-radius:20px;
-font-size:12px;
-box-shadow:0 2px 10px rgba(0,0,0,0.2);
-z-index:9999;">
-🟢 Publicado
-</div>
-
-<button id="publishFloatingBtn"
-onclick="publishAll()"
-style="
-display:none;
-position:fixed;
-bottom:20px;
-right:16px;
-background:#FF2A6D;
+bottom:0;
+left:0;
+right:0;
+background:linear-gradient(135deg,#FF2A6D,#ff0066);
 color:#fff;
-border:none;
-padding:14px 18px;
-border-radius:50px;
-font-weight:800;
-cursor:pointer;
-z-index:9999;
-box-shadow:0 6px 20px rgba(255,42,109,.4);">
-💾 Publicar alterações
-</button>
+padding:14px 20px;
+z-index:99998;
+display:none;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+box-shadow:0 -4px 20px rgba(255,42,109,.4);
+font-family:'Nunito',sans-serif;">
+  <span style="font-weight:700;font-size:13px;">🟡 Alterações não publicadas</span>
+  <button onclick="publishAll()" id="publishFloatingBtn" style="background:#fff;color:#FF2A6D;border:none;padding:10px 20px;border-radius:30px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;">💾 Publicar agora</button>
+</div>
 
 
 <script>
@@ -1250,21 +1160,12 @@ function markAsPublished(){
 }
 
 function updatePublishUI(){
-  var btn    = document.getElementById('publishFloatingBtn');
-  var status = document.getElementById('publishStatus');
-  if(!btn || !status) return;
-  if(!isInEditMode){
-    btn.style.display    = 'none';
-    status.style.display = 'none';
-    return;
-  }
-  status.style.display = 'block';
-  if(hasUnpublishedChanges){
-    btn.style.display  = 'flex';
-    status.innerHTML   = '🟡 Alterações não publicadas';
+  var banner = document.getElementById('publishBanner');
+  if(!banner) return;
+  if(!isInEditMode || !hasUnpublishedChanges){
+    banner.style.display = 'none';
   } else {
-    btn.style.display  = 'none';
-    status.innerHTML   = '🟢 Publicado';
+    banner.style.display = 'flex';
   }
 }
 
@@ -1308,14 +1209,7 @@ window.addEventListener('load', function(){
   };
 })();
 
-// Hook: toggleEditMode atualiza UI de publicação
-(function(){
-  var _toggle = toggleEditMode;
-  toggleEditMode = function(){
-    _toggle();
-    updatePublishUI();
-  };
-})();
+
 
 </script>
 </body>
