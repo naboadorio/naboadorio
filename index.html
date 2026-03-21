@@ -7,108 +7,49 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    :root{--primary:#FF2A6D;--secondary:#fee822;--bg-light:#f5f5f5;--text-dark:#1a1a1a;--text-gray:#777;--border-gray:#e0e0e0;--white:#fff}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Nunito',sans-serif;background:var(--bg-light);color:var(--text-dark);line-height:1.6}a{color:inherit;text-decoration:none}.container{max-width:480px;margin:0 auto;background:var(--white);min-height:100vh;display:flex;flex-direction:column}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:12px 12px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #fee822;}.logo{flex-shrink:0;width:145px;height:72px;display:flex;align-items:center;justify-content:center}.logo img{height:95px;width:auto;display:block;}.search-wrapper{flex:1;position:relative;min-width:120px}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;color:#1a1a1a;transition:all .2s ease;}.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#999;font-size:12px}.coupon-banner{background:linear-gradient(135deg,var(--secondary),#ffd700);padding:20px 16px;display:flex;align-items:center;gap:12px}.coupon-text{font-size:22px;font-weight:800}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.filter-btn{background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:20px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s;white-space:nowrap;flex-shrink:0;}.filter-btn:hover{background:var(--primary);color:#fff;transform:translateY(-2px);box-shadow:0 2px 8px rgba(255,42,109,0.3)}.filter-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(255,42,109,0.3);border:none}.section-header{padding:18px 16px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}.events-grid{padding:0 12px 24px;display:flex;flex-direction:column;gap:16px}.event-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:.3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,42,109,.08)}.event-card:hover{transform:translateY(-8px);box-shadow:0 12px 24px rgba(255,42,109,.15)}.event-image-wrapper{position:relative;display:block;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#f5f5f5,#e0e0e0);overflow:hidden;border-radius:12px;text-decoration:none}.event-image-wrapper img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center}.event-image-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;background:linear-gradient(135deg,#FFE0EA,#FFF0C2);color:#9c1f45}.event-image-fallback>div{width:100%}.event-image-fallback .fallback-title{font-weight:900;letter-spacing:.3px;font-size:18px;line-height:1.2}.event-image-fallback .fallback-sub{margin-top:6px;font-size:12px;font-weight:800;color:#b34e6a;text-transform:uppercase}.event-image-wrapper.no-image img{display:none}.date-badge,.discount-badge{position:absolute;top:12px;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border-radius:10px;font-weight:800;box-shadow:0 2px 8px rgba(255,42,109,.3)}.date-badge{left:12px;padding:10px 8px;min-width:50px;text-align:center}.date-badge .day{font-size:18px;line-height:1.2}.date-badge .month{font-size:10px;font-weight:700;letter-spacing:.5px}.discount-badge{right:12px;padding:8px 12px;border-radius:18px;font-size:13px}.promo-badge{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.98);color:var(--primary);padding:8px 14px;border-radius:16px;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.15);border:1px solid rgba(255,42,109,.2)}.event-content{padding:16px}.artist-title{font-size:16px;font-weight:900;letter-spacing:.3px}.event-subtitle{font-size:12px;font-weight:800;color:var(--text-gray);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}.event-location{font-size:13px;color:var(--text-gray);margin:10px 0 12px;display:flex;align-items:flex-start;gap:6px}.event-location i{color:var(--primary);margin-top:2px}.event-location a{text-decoration:underline}.event-datetime{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.3px}.event-actions{display:flex;gap:10px;margin-top:12px}.btn-ticket,.btn-share{flex:1;padding:12px 14px;border-radius:12px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;border:none;cursor:pointer;transition:all .3s;text-decoration:none}.btn-ticket{background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff}.btn-ticket:hover{transform:translateY(-2px)}.btn-share{background:#f0f0f0;color:var(--text-dark);border:none}.btn-share:hover{background:var(--primary);color:#fff;transform:translateY(-2px)}.no-results{padding:40px 16px;text-align:center;color:var(--text-gray);font-weight:600}footer{margin-top:auto;background:linear-gradient(135deg,#fff,#f9f9f9);padding:12px 16px;text-align:center;border-top:2px solid var(--secondary)}.footer-website{font-size:11px;color:var(--text-gray);margin-bottom:8px;font-weight:600}.footer-buttons{display:flex;gap:12px;flex-direction:column}.footer-btn{padding:10px 14px;border-radius:10px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;text-decoration:none;transition:all .3s}.btn-whatsapp{background:linear-gradient(135deg,#25D366,#20ba58)}.btn-instagram{background:linear-gradient(135deg,#E1306C,#C13584)}.fab-whatsapp{position:fixed;bottom:20px;right:16px;z-index:9999;display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,#25D366,#20ba58);color:#fff;padding:9px 14px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;box-shadow:0 4px 14px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s}.fab-whatsapp:hover{transform:translateY(-3px)}.image-upload-panel{background:#fff;padding:16px;margin:12px;border-radius:12px;border:2px dashed var(--primary);display:none}.image-upload-panel.show{display:block}.upload-title{font-weight:700;color:var(--primary);margin-bottom:12px;font-size:14px}.upload-inputs{display:grid;grid-template-columns:1fr;gap:8px;max-height:200px;overflow-y:auto}.upload-item{display:flex;align-items:center;gap:8px;font-size:12px}.upload-item input{flex:1;padding:6px 8px;border:1px solid var(--border-gray);border-radius:6px;font-size:11px}.upload-btn{background:var(--primary);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px;margin-top:8px;width:100%;transition:all .3s}.upload-btn:hover{background:#ff0066}@media(max-width:479px){.container{max-width:100%}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:12px 12px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #fee822;}.logo{width:125px;flex-shrink:0;}.logo img{height:85px;width:auto;}.search-wrapper{flex:1;position:relative;}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;}.search-icon{left:10px;font-size:12px;}.artist-title{font-size:14px}.fab-whatsapp{padding:8px 12px;font-size:11px;bottom:14px;right:12px}}@media(min-width:600px){.container{max-width:100%;background:var(--bg-light)}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:30px 16px;display:flex;align-items:center;gap:18px;border-bottom:4px solid #fee822;}.logo{width:155px}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.events-grid{padding:0 20px 32px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px}.footer-buttons{flex-direction:row}.footer-btn{flex:1}}@media(min-width:1024px){.container{max-width:1100px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.08)}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:30px 16px;display:flex;align-items:center;gap:18px;border-bottom:4px solid #fee822;}.logo{width:165px}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;color:#1a1a1a;transition:all .2s ease;}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.events-grid{padding:0 28px 40px;grid-template-columns:repeat(3,1fr);gap:24px}footer{padding:32px 32px}.artist-title{font-size:17px}.btn-ticket,.btn-share{font-size:12px;padding:9px 10px;gap:4px}.btn-ticket i,.btn-share i{font-size:11px}}
-  </style>
-  <style>
-    /* Estilos para o Painel de Publicação Admin */
-    #publishStatus {
-      position: fixed;
-      bottom: 80px;
-      right: 16px;
-      background: #fff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 800;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 10001;
-      display: none;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid var(--border-gray);
-    }
-    #publishFloatingBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 16px;
-      background: linear-gradient(135deg, var(--primary), #ff0066);
-      color: #fff;
-      border: none;
-      padding: 14px 24px;
-      border-radius: 50px;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-      z-index: 10001;
-      box-shadow: 0 6px 20px rgba(255,42,109,0.4);
-      display: none;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.3s;
-    }
-    @media(max-width:767px) {
-      #enterEditBtn, #exitEditBtn, #adminEventsBtn, #downloadHTMLBtn, #githubBtn, #closeAdminBtn {
-        display: none !important;
-      }
-    }
+    :root{--primary:#FF2A6D;--secondary:#fee822;--bg-light:#f5f5f5;--text-dark:#1a1a1a;--text-gray:#777;--border-gray:#e0e0e0;--white:#fff}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Nunito',sans-serif;background:var(--bg-light);color:var(--text-dark);line-height:1.6}a{color:inherit;text-decoration:none}.container{max-width:480px;margin:0 auto;background:var(--white);min-height:100vh;display:flex;flex-direction:column}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:12px 12px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #fee822;}.logo{flex-shrink:0;width:145px;height:72px;display:flex;align-items:center;justify-content:center}.logo img{height:95px;width:auto;display:block;}.search-wrapper{flex:1;position:relative;min-width:120px}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;color:#1a1a1a;transition:all .2s ease;}.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#999;font-size:12px}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.filter-btn{background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:20px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s;white-space:nowrap;flex-shrink:0;}.filter-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(255,42,109,0.3);border:none}.section-header{padding:18px 16px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}.events-grid{padding:0 12px 24px;display:flex;flex-direction:column;gap:16px}.event-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:.3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,42,109,.08)}.event-image-wrapper{position:relative;display:block;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#f5f5f5,#e0e0e0);overflow:hidden;border-radius:12px}.event-image-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;background:linear-gradient(135deg,#FFE0EA,#FFF0C2);color:#9c1f45}.fallback-title{font-weight:900;font-size:18px}.date-badge,.discount-badge{position:absolute;top:12px;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border-radius:10px;font-weight:800;box-shadow:0 2px 8px rgba(255,42,109,.3)}.date-badge{left:12px;padding:10px 8px;min-width:50px;text-align:center}.discount-badge{right:12px;padding:8px 12px;border-radius:18px;font-size:13px}.promo-badge{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.98);color:var(--primary);padding:8px 14px;border-radius:16px;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.15)}.event-content{padding:16px}.artist-title{font-size:16px;font-weight:900}.event-subtitle{font-size:12px;color:var(--text-gray);text-transform:uppercase}.event-location{font-size:13px;color:var(--text-gray);margin:10px 0 12px;display:flex;align-items:flex-start;gap:6px}.event-location i{color:var(--primary)}.event-actions{display:flex;gap:10px;margin-top:12px}.btn-ticket,.btn-share{flex:1;padding:12px 14px;border-radius:12px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;text-decoration:none}.btn-ticket{background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff}.btn-share{background:#f0f0f0;color:var(--text-dark)}footer{margin-top:auto;background:#fff;padding:24px 16px;text-align:center;border-top:2px solid var(--secondary)}.footer-website{font-size:11px;color:var(--text-gray);margin-bottom:8px}.footer-buttons{display:flex;gap:12px;flex-direction:column}.footer-btn{padding:12px;border-radius:10px;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}.btn-whatsapp{background:#25D366}.btn-instagram{background:#E1306C}.fab-whatsapp{position:fixed;bottom:20px;right:16px;z-index:9999;background:#25D366;color:#fff;padding:12px 20px;border-radius:50px;font-weight:800;box-shadow:0 4px 14px rgba(37,211,102,.45);display:flex;align-items:center;gap:8px}.image-upload-panel{background:#fff;padding:16px;margin:12px;border-radius:12px;border:2px dashed var(--primary);display:none}#publishStatus{position:fixed;bottom:80px;right:16px;background:#fff;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:10001;display:none;border:1px solid var(--border-gray)}#publishFloatingBtn{position:fixed;bottom:20px;right:16px;background:var(--primary);color:#fff;border:none;padding:14px 24px;border-radius:50px;font-weight:800;cursor:pointer;z-index:10001;display:none}
   </style>
 </head>
 <body>
   <div class="container">
-    
-  <div class="sticky-wrapper">
-    <header class="header">
-      <div class="logo"><img src="logo.png"></div>
-      <div class="search-wrapper"><i class="fa fa-search search-icon"></i><input type="text" id="search" placeholder="Buscar eventos, atrações, local ou datas"></div>
-    </header>
+    <div class="sticky-wrapper">
+      <header class="header">
+        <div class="logo"><img src="logo.png"></div>
+        <div class="search-wrapper"><i class="fa fa-search search-icon"></i><input type="text" id="search" placeholder="Buscar eventos, atrações ou local"></div>
+      </header>
 
-    <div class="filter-section" id="filters">
-      <button class="filter-btn active" data-filter="all">Todos os eventos</button>
-      <button class="filter-btn" data-filter="this">Este mês</button>
-      <button class="filter-btn" data-filter="next">Próximo mês</button>
-    </div>
-    
-    <div id="passwordModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;">
-      <div style="background:#fff;border-radius:16px;padding:40px;max-width:380px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);text-align:center;">
-        <div style="font-size:48px;margin-bottom:20px;">🔐</div>
-        <div style="font-size:24px;font-weight:800;color:var(--primary);margin-bottom:10px;">Painel Admin</div>
-        <div style="font-size:14px;color:var(--text-gray);margin-bottom:30px;">Digite a senha para acessar</div>
-        <input type="password" id="adminPassword" placeholder="Senha" style="width:100%;padding:14px;border:2px solid var(--border-gray);border-radius:8px;font-size:16px;margin-bottom:16px;font-family:Nunito;box-sizing:border-box;" onkeypress="if(event.key==='Enter') checkAdminPassword()">
-        <button onclick="checkAdminPassword()" style="width:100%;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border:none;padding:14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;margin-bottom:10px;transition:all 0.3s;">Acessar</button>
-        <button onclick="closePasswordModal()" style="width:100%;background:var(--border-gray);color:var(--text-dark);border:none;padding:14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;">Cancelar</button>
+      <div class="filter-section" id="filters">
+        <button class="filter-btn active" data-filter="all">Todos os eventos</button>
+        <button class="filter-btn" data-filter="this">Este mês</button>
+        <button class="filter-btn" data-filter="next">Próximo mês</button>
+      </div>
+
+      <div id="passwordModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;">
+        <div style="background:#fff;border-radius:16px;padding:30px;max-width:350px;width:90%;text-align:center;">
+          <div style="font-size:20px;font-weight:800;color:var(--primary);margin-bottom:20px;">Painel Admin</div>
+          <input type="password" id="adminPassword" placeholder="Senha" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;" onkeypress="if(event.key==='Enter') checkAdminPassword()">
+          <button onclick="checkAdminPassword()" style="width:100%;background:var(--primary);color:#fff;border:none;padding:12px;border-radius:8px;font-weight:700;">Acessar</button>
+          <button onclick="closePasswordModal()" style="width:100%;background:#eee;margin-top:10px;border:none;padding:12px;border-radius:8px;">Cancelar</button>
+        </div>
+      </div>
+
+      <button onclick="openPasswordModal()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px;margin:12px;border-radius:8px;font-weight:700;width:calc(100% - 24px);display:none;">📅 Gerenciar Eventos</button>
+      <button onclick="toggleEditMode()" id="enterEditBtn" style="background:#6c63ff;color:#fff;border:none;padding:12px;margin:12px;border-radius:8px;font-weight:700;width:calc(100% - 24px);display:none;">✏️ Modo Edição</button>
+      <button onclick="toggleEditMode()" id="exitEditBtn" style="background:#ff6b6b;color:#fff;border:none;padding:12px;margin:12px;border-radius:8px;font-weight:700;width:calc(100% - 24px);display:none;">✕ Sair do Modo Edição</button>
+
+      <div class="image-upload-panel" id="eventsPanel">
+        <div id="existingEventsList"></div>
+        <div style="border-top:2px solid #fee822;padding-top:12px;margin-top:12px;">
+          <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
+          <input type="text" id="newEventSubtitle" placeholder="Subtítulo/Artista" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
+          <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
+          <input type="text" id="newEventLocal" placeholder="Local" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
+          <input type="text" id="newEventLink" placeholder="Link de compra" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
+          <input type="text" id="newEventDiscount" placeholder="Desconto (Ex: -10%)" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid #ddd;border-radius:6px;">
+          <button class="upload-btn" onclick="addNewEvent()" style="width:100%;background:var(--primary);color:#fff;border:none;padding:12px;border-radius:6px;font-weight:700;">✅ Salvar Evento</button>
+        </div>
       </div>
     </div>
-
-    <button onclick="openPasswordModal()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;">📅 Gerenciar Eventos</button>
-    <button onclick="downloadUpdatedHTML()" style="background:#ff9800;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="downloadHTMLBtn">📥 Baixar HTML Atualizado</button>
-    <button onclick="pushToGitHub()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="githubBtn">🐙 Sincronizar com GitHub</button>
-    <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
-    <button onclick="toggleEditMode()" style="background:#6c63ff;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="enterEditBtn">✏️ Entrar em Modo Edição</button>
-    <button onclick="toggleEditMode()" style="background:#ff6b6b;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="exitEditBtn">✕ Sair do Modo Edição</button>
-
-    <div id="modeToggle" style="background:linear-gradient(135deg,#fff,#f9f9f9);padding:12px 16px;text-align:center;border-bottom:2px solid var(--secondary);display:none;">
-      <div style="font-size:11px;font-weight:700;color:var(--text-gray);margin-bottom:8px;text-transform:uppercase;">Modo de Visualização</div>
-      <div style="display:flex;gap:8px;justify-content:center;">
-        <button onclick="setViewMode('public')" id="publicModeBtn" style="background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px;transition:all 0.3s;flex:1;">👁️ Modo Público</button>
-        <button onclick="setViewMode('edit')" id="editModeBtn" style="background:#fff;color:var(--primary);border:2px solid var(--primary);padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px;transition:all 0.3s;flex:1;">✏️ Modo Edição</button>
-      </div>
-    </div>
-
-    <div class="image-upload-panel" id="eventsPanel">
-      <div class="upload-title">📅 Gerenciar Eventos</div>
-      <div id="existingEventsList" style="max-height:300px;overflow-y:auto;border:1px solid #fee822;border-radius:6px;padding:10px;margin-bottom:16px;"></div>
-      <div style="border-top:2px solid #fee822;padding-top:12px;">
-        <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <input type="text" id="newEventSubtitle" placeholder="Subtítulo/Artista" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <input type="time" id="newEventTime" value="14:00" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <input type="text" id="newEventLocal" placeholder="Local" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <input type="text" id="newEventLink" placeholder="Link" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <input type="text" id="newEventDiscount" placeholder="Desconto" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;">
-        <button class="upload-btn" onclick="addNewEvent()">✅ Salvar Evento</button>
-      </div>
-    </div>
-  </div>
 
     <div class="section-header"><i class="far fa-calendar-alt"></i><span>Próximos eventos</span></div>
     <div id="events-source" style="display:none"></div>
@@ -116,143 +57,103 @@
 
     <footer>
       <div class="footer-website">www.naboadorio.com.br</div>
+      <div class="footer-buttons">
+        <a class="footer-btn btn-whatsapp" href="https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd" target="_blank"><i class="fab fa-whatsapp"></i><span>Entrar no grupo do WhatsApp</span></a>
+        <a class="footer-btn btn-instagram" href="https://instagram.com/naboadorio" target="_blank"><i class="fab fa-instagram"></i><span>Seguir no Instagram</span></a>
+      </div>
     </footer>
   </div>
+
+  <a class="fab-whatsapp" href="https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd" target="_blank"><i class="fab fa-whatsapp"></i><span>Grupo VIP</span></a>
 
   <div id="publishStatus"></div>
   <button id="publishFloatingBtn" onclick="publishAll()">💾 Publicar alterações</button>
 
   <script>
-  let hasUnpublishedChanges = false;
-  let isInEditMode = false;
-  let currentViewMode = 'public';
+    let hasUnpublishedChanges = false;
+    let isInEditMode = false;
+    let currentViewMode = 'public';
 
-  /* =====================================================
-     DADOS CENTRALIZADOS (EVENTOS ORIGINAIS)
-  ===================================================== */
-  const eventsData = [
-    {id:1, nome:"O Grito da Copa", subtitulo:"João Gomes", dataISO:"2026-03-22", dataFormatada:"22/03 • Domingo • 14h", local:"Ilha do Itanhangá - Barra da Tijuca", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA", desconto:"-10%", imagem:""},
-    {id:2, nome:"Paralamas do Sucesso", subtitulo:"Rock / MPB", dataISO:"2026-05-16", dataFormatada:"16/05 • Sábado • 19h", local:"Bangu Shopping (Arena Bangu) - Bangu", link:"https://www.sympla.com.br/paralamas-do-sucesso", desconto:"-5%", imagem:""},
-    {id:3, nome:"Festa Geração 80 - 20 anos", subtitulo:"gravação do audiovisual", dataISO:"2026-04-04", dataFormatada:"04/04 • Sábado • 19h", local:"Bangu Shopping (Arena Bangu) - Bangu", link:"https://www.sympla.com.br/evento/festa-geracao-80-20-anos-04abr-sab-bangu-shopping/3293624?afid=108666", desconto:"-5%", imagem:""},
-    {id:4, nome:"Suel e Convidados", subtitulo:"Por do Suel", dataISO:"2026-04-12", dataFormatada:"12/04 • Domingo • 16h", local:"Ilha do Itanhangá - Barra da Tijuca", link:"https://checkout2.bilheteriadigital.com/por-do-suel-11-de-abril", desconto:"-10%", imagem:""},
-    {id:5, nome:"Festival Nova Iguaçu", subtitulo:"Sorriso Maroto, Delacruz, Fabinho e Pagode do Adame", dataISO:"2026-04-26", dataFormatada:"26/04 • Domingo • 13h", local:"Shopping Nova Iguaçu", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA", desconto:"-10%", imagem:""},
-    {id:6, nome:"Capital do Samba", subtitulo:"Alcione • Alexandre Pires • Dilsinho • Péricles • Belo", dataISO:"2026-05-16", dataFormatada:"16/05 • Sábado • 16h", local:"Marina da Glória - Glória", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA", desconto:"-5%", imagem:""},
-    {id:7, nome:"Capital do Samba", subtitulo:"Raça Negra • Ferrugem • Sorriso Maroto • Menos é Mais • Samba 90 Graus", dataISO:"2026-05-17", dataFormatada:"17/05 • Domingo • 15h", local:"Marina da Glória - Glória", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA", desconto:"-5%", imagem:""}
-  ];
+    const eventsData = [
+      {id:1, nome:"O Grito da Copa", subtitulo:"João Gomes", dataISO:"2026-03-22", dataFormatada:"22/03 • Dom • 14h", local:"Ilha do Itanhangá - Barra da Tijuca", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA", desconto:"-10%"},
+      {id:2, nome:"Paralamas do Sucesso", subtitulo:"Rock / MPB", dataISO:"2026-05-16", dataFormatada:"16/05 • Sáb • 19h", local:"Bangu Shopping - Bangu", link:"https://www.sympla.com.br/paralamas-do-sucesso", desconto:"-5%"},
+      {id:3, nome:"Festa Geração 80", subtitulo:"gravação do audiovisual", dataISO:"2026-04-04", dataFormatada:"04/04 • Sáb • 19h", local:"Bangu Shopping - Bangu", link:"https://www.sympla.com.br/evento/festa-geracao-80-20-anos-04abr-sab-bangu-shopping/3293624?afid=108666", desconto:"-5%"},
+      {id:4, nome:"Suel e Convidados", subtitulo:"Por do Suel", dataISO:"2026-04-12", dataFormatada:"12/04 • Dom • 16h", local:"Ilha do Itanhangá - Barra da Tijuca", link:"https://checkout2.bilheteriadigital.com/por-do-suel-11-de-abril", desconto:"-10%"},
+      {id:5, nome:"Festival Nova Iguaçu", subtitulo:"Sorriso Maroto e outros", dataISO:"2026-04-26", dataFormatada:"26/04 • Dom • 13h", local:"Shopping Nova Iguaçu", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA", desconto:"-10%"},
+      {id:6, nome:"Capital do Samba", subtitulo:"Alcione • Péricles • Belo", dataISO:"2026-05-16", dataFormatada:"16/05 • Sáb • 16h", local:"Marina da Glória - Glória", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA", desconto:"-5%"},
+      {id:7, nome:"Capital do Samba", subtitulo:"Raça Negra • Sorriso Maroto", dataISO:"2026-05-17", dataFormatada:"17/05 • Dom • 15h", local:"Marina da Glória - Glória", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA", desconto:"-5%"}
+    ];
 
-  /* =====================================================
-     GITHUB & DOWNLOAD (CONFIGURADO)
-  ===================================================== */
-  const GITHUB_OWNER = 'naboadorio';      
-  const GITHUB_REPO  = 'naboadorio';      
-  const GITHUB_TOKEN = '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'; 
-  const GITHUB_FILE_PATH = 'index.html';
+    const GITHUB_OWNER = 'naboadorio';
+    const GITHUB_REPO  = 'naboadorio';
+    const GITHUB_TOKEN = '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';
+    const GITHUB_FILE_PATH = 'index.html';
 
-  function markAsChanged(){ hasUnpublishedChanges = true; updatePublishUI(); localStorage.setItem('draftEvents', JSON.stringify(eventsData)); }
-  function markAsPublished(){ hasUnpublishedChanges = false; updatePublishUI(); localStorage.removeItem('draftEvents'); }
+    function markAsChanged(){ hasUnpublishedChanges = true; updatePublishUI(); localStorage.setItem('draftEvents', JSON.stringify(eventsData)); }
+    function markAsPublished(){ hasUnpublishedChanges = false; updatePublishUI(); localStorage.removeItem('draftEvents'); }
 
-  function updatePublishUI(){
-    const btn = document.getElementById('publishFloatingBtn');
-    const status = document.getElementById('publishStatus');
-    if(!isInEditMode) { btn.style.display = 'none'; status.style.display = 'none'; return; }
-    status.style.display = 'flex';
-    if(hasUnpublishedChanges) { status.innerHTML = '🟡 Alterações pendentes'; btn.style.display = 'flex'; }
-    else { status.innerHTML = '🟢 Publicado'; btn.style.display = 'none'; }
-  }
-
-  function publishAll(){
-    const choice = confirm("OK = GitHub | Cancelar = Download");
-    if(choice) pushToGitHub(); else downloadUpdatedHTML();
-  }
-
-  function pushToGitHub(){
-    if(!confirm('🚀 Publicar no GitHub agora?')) return;
-    const fileContent = document.documentElement.outerHTML.replace(/const eventsData = \[[\s\S]*?\];/, 'const eventsData = ' + JSON.stringify(eventsData, null, 2) + ';');
-    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_FILE_PATH}`;
-    fetch(url, { headers: { 'Authorization': 'token ' + GITHUB_TOKEN }})
-    .then(r => r.json()).then(data => {
-      return fetch(url, {
-        method: 'PUT', headers: { 'Authorization': 'token ' + GITHUB_TOKEN },
-        body: JSON.stringify({ message: 'Update site', content: btoa(unescape(encodeURIComponent(fileContent))), sha: data.sha })
-      });
-    }).then(r => { if(r.ok){ markAsPublished(); alert('✅ Site atualizado!'); } });
-  }
-
-  function downloadUpdatedHTML(){
-    const html = document.documentElement.outerHTML.replace(/const eventsData = \[[\s\S]*?\];/, 'const eventsData = ' + JSON.stringify(eventsData, null, 2) + ';');
-    const blob = new Blob([html], {type: 'text/html'});
-    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'index-atualizado.html'; link.click();
-    markAsPublished();
-  }
-
-  /* =====================================================
-     CRUD LÓGICA
-  ===================================================== */
-  function renderEventsFromData(){
-    const source = document.getElementById('events-source'); source.innerHTML = '';
-    eventsData.forEach(evt => {
-      const card = document.createElement('div'); card.className = 'event-card';
-      card.setAttribute('data-nome', evt.nome); card.setAttribute('data-date', evt.dataISO + 'T14:00:00-03:00');
-      const adminActions = currentViewMode === 'edit' ? `<div style="display:flex;gap:5px;margin-top:10px;"><button onclick="editEvent(${evt.id})" style="background:#0066cc;color:#fff;border:none;flex:1;padding:8px;border-radius:5px;cursor:pointer;">Editar</button><button onclick="deleteEvent(${evt.id})" style="background:#ff6b6b;color:#fff;border:none;flex:1;padding:8px;border-radius:5px;cursor:pointer;">Excluir</button></div>` : '';
-      card.innerHTML = `<div class="event-image-wrapper no-image"><div class="event-image-fallback"><div><div class="fallback-title">${evt.nome}</div></div></div><div class="date-badge"><div class="day">${evt.dataISO.split('-')[2]}</div></div></div><div class="event-content"><div class="artist-title">${evt.nome}</div><div class="event-subtitle">${evt.subtitulo}</div><div class="event-location">📍 ${evt.local}</div>${adminActions}</div>`;
-      source.appendChild(card);
-    });
-    if(window._boa) window._boa.refresh();
-  }
-
-  function addNewEvent(){
-    const nome = document.getElementById('newEventName').value;
-    const dataISO = document.getElementById('newEventDate').value;
-    if(!nome || !dataISO) return alert('Preencha Nome e Data');
-    if(window.editingEventId){
-      const evt = eventsData.find(e => e.id === window.editingEventId);
-      Object.assign(evt, {nome, subtitulo: document.getElementById('newEventSubtitle').value, dataISO, local: document.getElementById('newEventLocal').value});
-      window.editingEventId = null;
-    } else {
-      eventsData.push({id: Date.now(), nome, subtitulo: document.getElementById('newEventSubtitle').value, dataISO, local: document.getElementById('newEventLocal').value, dataFormatada: dataISO});
+    function updatePublishUI(){
+      const btn = document.getElementById('publishFloatingBtn');
+      const status = document.getElementById('publishStatus');
+      if(!isInEditMode) { btn.style.display = 'none'; status.style.display = 'none'; return; }
+      status.style.display = 'flex';
+      if(hasUnpublishedChanges) { status.innerHTML = '🟡 Alterações pendentes'; btn.style.display = 'flex'; }
+      else { status.innerHTML = '🟢 Publicado'; btn.style.display = 'none'; }
     }
-    markAsChanged(); renderEventsFromData(); renderExistingEvents();
-  }
 
-  function deleteEvent(id){ if(confirm('Excluir?')){ const idx = eventsData.findIndex(e => e.id === id); eventsData.splice(idx,1); markAsChanged(); renderEventsFromData(); renderExistingEvents(); } }
-  function editEvent(id){ const evt = eventsData.find(e => e.id === id); document.getElementById('newEventName').value = evt.nome; document.getElementById('newEventDate').value = evt.dataISO; window.editingEventId = id; document.getElementById('eventsPanel').classList.add('show'); }
+    function renderEventsFromData(){
+      const source = document.getElementById('events-source'); source.innerHTML = '';
+      eventsData.forEach(evt => {
+        const card = document.createElement('div'); card.className = 'event-card';
+        card.setAttribute('data-nome', evt.nome); card.setAttribute('data-date', evt.dataISO + 'T14:00:00-03:00');
+        
+        const adminActions = currentViewMode === 'edit' ? `<div style="display:flex;gap:5px;margin-top:10px;"><button onclick="editEvent(${evt.id})" style="background:#0066cc;color:#fff;border:none;flex:1;padding:8px;border-radius:5px;cursor:pointer;">Editar</button><button onclick="deleteEvent(${evt.id})" style="background:#ff6b6b;color:#fff;border:none;flex:1;padding:8px;border-radius:5px;cursor:pointer;">Excluir</button></div>` : '';
+        
+        card.innerHTML = `
+          <div class="event-image-wrapper">
+            <div class="event-image-fallback"><div class="fallback-title">${evt.nome}</div></div>
+            <div class="date-badge">${evt.dataISO.split('-')[2]}/${evt.dataISO.split('-')[1]}</div>
+            ${evt.desconto ? `<div class="discount-badge">${evt.desconto}</div>` : ''}
+            <div class="promo-badge"><i class="fas fa-fire"></i> Use o código <strong>BOA</strong></div>
+          </div>
+          <div class="event-content">
+            <div class="artist-title">${evt.nome}</div>
+            <div class="event-subtitle">${evt.subtitulo}</div>
+            <div class="event-location"><i class="fas fa-map-pin"></i> ${evt.local}</div>
+            <div class="event-actions">
+              <a class="btn-ticket" href="${evt.link}" target="_blank"><i class="fas fa-ticket-alt"></i> Comprar</a>
+              <button class="btn-share" onclick="shareEvent('${evt.nome}', '${evt.link}')"><i class="fas fa-share-alt"></i></button>
+            </div>
+            ${adminActions}
+          </div>`;
+        source.appendChild(card);
+      });
+      if(window._boa) window._boa.refresh();
+    }
 
-  function renderExistingEvents(){
-    document.getElementById('existingEventsList').innerHTML = eventsData.map(e => `<div style="font-size:12px;margin-bottom:5px;border-bottom:1px solid #eee;">${e.nome}</div>`).join('');
-  }
+    function shareEvent(nome, link){ window.open(`https://wa.me/?text=Confira ${nome} com desconto usando o código BOA: ${link}`, '_blank'); }
 
-  function toggleEditMode(){
-    isInEditMode = !isInEditMode;
-    document.getElementById('exitEditBtn').style.display = isInEditMode ? 'block' : 'none';
-    document.getElementById('enterEditBtn').style.display = isInEditMode ? 'none' : 'block';
-    document.getElementById('adminEventsBtn').style.display = isInEditMode ? 'block' : 'none';
-    document.getElementById('modeToggle').style.display = isInEditMode ? 'block' : 'none';
-    setViewMode(isInEditMode ? 'edit' : 'public');
-  }
+    function addNewEvent(){
+      const nome = document.getElementById('newEventName').value;
+      const dataISO = document.getElementById('newEventDate').value;
+      if(!nome || !dataISO) return alert('Preencha Nome e Data');
+      if(window.editingEventId){
+        const evt = eventsData.find(e => e.id === window.editingEventId);
+        Object.assign(evt, {nome, subtitulo: document.getElementById('newEventSubtitle').value, dataISO, local: document.getElementById('newEventLocal').value, link: document.getElementById('newEventLink').value, desconto: document.getElementById('newEventDiscount').value});
+        window.editingEventId = null;
+      } else {
+        eventsData.push({id: Date.now(), nome, subtitulo: document.getElementById('newEventSubtitle').value, dataISO, local: document.getElementById('newEventLocal').value, link: document.getElementById('newEventLink').value, desconto: document.getElementById('newEventDiscount').value});
+      }
+      markAsChanged(); renderEventsFromData(); renderExistingEvents();
+      ['newEventName', 'newEventSubtitle', 'newEventDate', 'newEventLocal', 'newEventLink', 'newEventDiscount'].forEach(id => document.getElementById(id).value = '');
+    }
 
-  function setViewMode(m){ currentViewMode = m; document.getElementById('eventsPanel').style.display = m === 'edit' ? 'block' : 'none'; renderEventsFromData(); updatePublishUI(); }
-  function checkAdminPassword(){ if(document.getElementById('adminPassword').value === 'BOA123'){ document.getElementById('passwordModal').style.display = 'none'; toggleEditMode(); } else alert('Erro'); }
-  function openPasswordModal(){ document.getElementById('passwordModal').style.display = 'flex'; }
-  function closePasswordModal(){ document.getElementById('passwordModal').style.display = 'none'; }
-  function closeAdminPanel(){ isInEditMode = true; toggleEditMode(); }
+    function deleteEvent(id){ if(confirm('Excluir?')){ const idx = eventsData.findIndex(e => e.id === id); eventsData.splice(idx,1); markAsChanged(); renderEventsFromData(); renderExistingEvents(); } }
+    function editEvent(id){ const evt = eventsData.find(e => e.id === id); document.getElementById('newEventName').value = evt.nome; document.getElementById('newEventDate').value = evt.dataISO; window.editingEventId = id; document.getElementById('eventsPanel').style.display = 'block'; }
+    function renderExistingEvents(){ document.getElementById('existingEventsList').innerHTML = eventsData.map(e => `<div style="font-size:12px;margin-bottom:5px;"><strong>${e.nome}</strong></div>`).join(''); }
 
-  document.getElementById('search').addEventListener('input', function(){ if(this.value.toLowerCase() === 'admin'){ this.value = ''; openPasswordModal(); } });
+    function publishAll(){ pushToGitHub(); }
 
-  /* =====================================================
-     MOTOR FILTROS
-  ===================================================== */
-  (function(){
-    const source = document.getElementById('events-source');
-    const view = document.getElementById('events-view');
-    window._boa = { refresh: () => {
-      view.innerHTML = ''; const grid = document.createElement('div'); grid.className = 'events-grid';
-      Array.from(source.children).forEach(c => grid.appendChild(c.cloneNode(true)));
-      view.appendChild(grid);
-    }};
-    renderEventsFromData(); renderExistingEvents();
-    const draft = localStorage.getItem('draftEvents');
-    if(draft && confirm('Restaurar rascunho?')){ eventsData.length = 0; JSON.parse(draft).forEach(e => eventsData.push(e)); renderEventsFromData(); markAsChanged(); }
-  })();
-  </script>
-</body>
-</html>
+    function pushToGitHub(){
+      if(!confirm('Publicar no GitHub?')) return;
+      const fileContent = document.documentElement.outerHTML.replace(/const eventsData = \[[\s\S]*?\];/, 'const eventsData = ' + JSON.stringify(events
