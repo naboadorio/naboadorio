@@ -16,7 +16,7 @@
       #exitEditBtn,
       #adminEventsBtn,
       #downloadHTMLBtn,
-      #githubBtn,
+      #githubBtnRow,
       #closeAdminBtn {
         display: none !important;
       }
@@ -54,7 +54,10 @@
 
     <button onclick="downloadUpdatedHTML()" style="background:#ff9800;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="downloadHTMLBtn">📥 Baixar HTML Atualizado</button>
 
-    <button onclick="openGitHubModal()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="githubBtn">🐙 Sincronizar com GitHub</button>
+    <div id="githubBtnRow" style="display:none;margin:0 12px;margin-top:-8px;gap:8px;">
+      <button onclick="pushToGitHub()" style="background:#333;color:#fff;border:none;padding:12px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;flex:1;" id="githubBtn">🐙 Publicar no GitHub</button>
+      <button onclick="showTokenModal(null)" style="background:#555;color:#fff;border:none;padding:12px 10px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;white-space:nowrap;" title="Configurar token do GitHub" id="githubTokenBtn">🔑</button>
+    </div>
 
     <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
 
@@ -205,62 +208,31 @@
      GITHUB PAGES - CONFIGURAÇÃO
   ===================================================== */
   
-  // 🔧 CREDENCIAIS DO GITHUB
-  const GITHUB_OWNER = 'naboadorio';      // Seu usuário do GitHub
-  const GITHUB_REPO = 'naboadorio';       // Nome do seu repositório
-  const GITHUB_TOKEN = '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';  // Token configurado
-  
-  // Arquivo que será atualizado no GitHub
+  // Credenciais fixas (token NÃO fica no código — salvo só no navegador do admin)
+  const GITHUB_OWNER = 'naboadorio';
+  const GITHUB_REPO = 'naboadorio';
   const GITHUB_FILE_PATH = 'index.html';
 
-  function openGitHubModal(){
-    var modal = document.createElement('div');
-    modal.id = 'githubModal';
-    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10001;display:flex;align-items:center;justify-content:center;';
-    
-    var content = document.createElement('div');
-    content.style.cssText = 'background:#fff;border-radius:16px;padding:40px;max-width:500px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
-    
-    content.innerHTML = `
-      <div style="font-size:40px;margin-bottom:20px;text-align:center;">🚀</div>
-      <div style="font-size:22px;font-weight:800;color:var(--primary);margin-bottom:10px;text-align:center;">Configurar GitHub</div>
-      <div style="font-size:13px;color:var(--text-gray);margin-bottom:20px;line-height:1.6;">
-        Para sincronizar automaticamente com GitHub Pages, edite essas 3 variáveis no código:
-      </div>
-      
-      <div style="background:#f5f5f5;padding:16px;border-radius:8px;border-left:4px solid var(--primary);margin-bottom:20px;font-family:monospace;font-size:12px;overflow-x:auto;">
-        <div><span style="color:var(--primary);font-weight:700;">GITHUB_OWNER</span> = '<span style="color:#0066cc;">seu-usuario</span>'</div>
-        <div style="margin-top:8px;"><span style="color:var(--primary);font-weight:700;">GITHUB_REPO</span> = '<span style="color:#0066cc;">seu-repositorio</span>'</div>
-        <div style="margin-top:8px;"><span style="color:var(--primary);font-weight:700;">GITHUB_TOKEN</span> = '<span style="color:#0066cc;">seu-token</span>'</div>
-      </div>
-
-      <div style="background:#fff9e6;padding:14px;border-radius:8px;border:2px solid #fee822;margin-bottom:20px;font-size:12px;">
-        <div style="font-weight:700;margin-bottom:8px;">📖 Como gerar seu token:</div>
-        <ol style="margin-left:20px;color:var(--text-gray);">
-          <li>Vá para GitHub.com → Settings</li>
-          <li>Developer settings → Personal access tokens</li>
-          <li>Generate new token → Selecione "repo"</li>
-          <li>Copie o token e cole no código</li>
-        </ol>
-      </div>
-
-      <div style="display:flex;gap:10px;">
-        <button onclick="document.getElementById('githubModal').remove();pushToGitHub();" style="flex:1;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">✅ Já Configurei</button>
-        <button onclick="document.getElementById('githubModal').remove();" style="flex:1;background:var(--border-gray);color:var(--text-dark);border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">Cancelar</button>
-      </div>
-    `;
-    
-    modal.appendChild(content);
-    document.body.appendChild(modal);
-  }
+  function getGitHubToken(){ return localStorage.getItem('boa_github_token') || ''; }
+  function saveGitHubToken(t){ localStorage.setItem('boa_github_token', t.trim()); }
+  function clearGitHubToken(){ localStorage.removeItem('boa_github_token'); }
 
   function pushToGitHub(){
-    if(GITHUB_OWNER === 'seu-usuario' || GITHUB_REPO === 'seu-repositorio' || GITHUB_TOKEN === 'seu-token-aqui'){
-      alert('⚠️ Configure suas credenciais do GitHub primeiro!\n\nEdite as linhas no código:\n- GITHUB_OWNER = "seu-usuario"\n- GITHUB_REPO = "seu-repositorio"\n- GITHUB_TOKEN = "seu-token"');
+    var token = getGitHubToken();
+    if(!token){
+      showTokenModal(function(){ pushToGitHub(); });
       return;
     }
 
-    alert('⏳ Enviando para GitHub...');
+    if(!confirm('🚀 Publicar todas as alterações no GitHub?\n\nO site será atualizado em alguns segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO)){
+      return;
+    }
+
+    var loadingDiv = document.createElement('div');
+    loadingDiv.id = 'githubLoading';
+    loadingDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    loadingDiv.innerHTML = '<div style="background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:320px;width:90%;"><div style="font-size:48px;margin-bottom:16px;">⏳</div><div style="font-size:18px;font-weight:800;color:#333;">Publicando...</div><div style="font-size:13px;color:#777;margin-top:8px;">Enviando para GitHub Pages</div></div>';
+    document.body.appendChild(loadingDiv);
 
     var fileContent = document.documentElement.outerHTML;
     var eventsJSON = JSON.stringify(eventsData, null, 2);
@@ -268,49 +240,70 @@
     fileContent = fileContent.replace(regex, 'const eventsData = ' + eventsJSON + ';');
 
     var encodedContent = btoa(unescape(encodeURIComponent(fileContent)));
-    
     var getUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE_PATH;
-    
+
     fetch(getUrl, {
-      headers: {
-        'Authorization': 'token ' + GITHUB_TOKEN,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
     })
-    .then(function(response){ return response.json(); })
+    .then(function(r){ return r.json(); })
     .then(function(data){
-      if(!data.sha){
-        throw new Error('Arquivo não encontrado no GitHub');
-      }
+      if(!data.sha) throw new Error('Arquivo index.html não encontrado no repositório');
       var sha = data.sha;
       var message = '📅 Atualização de eventos - ' + new Date().toLocaleString('pt-BR');
-      
       return fetch(getUrl, {
         method: 'PUT',
-        headers: {
-          'Authorization': 'token ' + GITHUB_TOKEN,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: message,
-          content: encodedContent,
-          sha: sha
-        })
+        headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message, content: encodedContent, sha: sha })
       });
     })
     .then(function(response){
+      document.getElementById('githubLoading').remove();
       if(response.ok){
-        alert('✅ Enviado para GitHub com sucesso!\n\nSeu site será atualizado em poucos segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO);
+        hasUnpublishedChanges = false;
+        updatePublishUI();
+        alert('✅ Publicado com sucesso!\n\nSeu site será atualizado em alguns segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO);
       } else {
         return response.json().then(function(error){
+          if(error.message && error.message.includes('Bad credentials')){
+            clearGitHubToken();
+            throw new Error('Token inválido ou expirado. O token foi removido — tente publicar novamente para inserir um novo.');
+          }
           throw new Error(error.message || 'Erro desconhecido');
         });
       }
     })
     .catch(function(error){
-      alert('❌ Erro ao enviar:\n\n' + error.message + '\n\nVerifique:\n- Token correto\n- Permissões do token\n- Dados do repositório\n- Arquivo index.html existe no repo');
+      if(document.getElementById('githubLoading')) document.getElementById('githubLoading').remove();
+      alert('❌ Erro ao publicar:\n\n' + error.message + '\n\nVerifique:\n• Token com permissão "repo"\n• Repositório: ' + GITHUB_OWNER + '/' + GITHUB_REPO + '\n• Arquivo index.html existe no repo');
     });
+  }
+
+  function showTokenModal(onSuccess){
+    var modal = document.createElement('div');
+    modal.id = 'tokenModal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:36px;max-width:400px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);text-align:center;">
+        <div style="font-size:44px;margin-bottom:16px;">🔑</div>
+        <div style="font-size:20px;font-weight:800;color:#FF2A6D;margin-bottom:8px;">Token do GitHub</div>
+        <div style="font-size:13px;color:#777;margin-bottom:20px;line-height:1.6;">
+          Cole seu token abaixo. Ele ficará salvo <strong>apenas neste navegador</strong> e nunca aparece no código-fonte do site.
+        </div>
+        <input type="password" id="tokenInput" placeholder="ghp_..." style="width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;margin-bottom:8px;box-sizing:border-box;font-family:monospace;">
+        <div style="font-size:11px;color:#aaa;margin-bottom:20px;">Crie um token em: GitHub → Settings → Developer settings → Personal access tokens (marque permissão <strong>repo</strong>)</div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="
+            var t=document.getElementById('tokenInput').value.trim();
+            if(!t){alert('⚠️ Digite o token!');return;}
+            saveGitHubToken(t);
+            document.getElementById('tokenModal').remove();
+            if(typeof onSuccessCallback==='function') onSuccessCallback();
+          " style="flex:1;background:linear-gradient(135deg,#FF2A6D,#ff0066);color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">✅ Salvar e Publicar</button>
+          <button onclick="document.getElementById('tokenModal').remove();" style="flex:1;background:#f0f0f0;color:#333;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">Cancelar</button>
+        </div>
+      </div>`;
+    window.onSuccessCallback = onSuccess;
+    document.body.appendChild(modal);
   }
 
   function editEvent(eventId){
@@ -512,7 +505,7 @@
     document.getElementById('adminEventsBtn').style.display   = 'none';
     document.getElementById('downloadHTMLBtn').style.display  = 'none';
     document.getElementById('closeAdminBtn').style.display    = 'none';
-    document.getElementById('githubBtn').style.display = 'none';
+    document.getElementById('githubBtnRow').style.display = 'none';
     
     currentViewMode = 'public';
     renderEventsFromData();
@@ -550,7 +543,7 @@
       document.getElementById('enterEditBtn').style.display = 'none';
       document.getElementById('adminEventsBtn').style.display = 'block';
       document.getElementById('downloadHTMLBtn').style.display = 'block';
-      document.getElementById('githubBtn').style.display = 'block';
+      document.getElementById('githubBtnRow').style.display = 'flex';
       document.getElementById('closeAdminBtn').style.display = 'block';
       document.getElementById('modeToggle').style.display = 'block';
       
@@ -565,7 +558,7 @@
       document.getElementById('enterEditBtn').style.display = 'block';
       document.getElementById('adminEventsBtn').style.display = 'none';
       document.getElementById('downloadHTMLBtn').style.display = 'none';
-      document.getElementById('githubBtn').style.display = 'none';
+      document.getElementById('githubBtnRow').style.display = 'none';
       document.getElementById('closeAdminBtn').style.display = 'none';
       document.getElementById('modeToggle').style.display = 'none';
       
