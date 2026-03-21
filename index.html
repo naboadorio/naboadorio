@@ -1,591 +1,1366 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>index1.html (com ADMIN inject)</title>
-  <!--
-    AVISO:
-    - Este arquivo é uma versão "completa" que inclui o script ADMIN injetado no final.
-    - Não alterei nenhuma estrutura de IDs nem o motor visual window._boa.
-    - Não alterei nenhum arquivo CSS externo; todo estilo do botão flutuante é inline e não modifica arquivos CSS existentes.
-    - Se você já tiver um index1.html original, substitua apenas a tag <script id="admin-inject">...</script> no final do seu arquivo original por este bloco de script (ou cole o conteúdo do script no final do seu arquivo), mantendo todo o restante do HTML intacto.
-  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ingressos com Desconto BOA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{--primary:#FF2A6D;--secondary:#fee822;--bg-light:#f5f5f5;--text-dark:#1a1a1a;--text-gray:#777;--border-gray:#e0e0e0;--white:#fff}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Nunito',sans-serif;background:var(--bg-light);color:var(--text-dark);line-height:1.6}a{color:inherit;text-decoration:none}.container{max-width:480px;margin:0 auto;background:var(--white);min-height:100vh;display:flex;flex-direction:column}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:12px 12px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #fee822;}.logo{flex-shrink:0;width:145px;height:72px;display:flex;align-items:center;justify-content:center}.logo img{height:95px;width:auto;display:block;}.search-wrapper{flex:1;position:relative;min-width:120px}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;color:#1a1a1a;transition:all .2s ease;}.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#999;font-size:12px}.coupon-banner{background:linear-gradient(135deg,var(--secondary),#ffd700);padding:20px 16px;display:flex;align-items:center;gap:12px}.coupon-text{font-size:22px;font-weight:800}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.filter-btn{background:#fff;color:var(--primary);border:2px solid var(--primary);border-radius:20px;padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s;white-space:nowrap;flex-shrink:0;}.filter-btn:hover{background:var(--primary);color:#fff;transform:translateY(-2px);box-shadow:0 2px 8px rgba(255,42,109,0.3)}.filter-btn.active{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(255,42,109,0.3);border:none}.section-header{padding:18px 16px;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}.events-grid{padding:0 12px 24px;display:flex;flex-direction:column;gap:16px}.event-card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:.3s cubic-bezier(.34,1.56,.64,1);border:1px solid rgba(255,42,109,.08)}.event-card:hover{transform:translateY(-8px);box-shadow:0 12px 24px rgba(255,42,109,.15)}.event-image-wrapper{position:relative;display:block;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#f5f5f5,#e0e0e0);overflow:hidden;border-radius:12px;text-decoration:none}.event-image-wrapper img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center}.event-image-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;background:linear-gradient(135deg,#FFE0EA,#FFF0C2);color:#9c1f45}.event-image-fallback>div{width:100%}.event-image-fallback .fallback-title{font-weight:900;letter-spacing:.3px;font-size:18px;line-height:1.2}.event-image-fallback .fallback-sub{margin-top:6px;font-size:12px;font-weight:800;color:#b34e6a;text-transform:uppercase}.event-image-wrapper.no-image img{display:none}.date-badge,.discount-badge{position:absolute;top:12px;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border-radius:10px;font-weight:800;box-shadow:0 2px 8px rgba(255,42,109,.3)}.date-badge{left:12px;padding:10px 8px;min-width:50px;text-align:center}.date-badge .day{font-size:18px;line-height:1.2}.date-badge .month{font-size:10px;font-weight:700;letter-spacing:.5px}.discount-badge{right:12px;padding:8px 12px;border-radius:18px;font-size:13px}.promo-badge{position:absolute;bottom:12px;left:12px;background:rgba(255,255,255,.98);color:var(--primary);padding:8px 14px;border-radius:16px;font-weight:700;font-size:11px;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,.15);border:1px solid rgba(255,42,109,.2)}.event-content{padding:16px}.artist-title{font-size:16px;font-weight:900;letter-spacing:.3px}.event-subtitle{font-size:12px;font-weight:800;color:var(--text-gray);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}.event-location{font-size:13px;color:var(--text-gray);margin:10px 0 12px;display:flex;align-items:flex-start;gap:6px}.event-location i{color:var(--primary);margin-top:2px}.event-location a{text-decoration:underline}.event-datetime{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.3px}.event-actions{display:flex;gap:10px;margin-top:12px}.btn-ticket,.btn-share{flex:1;padding:12px 14px;border-radius:12px;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;border:none;cursor:pointer;transition:all .3s;text-decoration:none}.btn-ticket{background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff}.btn-ticket:hover{transform:translateY(-2px)}.btn-share{background:#f0f0f0;color:var(--text-dark);border:none}.btn-share:hover{background:var(--primary);color:#fff;transform:translateY(-2px)}.no-results{padding:40px 16px;text-align:center;color:var(--text-gray);font-weight:600}footer{margin-top:auto;background:linear-gradient(135deg,#fff,#f9f9f9);padding:12px 16px;text-align:center;border-top:2px solid var(--secondary)}.footer-website{font-size:11px;color:var(--text-gray);margin-bottom:8px;font-weight:600}.footer-buttons{display:flex;gap:12px;flex-direction:column}.footer-btn{padding:10px 14px;border-radius:10px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;text-decoration:none;transition:all .3s}.btn-whatsapp{background:linear-gradient(135deg,#25D366,#20ba58)}.btn-instagram{background:linear-gradient(135deg,#E1306C,#C13584)}.fab-whatsapp{position:fixed;bottom:20px;right:16px;z-index:9999;display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,#25D366,#20ba58);color:#fff;padding:9px 14px;border-radius:50px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;box-shadow:0 4px 14px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s}.fab-whatsapp:hover{transform:translateY(-3px)}.image-upload-panel{background:#fff;padding:16px;margin:12px;border-radius:12px;border:2px dashed var(--primary);display:none}.image-upload-panel.show{display:block}.upload-title{font-weight:700;color:var(--primary);margin-bottom:12px;font-size:14px}.upload-inputs{display:grid;grid-template-columns:1fr;gap:8px;max-height:200px;overflow-y:auto}.upload-item{display:flex;align-items:center;gap:8px;font-size:12px}.upload-item input{flex:1;padding:6px 8px;border:1px solid var(--border-gray);border-radius:6px;font-size:11px}.upload-btn{background:var(--primary);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:700;font-size:11px;margin-top:8px;width:100%;transition:all .3s}.upload-btn:hover{background:#ff0066}@media(max-width:479px){.container{max-width:100%}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:12px 12px;display:flex;align-items:center;gap:10px;border-bottom:4px solid #fee822;}.logo{width:125px;flex-shrink:0;}.logo img{height:85px;width:auto;}.search-wrapper{flex:1;position:relative;}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;}.search-icon{left:10px;font-size:12px;}.coupon-badge{padding:6px 10px;font-size:10px;flex-shrink:0;white-space:nowrap;border:1.5px dashed var(--primary);}.coupon-badge i{font-size:10px;}.artist-title{font-size:14px}.fab-whatsapp{padding:8px 12px;font-size:11px;bottom:14px;right:12px}}@media(min-width:600px){.container{max-width:100%;background:var(--bg-light)}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:30px 16px;display:flex;align-items:center;gap:18px;border-bottom:4px solid #fee822;}.logo{width:155px}.coupon-banner{padding:18px 24px;gap:16px}.coupon-text{font-size:15px}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.section-header{padding:20px 20px 8px;font-size:20px}.events-grid{padding:0 20px 32px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px}.footer-buttons{flex-direction:row}.footer-btn{flex:1}}@media(min-width:1024px){.container{max-width:1100px;margin:0 auto;background:var(--white);box-shadow:0 0 40px rgba(0,0,0,.08)}.sticky-wrapper{position:sticky;top:0;z-index:1000;background:#fff;}.header{background:#fff;padding:30px 16px;display:flex;align-items:center;gap:18px;border-bottom:4px solid #fee822;}.logo{width:165px}.search-wrapper input{width:100%;padding:10px 14px 10px 36px;border:2px solid #e0e0e0;background:#fff;border-radius:20px;font-size:13px;color:#1a1a1a;transition:all .2s ease;}.coupon-banner{padding:20px 32px}.filter-section{background:#fff;padding:14px 12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border-gray);}.section-header{padding:24px 28px 8px;font-size:22px}.events-grid{padding:0 28px 40px;grid-template-columns:repeat(3,1fr);gap:24px}footer{padding:32px 32px}.artist-title{font-size:17px}.btn-ticket,.btn-share{font-size:12px;padding:9px 10px;gap:4px}.btn-ticket i,.btn-share i{font-size:11px}}@media(min-width:1400px){.container{max-width:1280px}}
+  </style>
+  <style>
+    /* Esconder admin no celular */
+    @media(max-width:767px) {
+      #enterEditBtn,
+      #exitEditBtn,
+      #adminEventsBtn,
+      #downloadHTMLBtn,
+      #githubBtn,
+      #closeAdminBtn {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- === INÍCIO DO CONTEÚDO ORIGINAL (placeholder) ===
-       Substitua este bloco pelo conteúdo real do seu index1.html.
-       Eu não removi nem alterei IDs ou classes — este é apenas um placeholder
-       para que o arquivo seja autossuficiente caso você não tenha enviado o original.
-  -->
-  <main id="app">
-    <h1>Aplicação (placeholder)</h1>
-    <p>Conteúdo original do seu index1.html deve ficar aqui. Não altere este arquivo se já tiver o original.</p>
+  <div class="container">
+    
+  <div class="sticky-wrapper">
+    <header class="header">
+      <div class="logo"><img src="logo.png"></div>
+      <div class="search-wrapper"><i class="fa fa-search search-icon"></i><input type="text" id="search" placeholder="Buscar eventos, atrações, local ou datas"></div>
+    </header>
 
-    <!-- Exemplos de botões CRUD que o script irá interceptar automaticamente -->
-    <div>
-      <button class="add-event">Adicionar evento (exemplo)</button>
-      <button class="edit-event">Editar evento (exemplo)</button>
-      <button class="delete-event">Excluir evento (exemplo)</button>
+    <div class="filter-section" id="filters">
+      <button class="filter-btn active" data-filter="all">Todos os eventos</button>
+      <button class="filter-btn" data-filter="this">Este mês</button>
+      <button class="filter-btn" data-filter="next">Próximo mês</button>
     </div>
-  </main>
-  <!-- === FIM DO CONTEÚDO ORIGINAL (placeholder) === -->
+    
+    <!-- MODAL DE SENHA -->
+    <div id="passwordModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:40px;max-width:380px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);text-align:center;">
+        <div style="font-size:48px;margin-bottom:20px;">🔐</div>
+        <div style="font-size:24px;font-weight:800;color:var(--primary);margin-bottom:10px;">Painel Admin</div>
+        <div style="font-size:14px;color:var(--text-gray);margin-bottom:30px;">Digite a senha para acessar</div>
+        <input type="password" id="adminPassword" placeholder="Senha" style="width:100%;padding:14px;border:2px solid var(--border-gray);border-radius:8px;font-size:16px;margin-bottom:16px;font-family:Nunito;box-sizing:border-box;" onkeypress="if(event.key==='Enter') checkAdminPassword()">
+        <button onclick="checkAdminPassword()" style="width:100%;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border:none;padding:14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;margin-bottom:10px;transition:all 0.3s;">Acessar</button>
+        <button onclick="closePasswordModal()" style="width:100%;background:var(--border-gray);color:var(--text-dark);border:none;padding:14px;border-radius:8px;cursor:pointer;font-weight:700;font-size:14px;">Cancelar</button>
+      </div>
+    </div>
 
-  <!-- === INÍCIO DO SCRIPT INJETADO (ADMIN) === -->
-  <script id="admin-inject">
-  (function () {
-    'use strict';
+    <button onclick="openPasswordModal()" id="adminEventsBtn" style="background:#FF2A6D;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;">📅 Gerenciar Eventos</button>
 
-    /************************************************************************
-     * 1) Configuração do GitHub (conforme solicitado)
-     ************************************************************************/
-    const GITHUB_TOKEN = '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';
-    const GITHUB_OWNER = 'naboadorio';
-    const GITHUB_REPO = 'naboadorio';
-    const GITHUB_PATH = 'index.html'; // arquivo no repositório onde será salvo o HTML
+    <button onclick="downloadUpdatedHTML()" style="background:#ff9800;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="downloadHTMLBtn">📥 Baixar HTML Atualizado</button>
 
-    /************************************************************************
-     * 2) Estado e funções de publicação / autosave
-     ************************************************************************/
-    let hasUnpublishedChanges = false;
-    let _statusIndicator = null;
-    let _floatingButton = null;
-    let _menu = null;
-    let _autoSaveIntervalId = null;
-    const AUTOSAVE_KEY = 'admin_autosave_html_v1';
-    const AUTOSAVE_INTERVAL_MS = 5000; // salva a cada 5s quando houver mudanças
+    <button onclick="openGitHubModal()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="githubBtn">🐙 Sincronizar com GitHub</button>
 
-    function createAdminElements() {
-      // Status indicator (emoji) - inline styles para não tocar no CSS original
-      _statusIndicator = document.createElement('div');
-      _statusIndicator.setAttribute('id', 'admin-status-indicator');
-      _statusIndicator.style.position = 'fixed';
-      _statusIndicator.style.right = '20px';
-      _statusIndicator.style.bottom = '90px';
-      _statusIndicator.style.zIndex = '99999';
-      _statusIndicator.style.fontSize = '20px';
-      _statusIndicator.style.padding = '6px 10px';
-      _statusIndicator.style.borderRadius = '8px';
-      _statusIndicator.style.background = 'rgba(255,255,255,0.95)';
-      _statusIndicator.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)';
-      _statusIndicator.style.display = 'none'; // visível apenas em modo edição
-      _statusIndicator.style.alignItems = 'center';
-      _statusIndicator.style.gap = '8px';
-      _statusIndicator.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
-      _statusIndicator.style.cursor = 'default';
-      _statusIndicator.textContent = '🟢'; // default
+    <button onclick="closeAdminPanel()" style="background:#333;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="closeAdminBtn">✕ Sair do Admin</button>
 
-      // Floating button
-      _floatingButton = document.createElement('button');
-      _floatingButton.setAttribute('id', 'admin-floating-button');
-      _floatingButton.type = 'button';
-      _floatingButton.style.position = 'fixed';
-      _floatingButton.style.right = '20px';
-      _floatingButton.style.bottom = '20px';
-      _floatingButton.style.zIndex = '99999';
-      _floatingButton.style.width = '56px';
-      _floatingButton.style.height = '56px';
-      _floatingButton.style.borderRadius = '50%';
-      _floatingButton.style.border = 'none';
-      _floatingButton.style.background = '#0b5cff';
-      _floatingButton.style.color = '#fff';
-      _floatingButton.style.fontSize = '20px';
-      _floatingButton.style.boxShadow = '0 6px 18px rgba(11,92,255,0.24)';
-      _floatingButton.style.display = 'none'; // visível apenas em modo edição
-      _floatingButton.style.cursor = 'pointer';
-      _floatingButton.title = 'Admin';
+    <button onclick="toggleEditMode()" style="background:#6c63ff;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="enterEditBtn">✏️ Entrar em Modo Edição</button>
 
-      _floatingButton.textContent = '⚙';
+    <button onclick="toggleEditMode()" style="background:#ff6b6b;color:#fff;border:none;padding:12px 16px;margin:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;width:calc(100% - 24px);display:none;margin-top:-8px;" id="exitEditBtn">✕ Sair do Modo Edição</button>
 
-      // Simple menu (hidden by default)
-      _menu = document.createElement('div');
-      _menu.setAttribute('id', 'admin-floating-menu');
-      _menu.style.position = 'fixed';
-      _menu.style.right = '20px';
-      _menu.style.bottom = '86px';
-      _menu.style.zIndex = '100000';
-      _menu.style.minWidth = '200px';
-      _menu.style.background = '#fff';
-      _menu.style.border = '1px solid rgba(0,0,0,0.08)';
-      _menu.style.borderRadius = '8px';
-      _menu.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)';
-      _menu.style.padding = '8px';
-      _menu.style.display = 'none';
-      _menu.style.fontFamily = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial';
-      _menu.style.fontSize = '14px';
+    <!-- TOGGLE MODO PÚBLICO/ADMIN -->
+    <div id="modeToggle" style="background:linear-gradient(135deg,#fff,#f9f9f9);padding:12px 16px;text-align:center;border-bottom:2px solid var(--secondary);display:none;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-gray);margin-bottom:8px;text-transform:uppercase;">Modo de Visualização</div>
+      <div style="display:flex;gap:8px;justify-content:center;">
+        <button onclick="setViewMode('public')" id="publicModeBtn" style="background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px;transition:all 0.3s;flex:1;">👁️ Modo Público</button>
+        <button onclick="setViewMode('edit')" id="editModeBtn" style="background:#fff;color:var(--primary);border:2px solid var(--primary);padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:700;font-size:12px;transition:all 0.3s;flex:1;">✏️ Modo Edição</button>
+      </div>
+    </div>
 
-      // Menu content
-      const syncBtn = document.createElement('button');
-      syncBtn.type = 'button';
-      syncBtn.textContent = 'Sincronizar com GitHub';
-      syncBtn.style.display = 'block';
-      syncBtn.style.width = '100%';
-      syncBtn.style.marginBottom = '6px';
-      syncBtn.style.padding = '8px';
-      syncBtn.style.border = 'none';
-      syncBtn.style.borderRadius = '6px';
-      syncBtn.style.background = '#0b5cff';
-      syncBtn.style.color = '#fff';
-      syncBtn.style.cursor = 'pointer';
+    <div class="image-upload-panel" id="eventsPanel">
+      <div class="upload-title">📅 Gerenciar Eventos</div>
+      
+      <div style="border-top:2px solid #fee822;padding-top:12px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">✏️ Editar Eventos (Originais e Novos):</div>
+        <div id="existingEventsList" style="max-height:300px;overflow-y:auto;border:1px solid #fee822;border-radius:6px;padding:10px;"></div>
+      </div>
 
-      const downloadBtn = document.createElement('button');
-      downloadBtn.type = 'button';
-      downloadBtn.textContent = 'Baixar HTML';
-      downloadBtn.style.display = 'block';
-      downloadBtn.style.width = '100%';
-      downloadBtn.style.padding = '8px';
-      downloadBtn.style.border = '1px solid rgba(0,0,0,0.06)';
-      downloadBtn.style.borderRadius = '6px';
-      downloadBtn.style.background = '#fff';
-      downloadBtn.style.color = '#111';
-      downloadBtn.style.cursor = 'pointer';
+      <div style="border-top:2px solid #fee822;padding-top:12px;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:12px;color:var(--primary);">➕ Novo Evento Completo:</div>
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;font-size:11px;color:#666;">
+          <strong>📝 Informações do Evento:</strong>
+        </div>
+        <input type="text" id="newEventName" placeholder="Nome do evento" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventSubtitle" placeholder="Subtítulo/Artista (Ex: Banda XYZ)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>📅 Data e Hora:</strong>
+        </div>
+        <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="time" id="newEventTime" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>📍 Local e Links:</strong>
+        </div>
+        <input type="text" id="newEventLocal" placeholder="Local (Ex: Marina da Glória)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <input type="text" id="newEventLink" placeholder="Link de ingresso" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>🎉 Promoção:</strong>
+        </div>
+        <input type="text" id="newEventDiscount" placeholder="Desconto (Ex: -10%)" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
+          <strong>📸 Foto do Evento:</strong>
+        </div>
+        <div id="imagePreview" style="width:100%;height:120px;background:#f9f9f9;border:2px dashed #fee822;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;overflow:hidden;cursor:pointer;transition:all 0.3s;" onclick="document.getElementById('newEventImage').click();">
+          📸 Clique aqui para adicionar imagem
+        </div>
+        <input type="file" id="newEventImage" accept="image/*" style="display:none;">
+        
+        <button class="upload-btn" onclick="addNewEvent()">✅ Adicionar Evento Completo</button>
+      </div>
+    </div>
+  </div>
 
-      const infoLine = document.createElement('div');
-      infoLine.style.marginTop = '8px';
-      infoLine.style.fontSize = '12px';
-      infoLine.style.color = '#666';
-      infoLine.textContent = 'Status: ';
+    <div class="section-header"><i class="far fa-calendar-alt"></i><span>Próximos eventos</span></div>
 
-      const statusSpan = document.createElement('span');
-      statusSpan.setAttribute('id', 'admin-menu-status');
-      statusSpan.textContent = '🟢';
-      infoLine.appendChild(statusSpan);
+    <div id="events-source" style="display:none">
+      <div class="event-card" data-nome="O Grito da Copa" data-data="22/03 • Domingo • 14h" data-local="Ilha do Itanhangá - Barra da Tijuca" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA" data-date="2026-03-22T14:00:00-03:00" data-img="1"><a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - O Grito da Copa"><img src="" alt="Capa do evento O Grito da Copa"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">O Grito da Copa</div></div></div><div class="date-badge"><div class="day">22</div><div class="month">MAR</div></div><div class="discount-badge">-10%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">O Grito da Copa</div><div class="event-subtitle">João Gomes</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Ilha%20do%20Itanhangá%20-%20Barra%20da%20Tijuca" target="_blank" rel="noopener noreferrer">Ilha do Itanhangá - Barra da Tijuca</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+      <div class="event-card" data-nome="Paralamas do Sucesso" data-data="16/05 • Sábado • 19h" data-local="Bangu Shopping (Arena Bangu) - Bangu" data-link="https://www.sympla.com.br/paralamas-do-sucesso" data-date="2026-05-16T19:00:00-03:00" data-img="2"><a href="https://www.sympla.com.br/paralamas-do-sucesso" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Paralamas do Sucesso"><img src="" alt="Capa do evento Paralamas do Sucesso"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">Paralamas do Sucesso</div></div></div><div class="date-badge"><div class="day">16</div><div class="month">MAI</div></div><div class="discount-badge">-5%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">Paralamas do Sucesso</div><div class="event-subtitle">Rock / MPB</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Bangu%20Shopping%20(Arena%20Bangu)%20-%20Bangu" target="_blank" rel="noopener noreferrer">Bangu Shopping (Arena Bangu) - Bangu</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://www.sympla.com.br/paralamas-do-sucesso" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+      <div class="event-card" data-nome="Festa Geração 80 - 20 anos" data-data="04/04 • Sábado • 19h" data-local="Bangu Shopping (Arena Bangu) - Bangu" data-link="https://www.sympla.com.br/evento/festa-geracao-80-20-anos-04abr-sab-bangu-shopping/3293624?afid=108666" data-date="2026-04-04T19:00:00-03:00" data-img="3"><a href="https://www.sympla.com.br/evento/festa-geracao-80-20-anos-04abr-sab-bangu-shopping/3293624?afid=108666" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Festa Geração 80 - 20 anos"><img src="" alt="Capa do evento Festa Geração 80 - 20 anos"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">Festa Geração 80 - 20 anos</div></div></div><div class="date-badge"><div class="day">04</div><div class="month">ABR</div></div><div class="discount-badge">-5%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">Festa Geração 80 - 20 anos</div><div class="event-subtitle">gravação do audiovisual</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Bangu%20Shopping%20(Arena%20Bangu)%20-%20Bangu" target="_blank" rel="noopener noreferrer">Bangu Shopping (Arena Bangu) - Bangu</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://www.sympla.com.br/evento/festa-geracao-80-20-anos-04abr-sab-bangu-shopping/3293624?afid=108666" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+      <div class="event-card" data-nome="Por do Suel" data-data="12/04 • Domingo • 16h" data-local="Ilha do Itanhangá - Barra da Tijuca" data-link="https://checkout2.bilheteriadigital.com/por-do-suel-11-de-abril" data-date="2026-04-12T16:00:00-03:00" data-img="4"><a href="https://checkout2.bilheteriadigital.com/por-do-suel-11-de-abril" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Por do Suel"><img src="" alt="Capa do evento Por do Suel"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">Por do Suel</div></div></div><div class="date-badge"><div class="day">12</div><div class="month">ABR</div></div><div class="discount-badge">-10%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">Suel e Convidados</div><div class="event-subtitle">Por do Suel</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Ilha%20do%20Itanhangá%20-%20Barra%20da%20Tijuca" target="_blank" rel="noopener noreferrer">Ilha do Itanhangá - Barra da Tijuca</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://checkout2.bilheteriadigital.com/por-do-suel-11-de-abril" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+      <div class="event-card" data-nome="Festival Nova Iguaçu" data-data="26/04 • Domingo • 13h" data-local="Shopping Nova Iguaçu" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA" data-date="2026-04-26T13:00:00-03:00" data-img="5"><a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Festival Nova Iguaçu"><img src="" alt="Capa do evento Festival Nova Iguaçu"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">Festival Nova Iguaçu</div></div></div><div class="date-badge"><div class="day">26</div><div class="month">ABR</div></div><div class="discount-badge">-10%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">Festival Nova Iguaçu</div><div class="event-subtitle">Sorriso Maroto, Delacruz, Fabinho e Pagode do Adame</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Shopping%20Nova%20Iguaçu" target="_blank" rel="noopener noreferrer">Shopping Nova Iguaçu</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+      <div class="event-card" data-nome="Capital do Samba" data-data="16/05 • Sábado • 16h" data-local="Marina da Glória - Glória" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" data-date="2026-05-16T16:00:00-03:00" data-img="6"><a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Capital do Samba"><img src="" alt="Capa do evento Capital do Samba - Dia 1"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">Capital do Samba</div><div class="fallback-sub">Dia 1</div></div></div><div class="date-badge"><div class="day">16</div><div class="month">MAI</div></div><div class="discount-badge">-5%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">Capital do Samba</div><div class="event-subtitle">Alcione • Alexandre Pires • Dilsinho • Péricles • Belo</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Marina%20da%20Glória%20-%20Glória" target="_blank" rel="noopener noreferrer">Marina da Glória - Glória</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+      <div class="event-card" data-nome="Capital do Samba" data-data="17/05 • Domingo • 15h" data-local="Marina da Glória - Glória" data-link="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" data-date="2026-05-17T15:00:00-03:00" data-img="6"><a href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer" class="event-image-wrapper" aria-label="Comprar ingresso - Capital do Samba"><img src="" alt="Capa do evento Capital do Samba - Dia 2"><div class="event-image-fallback" aria-hidden="true" hidden><div><div class="fallback-title">Capital do Samba</div><div class="fallback-sub">Dia 2</div></div></div><div class="date-badge"><div class="day">17</div><div class="month">MAI</div></div><div class="discount-badge">-5%</div><div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">Capital do Samba</div><div class="event-subtitle">Raça Negra • Ferrugem • Sorriso Maroto • Menos é Mais • Samba 90 Graus</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=Marina%20da%20Glória%20-%20Glória" target="_blank" rel="noopener noreferrer">Marina da Glória - Glória</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div></div></div>
+    </div>
 
-      _menu.appendChild(syncBtn);
-      _menu.appendChild(downloadBtn);
-      _menu.appendChild(infoLine);
+    <div id="events-view"></div>
 
-      document.body.appendChild(_statusIndicator);
-      document.body.appendChild(_floatingButton);
-      document.body.appendChild(_menu);
+    <footer>
+      <div class="footer-website">www.naboadorio.com.br</div>
+      <div class="footer-buttons">
+        <a class="footer-btn btn-whatsapp" href="https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i><span>Entrar no grupo do WhatsApp</span></a>
+        <a class="footer-btn btn-instagram" href="https://instagram.com/naboadorio" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i><span>Seguir no Instagram</span></a>
+      </div>
+    </footer>
+  </div>
 
-      // Click handlers
-      _floatingButton.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-        _menu.style.display = _menu.style.display === 'none' ? 'block' : 'none';
-      });
+  <a class="fab-whatsapp" href="https://chat.whatsapp.com/I39Qm7VZf6J71weQa9eoLd" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i><span>Grupo VIP</span></a>
 
-      // Close menu when clicking outside
-      document.addEventListener('click', function () {
-        if (_menu) _menu.style.display = 'none';
-      });
+  <script>
+  /* =====================================================
+     DADOS CENTRALIZADOS - JSON COM TODOS OS EVENTOS
+  ===================================================== */
+  
+  const eventsData = [
+    {id:1, nome:"O Grito da Copa", subtitulo:"João Gomes", dataISO:"2026-03-22", dataFormatada:"22/03 • Domingo • 14h", local:"Ilha do Itanhangá - Barra da Tijuca", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90623?coupon=BOA", desconto:"-10%", imagem:""},
+    {id:2, nome:"Paralamas do Sucesso", subtitulo:"Rock / MPB", dataISO:"2026-05-16", dataFormatada:"16/05 • Sábado • 19h", local:"Bangu Shopping (Arena Bangu) - Bangu", link:"https://www.sympla.com.br/paralamas-do-sucesso", desconto:"-5%", imagem:""},
+    {id:3, nome:"Festa Geração 80 - 20 anos", subtitulo:"gravação do audiovisual", dataISO:"2026-04-04", dataFormatada:"04/04 • Sábado • 19h", local:"Bangu Shopping (Arena Bangu) - Bangu", link:"https://www.sympla.com.br/evento/festa-geracao-80-20-anos-04abr-sab-bangu-shopping/3293624?afid=108666", desconto:"-5%", imagem:""},
+    {id:4, nome:"Suel e Convidados", subtitulo:"Por do Suel", dataISO:"2026-04-12", dataFormatada:"12/04 • Domingo • 16h", local:"Ilha do Itanhangá - Barra da Tijuca", link:"https://checkout2.bilheteriadigital.com/por-do-suel-11-de-abril", desconto:"-10%", imagem:""},
+    {id:5, nome:"Festival Nova Iguaçu", subtitulo:"Sorriso Maroto, Delacruz, Fabinho e Pagode do Adame", dataISO:"2026-04-26", dataFormatada:"26/04 • Domingo • 13h", local:"Shopping Nova Iguaçu", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90601?coupon=BOA", desconto:"-10%", imagem:""},
+    {id:6, nome:"Capital do Samba", subtitulo:"Alcione • Alexandre Pires • Dilsinho • Péricles • Belo", dataISO:"2026-05-16", dataFormatada:"16/05 • Sábado • 16h", local:"Marina da Glória - Glória", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA", desconto:"-5%", imagem:""},
+    {id:7, nome:"Capital do Samba", subtitulo:"Raça Negra • Ferrugem • Sorriso Maroto • Menos é Mais • Samba 90 Graus", dataISO:"2026-05-17", dataFormatada:"17/05 • Domingo • 15h", local:"Marina da Glória - Glória", link:"https://embedstore.ingresse.com/tickets/www.ingresse.com/event/90299?coupon=BOA", desconto:"-5%", imagem:""}
+  ];
 
-      // Prevent clicks inside menu from closing it
-      _menu.addEventListener('click', function (ev) {
-        ev.stopPropagation();
-      });
+  function renderEventsFromData(){
+    var source = document.getElementById('events-source');
+    source.innerHTML = '';
+    eventsData.forEach(function(evt){
+      var card = document.createElement('div');
+      card.className = 'event-card';
+      card.setAttribute('data-nome', evt.nome);
+      card.setAttribute('data-data', evt.dataFormatada);
+      card.setAttribute('data-local', evt.local);
+      card.setAttribute('data-link', evt.link);
+      card.setAttribute('data-date', evt.dataISO + 'T14:00:00-03:00');
+      var dateParts = evt.dataISO.split('-');
+      var MESES_ABR = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+      var monthAbbr = MESES_ABR[parseInt(dateParts[1])-1];
+      var day = dateParts[2];
+      
+      // Botões de edição - apenas em modo edição
+      var adminActions = currentViewMode === 'edit' 
+        ? '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn-ticket" style="background:#0066cc;flex:1;" onclick="editEvent(' + evt.id + ')"><i class="fas fa-edit"></i> Editar</button><button class="btn-ticket" style="background:#ff6b6b;flex:1;" onclick="deleteEvent(' + evt.id + ')"><i class="fas fa-trash"></i> Deletar</button></div>'
+        : '';
+      
+      card.innerHTML = '<a href="' + evt.link + '" target="_blank" rel="noopener noreferrer" class="event-image-wrapper' + (evt.imagem ? '' : ' no-image') + '" aria-label="Comprar ingresso - ' + evt.nome + '"><img src="' + (evt.imagem || '') + '" alt="Capa do evento ' + evt.nome + '"><div class="event-image-fallback" ' + (evt.imagem ? 'style="display:none"' : '') + ' aria-hidden="true" ' + (evt.imagem ? 'hidden' : '') + '><div><div class="fallback-title">' + evt.nome + '</div></div></div><div class="date-badge"><div class="day">' + day + '</div><div class="month">' + monthAbbr + '</div></div>' + (evt.desconto ? '<div class="discount-badge">' + evt.desconto + '</div>' : '') + '<div class="promo-badge"><i class="fas fa-fire"></i><span>Use o código <span style="color:var(--primary);font-weight:900">BOA</span></span></div></a><div class="event-content"><div class="artist-title">' + evt.nome + '</div><div class="event-subtitle">' + evt.subtitulo + '</div><div class="event-location"><i class="fas fa-map-pin"></i><div><div><a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(evt.local) + '" target="_blank" rel="noopener noreferrer">' + evt.local + '</a></div></div></div><div class="event-actions"><a class="btn-ticket" href="' + evt.link + '" target="_blank" rel="noopener noreferrer"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a><button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button></div>' + adminActions + '</div>';
+      source.appendChild(card);
+    });
+    if(window._boa && window._boa.refresh) window._boa.refresh();
+  }
 
-      syncBtn.addEventListener('click', function () {
-        _menu.style.display = 'none';
-        syncWithGitHub();
-      });
+  function downloadUpdatedHTML(){
+    var eventsJSON = JSON.stringify(eventsData, null, 2);
+    var html = document.documentElement.outerHTML;
+    var regex = /const eventsData = \[\s*{[\s\S]*?}\s*\];/;
+    html = html.replace(regex, 'const eventsData = ' + eventsJSON + ';');
+    var blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = 'ingressos-boa-atualizado.html';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    alert('✅ HTML baixado com sucesso!');
+  }
 
-      downloadBtn.addEventListener('click', function () {
-        _menu.style.display = 'none';
-        downloadCurrentHTML();
-      });
+  /* =====================================================
+     GITHUB PAGES - CONFIGURAÇÃO
+  ===================================================== */
+  
+  // 🔧 CREDENCIAIS DO GITHUB
+  const GITHUB_OWNER = 'naboadorio';      // Seu usuário do GitHub
+  const GITHUB_REPO = 'naboadorio';       // Nome do seu repositório
+  const GITHUB_TOKEN = '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';  // Token configurado
+  
+  // Arquivo que será atualizado no GitHub
+  const GITHUB_FILE_PATH = 'index.html';
+
+  function openGitHubModal(){
+    var modal = document.createElement('div');
+    modal.id = 'githubModal';
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10001;display:flex;align-items:center;justify-content:center;';
+    
+    var content = document.createElement('div');
+    content.style.cssText = 'background:#fff;border-radius:16px;padding:40px;max-width:500px;width:90%;box-shadow:0 10px 40px rgba(0,0,0,0.3);';
+    
+    content.innerHTML = `
+      <div style="font-size:40px;margin-bottom:20px;text-align:center;">🚀</div>
+      <div style="font-size:22px;font-weight:800;color:var(--primary);margin-bottom:10px;text-align:center;">Configurar GitHub</div>
+      <div style="font-size:13px;color:var(--text-gray);margin-bottom:20px;line-height:1.6;">
+        Para sincronizar automaticamente com GitHub Pages, edite essas 3 variáveis no código:
+      </div>
+      
+      <div style="background:#f5f5f5;padding:16px;border-radius:8px;border-left:4px solid var(--primary);margin-bottom:20px;font-family:monospace;font-size:12px;overflow-x:auto;">
+        <div><span style="color:var(--primary);font-weight:700;">GITHUB_OWNER</span> = '<span style="color:#0066cc;">seu-usuario</span>'</div>
+        <div style="margin-top:8px;"><span style="color:var(--primary);font-weight:700;">GITHUB_REPO</span> = '<span style="color:#0066cc;">seu-repositorio</span>'</div>
+        <div style="margin-top:8px;"><span style="color:var(--primary);font-weight:700;">GITHUB_TOKEN</span> = '<span style="color:#0066cc;">seu-token</span>'</div>
+      </div>
+
+      <div style="background:#fff9e6;padding:14px;border-radius:8px;border:2px solid #fee822;margin-bottom:20px;font-size:12px;">
+        <div style="font-weight:700;margin-bottom:8px;">📖 Como gerar seu token:</div>
+        <ol style="margin-left:20px;color:var(--text-gray);">
+          <li>Vá para GitHub.com → Settings</li>
+          <li>Developer settings → Personal access tokens</li>
+          <li>Generate new token → Selecione "repo"</li>
+          <li>Copie o token e cole no código</li>
+        </ol>
+      </div>
+
+      <div style="display:flex;gap:10px;">
+        <button onclick="document.getElementById('githubModal').remove();pushToGitHub();" style="flex:1;background:linear-gradient(135deg,var(--primary),#ff0066);color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">✅ Já Configurei</button>
+        <button onclick="document.getElementById('githubModal').remove();" style="flex:1;background:var(--border-gray);color:var(--text-dark);border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;">Cancelar</button>
+      </div>
+    `;
+    
+    modal.appendChild(content);
+    document.body.appendChild(modal);
+  }
+
+  function pushToGitHub(){
+    if(GITHUB_OWNER === 'seu-usuario' || GITHUB_REPO === 'seu-repositorio' || GITHUB_TOKEN === 'seu-token-aqui'){
+      alert('⚠️ Configure suas credenciais do GitHub primeiro!\n\nEdite as linhas no código:\n- GITHUB_OWNER = "seu-usuario"\n- GITHUB_REPO = "seu-repositorio"\n- GITHUB_TOKEN = "seu-token"');
+      return;
     }
 
-    function updateStatusIndicator() {
-      if (!_statusIndicator) return;
-      const menuStatus = document.getElementById('admin-menu-status');
-      if (hasUnpublishedChanges) {
-        _statusIndicator.textContent = '🟡';
-        if (menuStatus) menuStatus.textContent = '🟡';
+    alert('⏳ Enviando para GitHub...');
+
+    var fileContent = document.documentElement.outerHTML;
+    var eventsJSON = JSON.stringify(eventsData, null, 2);
+    var regex = /const eventsData = \[\s*{[\s\S]*?}\s*\];/;
+    fileContent = fileContent.replace(regex, 'const eventsData = ' + eventsJSON + ';');
+
+    var encodedContent = btoa(unescape(encodeURIComponent(fileContent)));
+    
+    var getUrl = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO + '/contents/' + GITHUB_FILE_PATH;
+    
+    fetch(getUrl, {
+      headers: {
+        'Authorization': 'token ' + GITHUB_TOKEN,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    })
+    .then(function(response){ return response.json(); })
+    .then(function(data){
+      if(!data.sha){
+        throw new Error('Arquivo não encontrado no GitHub');
+      }
+      var sha = data.sha;
+      var message = '📅 Atualização de eventos - ' + new Date().toLocaleString('pt-BR');
+      
+      return fetch(getUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'token ' + GITHUB_TOKEN,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: message,
+          content: encodedContent,
+          sha: sha
+        })
+      });
+    })
+    .then(function(response){
+      if(response.ok){
+        alert('✅ Enviado para GitHub com sucesso!\n\nSeu site será atualizado em poucos segundos em:\nhttps://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO);
       } else {
-        _statusIndicator.textContent = '🟢';
-        if (menuStatus) menuStatus.textContent = '🟢';
+        return response.json().then(function(error){
+          throw new Error(error.message || 'Erro desconhecido');
+        });
       }
+    })
+    .catch(function(error){
+      alert('❌ Erro ao enviar:\n\n' + error.message + '\n\nVerifique:\n- Token correto\n- Permissões do token\n- Dados do repositório\n- Arquivo index.html existe no repo');
+    });
+  }
+
+  function editEvent(eventId){
+    var evt = eventsData.find(function(e){ return e.id === eventId; });
+    if(!evt) return;
+    document.getElementById('newEventName').value = evt.nome;
+    document.getElementById('newEventSubtitle').value = evt.subtitulo;
+    document.getElementById('newEventDate').value = evt.dataISO;
+    document.getElementById('newEventLocal').value = evt.local;
+    document.getElementById('newEventLink').value = evt.link;
+    document.getElementById('newEventDiscount').value = evt.desconto;
+    
+    var hora = '14:00';
+    var match = evt.dataFormatada.match(/(\d+)h(\d+)?/);
+    if(match) hora = String(match[1]).padStart(2, '0') + ':' + (match[2] || '00');
+    document.getElementById('newEventTime').value = hora;
+    
+    window.editingEventId = eventId;
+    document.getElementById('eventsPanel').scrollIntoView({behavior: 'smooth'});
+    document.getElementById('newEventName').focus();
+  }
+
+  function deleteEvent(eventId){
+    var evt = eventsData.find(function(e){ return e.id === eventId; });
+    if(!evt || !confirm('⚠️ Deletar "' + evt.nome + '"?')) return;
+    var idx = eventsData.findIndex(function(e){ return e.id === eventId; });
+    eventsData.splice(idx, 1);
+    renderEventsFromData();
+    renderExistingEvents();
+    alert('✅ Evento deletado!');
+  }
+
+  function addNewEvent(){
+    var nome = document.getElementById('newEventName').value.trim();
+    var subtitulo = document.getElementById('newEventSubtitle').value.trim();
+    var dataISO = document.getElementById('newEventDate').value;
+    var hora = document.getElementById('newEventTime').value || '14:00';
+    var local = document.getElementById('newEventLocal').value.trim();
+    var link = document.getElementById('newEventLink').value.trim();
+    var desconto = document.getElementById('newEventDiscount').value.trim();
+
+    if(!nome || !subtitulo || !dataISO || !local || !link){
+      alert('⚠️ Preencha todos os campos obrigatórios!');
+      return;
     }
 
-    function markAsChanged() {
-      hasUnpublishedChanges = true;
-      updateStatusIndicator();
-      // start autosave if not running
-      startAutoSave();
-    }
+    var DIAS = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    var parts = dataISO.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var timeParts = hora.split(':');
+    var horaStr = timeParts[1] === '00' ? timeParts[0] + 'h' : timeParts[0] + 'h' + timeParts[1];
+    var dataFormatada = parts[2] + '/' + parts[1] + ' • ' + DIAS[d.getDay()] + ' • ' + horaStr;
 
-    function markAsPublished() {
-      hasUnpublishedChanges = false;
-      updateStatusIndicator();
-      // clear autosave storage after publish
-      try {
-        localStorage.removeItem(AUTOSAVE_KEY);
-      } catch (e) {
-        // ignore
+    if(window.editingEventId){
+      // Editar evento existente
+      var evt = eventsData.find(function(e){ return e.id === window.editingEventId; });
+      if(evt){
+        evt.nome = nome;
+        evt.subtitulo = subtitulo;
+        evt.dataISO = dataISO;
+        evt.dataFormatada = dataFormatada;
+        evt.local = local;
+        evt.link = link;
+        evt.desconto = desconto;
+        alert('✅ Evento atualizado!');
       }
+      window.editingEventId = null;
+    } else {
+      // Novo evento
+      var newId = Math.max(...eventsData.map(function(e){ return e.id; }), 0) + 1;
+      eventsData.push({id: newId, nome: nome, subtitulo: subtitulo, dataISO: dataISO, dataFormatada: dataFormatada, local: local, link: link, desconto: desconto, imagem: ''});
+      alert('✅ Evento criado!');
     }
 
-    function autoSave() {
-      try {
-        if (!hasUnpublishedChanges) return;
-        const html = document.documentElement.outerHTML;
-        localStorage.setItem(AUTOSAVE_KEY, html);
-        // console.log('Admin: autosaved HTML to localStorage');
-      } catch (e) {
-        // ignore storage errors
+    // Limpar formulário
+    document.getElementById('newEventName').value = '';
+    document.getElementById('newEventSubtitle').value = '';
+    document.getElementById('newEventDate').value = '';
+    document.getElementById('newEventTime').value = '14:00';
+    document.getElementById('newEventLocal').value = '';
+    document.getElementById('newEventLink').value = '';
+    document.getElementById('newEventDiscount').value = '';
+    window.editingEventId = null;
+
+    renderEventsFromData();
+    renderExistingEvents();
+  }
+
+  function renderExistingEvents(){
+    var container = document.getElementById('existingEventsList');
+    if(!container) return;
+    if(eventsData.length === 0){
+      container.innerHTML = '<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento</p>';
+      return;
+    }
+    var html = '';
+    eventsData.forEach(function(evt){
+      html += '<div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">'
+        + '<div style="font-weight:700;font-size:13px;color:#FF2A6D;">' + evt.nome + '</div>'
+        + '<div style="font-size:11px;color:#666;">📅 ' + evt.dataFormatada + '</div>'
+        + '<div style="font-size:11px;color:#666;margin-bottom:8px;">📍 ' + evt.local + '</div>'
+        + '<div style="display:flex;gap:6px;">'
+        + '<button onclick="editEvent(' + evt.id + ')" style="background:#0066cc;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">✏️ Editar</button>'
+        + '<button onclick="deleteEvent(' + evt.id + ')" style="background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">🗑️ Deletar</button>'
+        + '</div></div>';
+    });
+    container.innerHTML = html;
+  }
+
+  /* =====================================================
+     CONTROLE DE VISUALIZAÇÃO - PÚBLICO vs EDIÇÃO
+  ===================================================== */
+
+  var currentViewMode = 'public';
+
+  function setViewMode(mode){
+    currentViewMode = mode;
+    
+    var publicBtn = document.getElementById('publicModeBtn');
+    var editBtn = document.getElementById('editModeBtn');
+    var eventsPanel = document.getElementById('eventsPanel');
+    
+    if(mode === 'public'){
+      publicBtn.style.background = 'var(--primary)';
+      publicBtn.style.color = '#fff';
+      publicBtn.style.border = 'none';
+      editBtn.style.background = '#fff';
+      editBtn.style.color = 'var(--primary)';
+      editBtn.style.border = '2px solid var(--primary)';
+      eventsPanel.style.display = 'none';
+    } else {
+      publicBtn.style.background = '#fff';
+      publicBtn.style.color = 'var(--primary)';
+      publicBtn.style.border = '2px solid var(--primary)';
+      editBtn.style.background = 'var(--primary)';
+      editBtn.style.color = '#fff';
+      editBtn.style.border = 'none';
+      eventsPanel.style.display = 'block';
+    }
+    
+    renderEventsFromData();
+  }
+
+  /* =====================================================
+     CONTROLE DE SENHA
+  ===================================================== */
+  
+  const ADMIN_PASSWORD = 'BOA123';
+
+  function openPasswordModal(){
+    document.getElementById('passwordModal').style.display = 'flex';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminPassword').focus();
+  }
+
+  function closePasswordModal(){
+    document.getElementById('passwordModal').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+  }
+
+  function checkAdminPassword(){
+    var senha = document.getElementById('adminPassword').value;
+    if(senha === ADMIN_PASSWORD){
+      closePasswordModal();
+      document.getElementById('modeToggle').style.display = 'block';
+      setViewMode('public');
+      toggleEventsPanel();
+      renderExistingEvents();
+    } else {
+      alert('❌ Senha incorreta!');
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('adminPassword').focus();
+    }
+  }
+
+  /* =====================================================
+     ADMIN + EVENTOS
+  ===================================================== */
+
+  // ── Senha Admin ──────────────────────────────────────
+
+  function activateAdmin(){
+    document.getElementById('adminEventsBtn').style.display = 'block';
+    document.getElementById('downloadHTMLBtn').style.display = 'block';
+    document.getElementById('closeAdminBtn').style.display  = 'block';
+    var raw = localStorage.getItem('customEvents');
+    var evts = raw ? JSON.parse(raw) : [];
+    alert('✅ Admin ativado! ' + evts.length + ' evento(s) salvo(s).');
+  }
+
+  // Detectar se é celular
+  var isMobile = window.innerWidth < 768;
+  var isPreviewMode = false;
+  
+  function closeAdminPanel(){
+    document.getElementById('eventsPanel').classList.remove('show');
+    document.getElementById('modeToggle').style.display = 'none';
+    document.getElementById('enterEditBtn').style.display = 'none';
+    document.getElementById('adminEventsBtn').style.display   = 'none';
+    document.getElementById('downloadHTMLBtn').style.display  = 'none';
+    document.getElementById('closeAdminBtn').style.display    = 'none';
+    document.getElementById('githubBtn').style.display = 'none';
+    
+    currentViewMode = 'public';
+    renderEventsFromData();
+    
+    var searchInput = document.querySelector('.search-wrapper input');
+    if(searchInput) searchInput.value = '';
+    setTimeout(function(){
+      if(window._boa && window._boa.resetAllFilters){ 
+        window._boa.resetAllFilters();
       }
-    }
+    }, 50);
+    alert('✅ Painel fechado!');
+  }
 
-    function startAutoSave() {
-      if (_autoSaveIntervalId) return;
-      _autoSaveIntervalId = setInterval(autoSave, AUTOSAVE_INTERVAL_MS);
-    }
-
-    function stopAutoSave() {
-      if (_autoSaveIntervalId) {
-        clearInterval(_autoSaveIntervalId);
-        _autoSaveIntervalId = null;
+  // Sistema de ativação de admin - Escrever "admin" na busca
+  var searchInput = document.querySelector('.search-wrapper input');
+  if(searchInput && !isMobile) {
+    searchInput.addEventListener('input', function(){
+      if(this.value.toLowerCase().trim() === 'admin'){
+        openPasswordModal();
+        this.value = '';
       }
-    }
+    });
+  }
 
-    // beforeunload handler to prevent leaving with unsaved changes
-    window.addEventListener('beforeunload', function (e) {
-      if (hasUnpublishedChanges) {
-        const confirmationMessage = 'Existem alterações não publicadas. Tem certeza que deseja sair?';
-        (e || window.event).returnValue = confirmationMessage;
-        return confirmationMessage;
+  // Variável para rastrear modo edição
+  var isInEditMode = false;
+
+  function toggleEditMode(){
+    isInEditMode = !isInEditMode;
+    
+    if(isInEditMode){
+      // Entrar no modo edição
+      document.getElementById('exitEditBtn').style.display = 'block';
+      document.getElementById('enterEditBtn').style.display = 'none';
+      document.getElementById('adminEventsBtn').style.display = 'block';
+      document.getElementById('downloadHTMLBtn').style.display = 'block';
+      document.getElementById('githubBtn').style.display = 'block';
+      document.getElementById('closeAdminBtn').style.display = 'block';
+      document.getElementById('modeToggle').style.display = 'block';
+      
+      setViewMode('edit');
+      
+      window.scrollTo(0, 0);
+      
+      alert('✏️ Modo Edição Ativado!\n\nVocê pode:\n✏️ Editar eventos\n🗑️ Deletar eventos\n➕ Adicionar novos\n\nAo terminar, clique "Sair do Modo Edição"');
+    } else {
+      // Sair do modo edição
+      document.getElementById('exitEditBtn').style.display = 'none';
+      document.getElementById('enterEditBtn').style.display = 'block';
+      document.getElementById('adminEventsBtn').style.display = 'none';
+      document.getElementById('downloadHTMLBtn').style.display = 'none';
+      document.getElementById('githubBtn').style.display = 'none';
+      document.getElementById('closeAdminBtn').style.display = 'none';
+      document.getElementById('modeToggle').style.display = 'none';
+      
+      var panel = document.getElementById('eventsPanel');
+      if(panel) panel.classList.remove('show');
+      
+      setViewMode('public');
+      
+      window.scrollTo(0, 0);
+      
+      alert('✅ Você voltou a ver o site como o público vê!');
+    }
+  }
+
+  function toggleEventsPanel(){
+    var p = document.getElementById('eventsPanel');
+    if(p.classList.contains('show')){
+      p.classList.remove('show');
+    } else {
+      p.classList.add('show');
+      renderExistingEvents();
+    }
+  }
+
+  // ── localStorage helpers ──────────────────────────────
+  function getCustomEvents(){
+    try { var r = localStorage.getItem('customEvents'); return r ? JSON.parse(r) : []; }
+    catch(e){ return []; }
+  }
+  function saveCustomEvents(arr){
+    try { localStorage.setItem('customEvents', JSON.stringify(arr)); } catch(e){}
+  }
+  function getSavedImages(){
+    try { var r = localStorage.getItem('eventImages'); return r ? JSON.parse(r) : {}; }
+    catch(e){ return {}; }
+  }
+  function saveSavedImages(obj){
+    try { localStorage.setItem('eventImages', JSON.stringify(obj)); } catch(e){}
+  }
+
+  // ── Injetar eventos custom no events-source ────────────
+  function loadCustomEventsToDOM(){
+    var source = document.getElementById('events-source');
+    if(!source) return;
+    // remove cards custom anteriores para evitar duplicatas
+    var old = source.querySelectorAll('.event-card[data-custom]');
+    for(var i=0;i<old.length;i++) old[i].remove();
+
+    var events = getCustomEvents();
+    var MESES_ABR = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+
+    // Remover eventos originais que foram editados (evitar duplicatas)
+    var editedOriginals = {};
+    events.forEach(function(evt){
+      if(evt.isEditedOriginal){
+        editedOriginals[evt.originalNome] = true;
       }
-      return undefined;
     });
 
-    /************************************************************************
-     * 3) Interface Admin: visibilidade controlada por isInEditMode
-     ************************************************************************/
-    // Detecta se existe uma flag global isInEditMode; se não existir, tenta window._boa?.isInEditMode
-    function readIsInEditMode() {
-      try {
-        if (typeof window.isInEditMode !== 'undefined') return !!window.isInEditMode;
-        if (window._boa && typeof window._boa.isInEditMode !== 'undefined') return !!window._boa.isInEditMode;
-      } catch (e) {
-        // ignore
-      }
-      return false;
-    }
-
-    function showAdminUIIfNeeded() {
-      const isInEditMode = readIsInEditMode();
-      if (!_statusIndicator || !_floatingButton) return;
-      if (isInEditMode) {
-        _statusIndicator.style.display = 'flex';
-        _floatingButton.style.display = 'block';
-      } else {
-        _statusIndicator.style.display = 'none';
-        _floatingButton.style.display = 'none';
-        if (_menu) _menu.style.display = 'none';
+    // Encontrar e remover eventos originais que foram editados
+    var cardsToRemove = [];
+    var allCards = source.querySelectorAll('.event-card:not([data-custom])');
+    for(var i=0; i<allCards.length; i++){
+      var nome = allCards[i].getAttribute('data-nome');
+      if(editedOriginals[nome]){
+        cardsToRemove.push(allCards[i]);
       }
     }
+    cardsToRemove.forEach(function(card){ card.remove(); });
 
-    // Observe changes to window.isInEditMode or window._boa.isInEditMode if they change dynamically
-    function watchEditMode() {
-      // Polling approach (safe and non-invasive)
-      let last = readIsInEditMode();
-      showAdminUIIfNeeded();
-      setInterval(function () {
-        const current = readIsInEditMode();
-        if (current !== last) {
-          last = current;
-          showAdminUIIfNeeded();
-        }
-      }, 800);
+    events.forEach(function(evt){
+      var dateISO = evt.date ? evt.date + 'T' + (evt.time || '19:00:00') + '-03:00' : '';
+      var parts   = (evt.date || '2026-01-01').split('-');
+      var ano=parts[0], mes=parts[1], dia=parts[2];
+      var monthAbbr = MESES_ABR[parseInt(mes)-1];
+      var imgTag = evt.image
+        ? '<img src="'+evt.image+'" alt="'+evt.nome+'" style="display:block;position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;transform:translate('+(evt.imageOffsetX||0)+'px,'+(evt.imageOffsetY||0)+'px) scale('+((evt.imageZoom||100)/100)+');">'
+        : '<img src="" alt="'+evt.nome+'">';
+      var html = '<div class="event-card" data-custom="1"'
+        +' data-nome="'+evt.nome+'"'
+        +' data-data="'+evt.data+'"'
+        +' data-local="'+(evt.local||'')+'"'
+        +' data-link="'+(evt.link||'')+'"'
+        +' data-date="'+dateISO+'">'
+        +'<a href="'+(evt.link||'#')+'" target="_blank" class="event-image-wrapper'+(evt.image?'':' no-image')+'">'
+        +imgTag
+        +'<div class="event-image-fallback" '+(evt.image?'style="display:none"':'')+' aria-hidden="true"><div><div class="fallback-title">'+evt.nome+'</div></div></div>'
+        +'<div class="date-badge"><div class="day">'+dia+'</div><div class="month">'+monthAbbr+'</div></div>'
+        +(evt.discount?'<div class="discount-badge">'+evt.discount+'</div>':'')
+        +'<div class="promo-badge"><i class="fas fa-tag"></i> Compre aqui</div>'
+        +'</a>'
+        +'<div class="event-content">'
+        +'<div class="artist-title">'+evt.nome+'</div>'
+        +(evt.subtitle?'<div class="event-subtitle">'+evt.subtitle+'</div>':'')
+        +(evt.local?'<div class="event-location"><i class="fas fa-map-pin"></i><div><a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(evt.local)+'" target="_blank">'+evt.local+'</a></div></div>':'')
+        +'<div class="event-actions">'
+        +'<a class="btn-ticket" href="'+(evt.link||'#')+'" target="_blank"><i class="fas fa-ticket-alt"></i><span>Comprar ingresso</span></a>'
+        +'<button class="btn-share" type="button"><i class="fas fa-share-alt"></i><span>Compartilhar</span></button>'
+        +'</div></div></div>';
+      var tmp = document.createElement('div');
+      tmp.innerHTML = html;
+      source.appendChild(tmp.firstElementChild);
+    });
+  }
+
+  // ── Aplicar imagens salvas aos eventos originais ────────
+  function loadSavedImages(){
+    var images = getSavedImages();
+    var keys = Object.keys(images);
+    if(!keys.length) return;
+    document.querySelectorAll('[data-img]').forEach(function(card){
+      var n = card.getAttribute('data-img');
+      if(!images[n]) return;
+      var img     = card.querySelector('img');
+      var wrapper = card.querySelector('.event-image-wrapper');
+      var fb      = card.querySelector('.event-image-fallback');
+      if(img){ img.setAttribute('src', images[n]); img.style.display='block'; }
+      if(wrapper) wrapper.classList.remove('no-image');
+      if(fb){ fb.hidden=true; fb.style.display='none'; }
+    });
+  }
+
+  // ── Listar eventos no painel admin ─────────────────────
+  function renderExistingEvents(){
+    var source = document.getElementById('events-source');
+    var container = document.getElementById('existingEventsList');
+    if(!source||!container) return;
+    var cards = source.querySelectorAll('.event-card');
+    if(!cards.length){
+      container.innerHTML='<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento</p>';
+      return;
     }
-
-    /************************************************************************
-     * 4) Integração com CRUD: interceptar/adaptar chamadas de Add/Edit/Delete
-     *
-     * Estratégia:
-     * - Se existirem funções globais window.addEvent, window.editEvent, window.deleteEvent,
-     *   nós as "wrapamos" para disparar markAsChanged().
-     * - Também adicionamos delegação de eventos para botões com classes comuns:
-     *   .add-event, .edit-event, .delete-event e atributos data-crud="add|edit|delete".
-     * - Isso garante compatibilidade com a maioria das implementações sem alterar o código original.
-     ************************************************************************/
-    function wrapGlobalFunction(name) {
-      try {
-        const original = window[name];
-        if (typeof original === 'function') {
-          window[name] = function wrappedFunction() {
-            try {
-              markAsChanged();
-            } catch (e) {}
-            return original.apply(this, arguments);
-          };
-        }
-      } catch (e) {
-        // ignore
-      }
+    var html='';
+    for(var i=0;i<cards.length;i++){
+      var c = cards[i];
+      var nome  = c.getAttribute('data-nome')||'Evento';
+      var data  = c.getAttribute('data-data')||'';
+      var local = c.getAttribute('data-local')||'';
+      html+='<div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">'
+        +'<div style="font-weight:700;font-size:13px;color:#FF2A6D;">'+nome+'</div>'
+        +'<div style="font-size:11px;color:#666;">📅 '+data+'</div>'
+        +'<div style="font-size:11px;color:#666;margin-bottom:8px;">📍 '+local+'</div>'
+        +'<div style="display:flex;gap:6px;">'
+        +'<button onclick="editEventDialog('+i+')" style="background:#0066cc;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">✏️ Editar</button>'
+        +'<button onclick="deleteEventFromSite('+i+')" style="background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">🗑️ Deletar</button>'
+        +'</div></div>';
     }
+    container.innerHTML = html;
+  }
 
-    function setupCrudInterception() {
-      // Wrap common global functions if present
-      ['addEvent', 'editEvent', 'deleteEvent', 'createEvent', 'updateEvent', 'removeEvent'].forEach(wrapGlobalFunction);
+  // ── Deletar evento ─────────────────────────────────────
+  function deleteEventFromSite(idx){
+    var source = document.getElementById('events-source');
+    var cards  = source.querySelectorAll('.event-card');
+    var card   = cards[idx];
+    var nome   = card.getAttribute('data-nome')||'Evento';
+    if(!confirm('⚠️ Deletar "'+nome+'"?')) return;
+    // remove do customEvents se for custom
+    var events = getCustomEvents();
+    var updated = events.filter(function(e){ return e.nome!==nome; });
+    if(updated.length < events.length) saveCustomEvents(updated);
+    card.remove();
+    renderExistingEvents();
+    if(window._boa) window._boa.refresh();
+    alert('✅ Evento deletado!');
+  }
 
-      // Delegated listeners for DOM elements (non-invasive)
-      document.addEventListener('click', function (ev) {
-        const target = ev.target;
-        if (!target) return;
+  // ── Adicionar novo evento ──────────────────────────────
+  function addNewEvent(){
+    var nome     = document.getElementById('newEventName').value.trim();
+    var subtitle = document.getElementById('newEventSubtitle').value.trim();
+    var dateInput= document.getElementById('newEventDate').value;
+    var timeInput= document.getElementById('newEventTime').value;
+    var local    = document.getElementById('newEventLocal').value.trim();
+    var link     = document.getElementById('newEventLink').value.trim();
+    var discount = document.getElementById('newEventDiscount').value.trim();
+    var image    = window.selectedEventImage || null;
 
-        // Walk up to find element with class or data attribute
-        let el = target;
-        for (let i = 0; i < 6 && el; i++, el = el.parentElement) {
-          if (!el) break;
-          const cls = el.className || '';
-          const dataCrud = el.getAttribute && el.getAttribute('data-crud');
-          if (dataCrud) {
-            const action = dataCrud.toLowerCase();
-            if (action === 'add' || action === 'edit' || action === 'delete') {
-              markAsChanged();
-              return;
-            }
-          }
-          if (cls && typeof cls === 'string') {
-            if (cls.split(/\s+/).some(c => ['add-event', 'edit-event', 'delete-event', 'create-event', 'update-event', 'remove-event'].includes(c))) {
-              markAsChanged();
-              return;
-            }
-          }
-        }
-      }, true);
+    if(!nome||!dateInput){ alert('⚠️ Preencha nome e data!'); return; }
 
-      // If the app uses forms for CRUD, listen to submit events and mark changed on successful submit
-      document.addEventListener('submit', function (ev) {
-        // We cannot assume success, but mark as changed because user submitted a change
-        markAsChanged();
-      }, true);
-    }
+    var DIAS  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    var parts = dateInput.split('-');
+    var ano=parts[0], mes=parts[1], dia=parts[2];
+    var dtObj  = new Date(+ano, +mes-1, +dia);
+    var diaSem = DIAS[dtObj.getDay()];
+    var hora   = '';
+    if(timeInput){ var tp=timeInput.split(':'); hora=tp[1]==='00'?tp[0]+'h':tp[0]+'h'+tp[1]; }
+    var dataCompleta = dia+'/'+mes+' • '+diaSem+(hora?' • '+hora:'');
 
-    /************************************************************************
-     * 5) GitHub integration: PUT file to repository (create or update)
-     *
-     * - Busca SHA do arquivo (GET contents). Se existir, faz PUT com sha.
-     * - Se não existir, faz PUT sem sha (cria).
-     * - Usa token fornecido acima.
-     * - Após sucesso, chama markAsPublished().
-     ************************************************************************/
-    async function getFileShaIfExists(path) {
-      const url = `https://api.github.com/repos/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/contents/${encodeURIComponent(path)}`;
-      try {
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/vnd.github+json',
-            'Authorization': 'token ' + GITHUB_TOKEN
-          }
-        });
-        if (res.status === 200) {
-          const data = await res.json();
-          return data.sha;
-        }
-        return null;
-      } catch (e) {
-        console.error('Admin: erro ao buscar SHA do arquivo', e);
-        return null;
-      }
-    }
+    var events = getCustomEvents();
+    events.push({ nome:nome, subtitle:subtitle, data:dataCompleta, date:dateInput,
+      time:timeInput, dayWeek:diaSem, local:local, link:link, discount:discount,
+      image:image, imageOffsetX:0, imageOffsetY:0, imageZoom:100 });
+    saveCustomEvents(events);
 
-    async function putFileToGitHub(path, contentBase64, message, sha) {
-      const url = `https://api.github.com/repos/${encodeURIComponent(GITHUB_OWNER)}/${encodeURIComponent(GITHUB_REPO)}/contents/${encodeURIComponent(path)}`;
-      const body = {
-        message: message || 'Atualização via admin UI',
-        content: contentBase64,
-        committer: {
-          name: GITHUB_OWNER,
-          email: `${GITHUB_OWNER}@users.noreply.github.com`
-        }
+    // Limpar campos
+    ['newEventName','newEventSubtitle','newEventDate','newEventTime',
+     'newEventLocal','newEventLink','newEventDiscount'].forEach(function(id){
+      document.getElementById(id).value='';
+    });
+    document.getElementById('imagePreview').innerHTML='📸 Clique aqui para adicionar imagem';
+    window.selectedEventImage=null;
+
+    // Recarregar
+    loadCustomEventsToDOM();
+    if(window._boa) window._boa.refresh();
+    renderExistingEvents();
+    alert('✅ Evento "'+nome+'" adicionado!');
+  }
+
+  // ── Editar evento ──────────────────────────────────────
+  function editEventDialog(idx){
+    var source = document.getElementById('events-source');
+    var cards  = source.querySelectorAll('.event-card');
+    var card   = cards[idx];
+
+    var currentNome     = card.getAttribute('data-nome')||'';
+    var currentData     = card.getAttribute('data-data')||'';
+    var currentLocal    = card.getAttribute('data-local')||'';
+    var currentLink     = card.getAttribute('data-link')||'';
+    var currentDateISO  = card.getAttribute('data-date')||'';
+    var subtitleEl      = card.querySelector('.event-subtitle');
+    var subtitle        = subtitleEl ? subtitleEl.textContent : '';
+    var discEl          = card.querySelector('.discount-badge');
+    var currentDiscount = discEl ? discEl.textContent.trim() : '';
+    var currentImgSrc   = (card.querySelector('img')||{}).getAttribute ? card.querySelector('img').getAttribute('src')||'' : '';
+
+    var isoDate='', isoTime='';
+    var m = currentDateISO.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/);
+    if(m){ isoDate=m[1]; isoTime=m[2]; }
+
+    var modal = document.createElement('div');
+    modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);display:flex;align-items:flex-start;justify-content:center;z-index:10000;overflow-y:auto;padding:16px;';
+    var dialog = document.createElement('div');
+    dialog.style.cssText='background:#fff;border-radius:12px;padding:20px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,0.3);margin:auto;';
+
+    function esc(s){ return (s||'').replace(/"/g,'&quot;'); }
+
+    dialog.innerHTML=
+      '<div style="font-size:18px;font-weight:800;color:#FF2A6D;margin-bottom:14px;">✏️ Editar Evento</div>'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📝 Nome</label>'
+      +'<input id="eNome" value="'+esc(currentNome)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">🎤 Subtítulo</label>'
+      +'<input id="eSub" value="'+esc(subtitle)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📅 Data</label>'
+      +'<input id="eDate" type="date" value="'+isoDate+'" style="width:100%;padding:9px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">🕐 Hora</label>'
+      +'<input id="eTime" type="time" value="'+isoTime+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📍 Local</label>'
+      +'<input id="eLocal" value="'+esc(currentLocal)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">🔗 Link</label>'
+      +'<input id="eLink" value="'+esc(currentLink)+'" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">💰 Desconto</label>'
+      +'<input id="eDisc" value="'+esc(currentDiscount)+'" placeholder="-10%" style="width:100%;padding:9px;margin-bottom:10px;border:2px solid #fee822;border-radius:6px;font-family:Nunito;font-size:13px;box-sizing:border-box;">'
+      +'<label style="font-size:12px;font-weight:700;display:block;margin-bottom:3px;">📸 Foto</label>'
+      +'<div id="ePrev" onclick="document.getElementById(\'eFile\').click();" style="width:100%;height:120px;background:#f0f0f0;border:2px dashed #fee822;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;margin-bottom:6px;">'
+      +(currentImgSrc?'<img src="'+currentImgSrc+'" style="width:100%;height:100%;object-fit:cover;">':'<span style="color:#999;font-size:12px;">📸 Clique para adicionar foto</span>')
+      +'</div>'
+      +'<input id="eFile" type="file" accept="image/*" style="display:none;">'
+      +'<div id="eRepos" style="display:'+(currentImgSrc?'block':'none')+';background:#f9f9f9;padding:10px;border-radius:6px;border:1px solid #fee822;margin-bottom:10px;">'
+      +'<div style="font-size:11px;font-weight:700;margin-bottom:6px;">🔍 Ajustar foto:</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="font-size:11px;font-weight:700;min-width:35px;">Zoom</span><input type="range" id="eZoom" min="50" max="250" value="100" style="flex:1;"><span id="eZoomLbl" style="font-size:11px;min-width:35px;">100%</span></div>'
+      +'<div style="font-size:10px;color:#888;margin-bottom:5px;">Arraste para reposicionar:</div>'
+      +'<div id="eEditor" style="width:100%;height:140px;background:#ddd;border:2px solid #fee822;border-radius:6px;overflow:hidden;cursor:grab;position:relative;user-select:none;">'
+      +'<img id="eEditorImg" src="'+(currentImgSrc||'')+'" style="position:absolute;top:0;left:0;width:100%;height:auto;transform-origin:center top;"></div>'
+      +'<div style="display:flex;gap:8px;margin-top:6px;">'
+      +'<button id="eRemove" style="flex:1;background:#ff6b6b;color:#fff;border:none;padding:7px;border-radius:5px;font-weight:700;cursor:pointer;font-size:11px;">🗑️ Remover</button>'
+      +'<button id="eReset" style="flex:1;background:#4CAF50;color:#fff;border:none;padding:7px;border-radius:5px;font-weight:700;cursor:pointer;font-size:11px;">↺ Resetar</button>'
+      +'</div></div>'
+      +'<div style="display:flex;gap:10px;">'
+      +'<button id="eSave" style="flex:1;background:#4CAF50;color:#fff;border:none;padding:12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">💾 Salvar</button>'
+      +'<button id="eCancel" style="flex:1;background:#999;color:#fff;border:none;padding:12px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">✕ Cancelar</button>'
+      +'</div>';
+
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+
+    var selImg = currentImgSrc || null;
+    var ox=0, oy=0, zoom=100, dragging=false;
+
+    function applyT(){ var i=document.getElementById('eEditorImg'); if(i) i.style.transform='translate('+ox+'px,'+oy+'px) scale('+zoom/100+')'; }
+
+    function setupEditor(src){
+      var img=document.getElementById('eEditorImg');
+      var ed=document.getElementById('eEditor');
+      var repos=document.getElementById('eRepos');
+      if(!img||!ed) return;
+      img.src=src; repos.style.display='block';
+      ox=0;oy=0;zoom=100;
+      document.getElementById('eZoom').value=100;
+      document.getElementById('eZoomLbl').textContent='100%';
+      applyT();
+      ed.onmousedown=ed.ontouchstart=function(e){
+        dragging=true; ed.style.cursor='grabbing';
+        var isT=e.type==='touchstart';
+        var sx=isT?e.touches[0].clientX:e.clientX, sy=isT?e.touches[0].clientY:e.clientY;
+        var sox=ox, soy=oy;
+        function mv(e2){ if(!dragging)return; var cx=isT?e2.touches[0].clientX:e2.clientX, cy=isT?e2.touches[0].clientY:e2.clientY; ox=sox+(cx-sx); oy=soy+(cy-sy); applyT(); }
+        function up(){ dragging=false; ed.style.cursor='grab'; document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up); }
+        document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+        document.addEventListener('touchmove',mv,{passive:false}); document.addEventListener('touchend',up);
+        e.preventDefault();
       };
-      if (sha) body.sha = sha;
-      try {
-        const res = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Accept': 'application/vnd.github+json',
-            'Authorization': 'token ' + GITHUB_TOKEN,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
+    }
+    if(currentImgSrc) setupEditor(currentImgSrc);
+
+    document.getElementById('eZoom').oninput=function(){ zoom=parseInt(this.value); document.getElementById('eZoomLbl').textContent=zoom+'%'; applyT(); };
+    document.getElementById('eRemove').onclick=function(){ selImg=null; document.getElementById('ePrev').innerHTML='<span style="color:#999;font-size:12px;">📸 Clique para adicionar foto</span>'; document.getElementById('eRepos').style.display='none'; document.getElementById('eFile').value=''; };
+    document.getElementById('eReset').onclick=function(){ ox=0;oy=0;zoom=100; document.getElementById('eZoom').value=100; document.getElementById('eZoomLbl').textContent='100%'; applyT(); };
+    document.getElementById('eFile').onchange=function(e){
+      var f=e.target.files[0]; if(!f) return;
+      if(f.size>3*1024*1024){ alert('⚠️ Máximo 3MB'); return; }
+      var r=new FileReader();
+      r.onload=function(ev){ selImg=ev.target.result; document.getElementById('ePrev').innerHTML='<img src="'+selImg+'" style="width:100%;height:100%;object-fit:cover;">'; setupEditor(selImg); };
+      r.readAsDataURL(f);
+    };
+    document.getElementById('eCancel').onclick=function(){ document.body.removeChild(modal); };
+
+    document.getElementById('eSave').onclick=function(){
+      var novoNome = document.getElementById('eNome').value.trim();
+      var novoSub  = document.getElementById('eSub').value.trim();
+      var novoDate = document.getElementById('eDate').value;
+      var novoTime = document.getElementById('eTime').value;
+      var novoLoc  = document.getElementById('eLocal').value.trim();
+      var novoLink = document.getElementById('eLink').value.trim();
+      var novoDisc = document.getElementById('eDisc').value.trim();
+      if(!novoNome||!novoDate){ alert('⚠️ Preencha nome e data!'); return; }
+
+      var DIAS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+      var MESES_ABR=['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+      var p=novoDate.split('-'), ano=p[0], mes=p[1], dia=p[2];
+      var dtObj=new Date(+ano,+mes-1,+dia);
+      var diaSem=DIAS[dtObj.getDay()];
+      var horaStr='';
+      if(novoTime){ var tp=novoTime.split(':'); horaStr=tp[1]==='00'?tp[0]+'h':tp[0]+'h'+tp[1]; }
+      var novaData = dia+'/'+mes+' • '+diaSem+(horaStr?' • '+horaStr:'');
+      var novoISO  = novoDate+'T'+(novoTime||'19:00')+':00-03:00';
+      var finalT   = 'translate('+ox+'px,'+oy+'px) scale('+zoom/100+')';
+
+      // Atualizar card no DOM
+      card.setAttribute('data-nome',  novoNome);
+      card.setAttribute('data-data',  novaData);
+      card.setAttribute('data-local', novoLoc);
+      card.setAttribute('data-link',  novoLink);
+      card.setAttribute('data-date',  novoISO);
+      card.querySelector('.event-datetime') && card.querySelector('.event-datetime').remove();
+
+      var at=card.querySelector('.artist-title'); if(at) at.textContent=novoNome;
+      var se=card.querySelector('.event-subtitle');
+      if(novoSub){ if(!se){se=document.createElement('div');se.className='event-subtitle';at&&at.parentNode.insertBefore(se,at.nextSibling);}se.textContent=novoSub; }else if(se) se.remove();
+
+      var de=card.querySelector('.discount-badge');
+      if(novoDisc){ if(!de){de=document.createElement('div');de.className='discount-badge';card.querySelector('.event-image-wrapper')&&card.querySelector('.event-image-wrapper').appendChild(de);}de.textContent=novoDisc; }else if(de) de.remove();
+
+      var le=card.querySelector('.event-location');
+      if(novoLoc){
+        var mu='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(novoLoc);
+        if(!le){le=document.createElement('div');le.className='event-location';le.innerHTML='<i class="fas fa-map-pin"></i><div><a href="'+mu+'" target="_blank">'+novoLoc+'</a></div>';card.querySelector('.event-content')&&card.querySelector('.event-content').appendChild(le);}
+        else{var a=le.querySelector('a');if(a){a.href=mu;a.textContent=novoLoc;}}
+      }else if(le) le.remove();
+
+      var tb=card.querySelector('.btn-ticket'); if(tb) tb.href=novoLink||'#';
+      var wl=card.querySelector('.event-image-wrapper'); if(wl) wl.href=novoLink||'#';
+
+      // Foto
+      if(selImg!==null){
+        var img=card.querySelector('img');
+        if(img){ img.setAttribute('src',selImg||''); img.style.display=selImg?'block':'none'; if(selImg) img.style.transform=finalT; }
+        var fb=card.querySelector('.event-image-fallback');
+        var wr=card.querySelector('.event-image-wrapper');
+        if(selImg){ if(fb){fb.hidden=true;fb.style.display='none';} if(wr) wr.classList.remove('no-image'); }
+        else{ if(fb){fb.hidden=false;fb.style.display='';} if(wr) wr.classList.add('no-image'); }
+        // Salvar em eventImages (eventos originais)
+        var imgNum=card.getAttribute('data-img');
+        if(imgNum&&selImg){ var imgs=getSavedImages(); imgs[imgNum]=selImg; saveSavedImages(imgs); }
+      }
+
+      // Salvar em customEvents (eventos adicionados pelo admin)
+      var evts=getCustomEvents();
+      var ei=evts.findIndex(function(e){ return e.nome===currentNome; });
+      if(ei!==-1){
+        // Evento já existe em customEvents - atualizar
+        evts[ei]=Object.assign({},evts[ei],{
+          nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
+          time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
+          image:selImg!==null?selImg:evts[ei].image,
+          imageOffsetX:ox, imageOffsetY:oy, imageZoom:zoom
         });
-        const data = await res.json();
-        if (res.status === 201 || res.status === 200) {
-          return { ok: true, data };
-        } else {
-          return { ok: false, status: res.status, data };
-        }
-      } catch (e) {
-        return { ok: false, error: e };
+        saveCustomEvents(evts);
+      } else {
+        // Evento original está sendo editado - salvar como customEvent
+        evts.push({
+          nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
+          time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
+          image:selImg||null,
+          imageOffsetX:ox, imageOffsetY:oy, imageZoom:zoom,
+          isEditedOriginal:true, originalNome:currentNome
+        });
+        saveCustomEvents(evts);
       }
-    }
 
-    async function syncWithGitHub() {
-      try {
-        // Provide visual feedback
-        const originalText = _floatingButton.textContent;
-        _floatingButton.textContent = '⏳';
-        _floatingButton.disabled = true;
+      var dayEl=card.querySelector('.date-badge .day'), monEl=card.querySelector('.date-badge .month');
+      if(dayEl) dayEl.textContent=dia;
+      if(monEl) monEl.textContent=MESES_ABR[+mes-1];
 
-        // Get current HTML
-        const html = document.documentElement.outerHTML;
-        const contentBase64 = btoa(unescape(encodeURIComponent(html)));
+      document.body.removeChild(modal);
+      alert('✅ Salvo!');
+      setTimeout(function(){ if(window._boa) window._boa.refresh(); renderExistingEvents(); }, 100);
+    };
+  }
 
-        // Get existing SHA if any
-        const sha = await getFileShaIfExists(GITHUB_PATH);
-
-        const message = sha ? 'Atualização automática do site (admin)' : 'Criação do arquivo index via admin';
-        const result = await putFileToGitHub(GITHUB_PATH, contentBase64, message, sha);
-
-        if (result.ok) {
-          markAsPublished();
-          alert('Sincronização com GitHub concluída com sucesso.');
-        } else {
-          console.error('Admin: erro ao enviar para GitHub', result);
-          alert('Falha ao sincronizar com GitHub. Veja console para detalhes.');
-        }
-      } catch (e) {
-        console.error('Admin: exceção em syncWithGitHub', e);
-        alert('Erro inesperado ao sincronizar com GitHub.');
-      } finally {
-        _floatingButton.textContent = originalText;
-        _floatingButton.disabled = false;
-      }
-    }
-
-    /************************************************************************
-     * 6) Download HTML
-     ************************************************************************/
-    function downloadCurrentHTML() {
-      try {
-        const html = document.documentElement.outerHTML;
-        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'index.html';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-        markAsPublished();
-      } catch (e) {
-        console.error('Admin: erro ao baixar HTML', e);
-        alert('Falha ao baixar HTML.');
-      }
-    }
-
-    /************************************************************************
-     * 7) On load: create UI, setup watchers and CRUD interception
-     ************************************************************************/
-    function initAdmin() {
-      try {
-        createAdminElements();
-        setupCrudInterception();
-        watchEditMode();
-
-        // If there is an autosaved draft, keep it but do not overwrite the page automatically.
-        try {
-          const draft = localStorage.getItem(AUTOSAVE_KEY);
-          if (draft) {
-            // Indicate there is an autosave available by setting changed state
-            hasUnpublishedChanges = true;
-            updateStatusIndicator();
-          }
-        } catch (e) {
-          // ignore
-        }
-
-        // If the page triggers changes programmatically, expose a global helper
-        window.__admin_markAsChanged = markAsChanged;
-        window.__admin_markAsPublished = markAsPublished;
-        window.__admin_downloadHTML = downloadCurrentHTML;
-        window.__admin_syncWithGitHub = syncWithGitHub;
-
-        // Start autosave if there are pending changes
-        if (hasUnpublishedChanges) startAutoSave();
-      } catch (e) {
-        console.error('Admin: falha na inicialização', e);
-      }
-    }
-
-    // Initialize after DOM ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initAdmin);
+  // ── Download HTML ──────────────────────────────────────
+  function downloadUpdatedHTML(){
+    var source = document.getElementById('events-source');
+    if(!source){ alert('Erro: events-source não encontrado'); return; }
+    var htmlContent = document.documentElement.outerHTML;
+    var newEventsHTML = source.innerHTML;
+    var oldEventsPattern = /<div id="events-source"[\s\S]*?<\/div>/;
+    var newEventsDiv = '<div id="events-source" style="display:none">\n'+newEventsHTML+'\n    </div>';
+    htmlContent = htmlContent.replace(oldEventsPattern, newEventsDiv);
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if(isMobile){
+      showHTMLModal(htmlContent);
     } else {
-      initAdmin();
+      var blob = new Blob([htmlContent],{type:'text/html;charset=utf-8;'});
+      var link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'index_atualizado_'+new Date().toISOString().slice(0,10)+'.html';
+      link.click();
+      alert('✅ HTML baixado!');
+    }
+  }
+
+  function showHTMLModal(htmlContent){
+    var modal=document.createElement('div');
+    modal.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:10001;padding:10px;';
+    var d=document.createElement('div');
+    d.style.cssText='background:#fff;border-radius:12px;padding:20px;width:100%;max-height:90vh;overflow-y:auto;';
+    d.innerHTML='<div style="font-size:16px;font-weight:800;color:#FF2A6D;margin-bottom:12px;">📱 HTML Atualizado</div>'
+      +'<textarea id="htmlArea" readonly style="width:100%;height:180px;padding:10px;border:1px solid #e0e0e0;border-radius:6px;font-size:10px;font-family:monospace;box-sizing:border-box;background:#f9f9f9;"></textarea>'
+      +'<div style="display:flex;gap:10px;margin-top:10px;">'
+      +'<button id="copyBtn" style="flex:1;background:#4CAF50;color:#fff;border:none;padding:11px;border-radius:6px;font-weight:700;cursor:pointer;">📋 Copiar</button>'
+      +'<button id="closeBtn" style="flex:1;background:#999;color:#fff;border:none;padding:11px;border-radius:6px;font-weight:700;cursor:pointer;">✕ Fechar</button>'
+      +'</div>';
+    modal.appendChild(d); document.body.appendChild(modal);
+    document.getElementById('htmlArea').value=htmlContent;
+    document.getElementById('copyBtn').onclick=function(){ document.getElementById('htmlArea').select(); document.execCommand('copy'); alert('✅ Copiado!'); };
+    document.getElementById('closeBtn').onclick=function(){ document.body.removeChild(modal); };
+  }
+
+  // ── Preview imagem novo evento ─────────────────────────
+  document.addEventListener('DOMContentLoaded', function(){
+    var si=document.getElementById('search');
+    if(si) si.addEventListener('input',function(){ if(this.value.toLowerCase().includes('admin')){ this.value=''; openPasswordModal(); } });
+    var fi=document.getElementById('newEventImage');
+    if(fi) fi.addEventListener('change',function(e){
+      var f=e.target.files[0]; if(!f) return;
+      if(f.size>3*1024*1024){ alert('⚠️ Máximo 3MB'); return; }
+      var r=new FileReader();
+      r.onload=function(ev){
+        window.selectedEventImage=ev.target.result;
+        var p=document.getElementById('imagePreview');
+        p.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:100%;object-fit:cover;">';
+        p.style.border='2px solid #4CAF50';
+      };
+      r.readAsDataURL(f);
+    });
+  });
+
+  // ── Motor principal (filtros, render) ──────────────────
+  (function(){
+    var MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+    var MESES_ABR=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+    var DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var DIAS_LONGO=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+    function pad2(n){ return String(n).padStart(2,'0'); }
+    function keyYM(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1); }
+    function stripAccents(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+
+    var source = document.getElementById('events-source');
+    var view   = document.getElementById('events-view');
+    var searchInput = document.querySelector('.search-wrapper input');
+    var hoje   = new Date();
+    var thisKey = keyYM(new Date(hoje.getFullYear(),hoje.getMonth(),1));
+    var nextKey = keyYM(new Date(hoje.getFullYear(),hoje.getMonth()+1,1));
+    var activeMonthFilter='all', searchQuery='';
+    var ALL_CARDS=[];
+
+    function setupFallback(w){
+      var img=w.querySelector('img');
+      var fb=w.querySelector('.event-image-fallback');
+      var noImg=function(){ w.classList.add('no-image'); if(fb) fb.hidden=false; };
+      if(!img||!img.getAttribute('src')){ noImg(); return; }
+      img.addEventListener('error', noImg);
+      img.addEventListener('load', function(){ if(img.naturalWidth===0) noImg(); });
     }
 
-    /************************************************************************
-     * 8) Extra: If the original app exposes specific event emitter hooks,
-     *    try to attach to them (non-invasive).
-     ************************************************************************/
-    try {
-      // If window._boa exists and has event hooks, try to listen for changes
-      if (window._boa && typeof window._boa.on === 'function') {
-        try {
-          window._boa.on('change', function () {
-            markAsChanged();
-          });
-        } catch (e) {}
-      }
-    } catch (e) {}
-
-    /************************************************************************
-     * 9) Ensure that common programmatic CRUD helpers call markAsChanged
-     *    by monkey-patching common DOM APIs that may be used by apps.
-     *
-     *    This is conservative and non-destructive: we wrap methods and call
-     *    markAsChanged() when they are used in ways that likely change content.
-     ************************************************************************/
-    (function patchDOMMethods() {
-      try {
-        const origAppend = Element.prototype.appendChild;
-        Element.prototype.appendChild = function () {
-          try { markAsChanged(); } catch (e) {}
-          return origAppend.apply(this, arguments);
-        };
-
-        const origRemove = Element.prototype.removeChild;
-        Element.prototype.removeChild = function () {
-          try { markAsChanged(); } catch (e) {}
-          return origRemove.apply(this, arguments);
-        };
-
-        const origInsert = Element.prototype.insertBefore;
-        Element.prototype.insertBefore = function () {
-          try { markAsChanged(); } catch (e) {}
-          return origInsert.apply(this, arguments);
-        };
-
-        const origSetAttr = Element.prototype.setAttribute;
-        Element.prototype.setAttribute = function () {
-          try {
-            // Only mark changed for attributes that likely change content/state
-            const name = arguments[0];
-            if (name && ['value', 'checked', 'selected', 'innerHTML', 'src', 'href'].includes(String(name))) {
-              markAsChanged();
-            }
-          } catch (e) {}
-          return origSetAttr.apply(this, arguments);
-        };
-      } catch (e) {
-        // ignore if patching fails
-      }
-    })();
-
-    /************************************************************************
-     * 10) Small safety: do not expose token widely in console logs
-     ************************************************************************/
-    try {
-      Object.defineProperty(window, '__GITHUB_TOKEN__', {
-        value: GITHUB_TOKEN,
-        writable: false,
-        configurable: false,
-        enumerable: false
-      });
-    } catch (e) {
-      // ignore
+    function ensureDateLine(node,dt){
+      if(node.querySelector('.event-datetime')) return;
+      var content=node.querySelector('.event-content'); if(!content) return;
+      var h=pad2(dt.getHours()),mn=pad2(dt.getMinutes());
+      var hora=mn==='00'?h+'h':h+'h'+mn;
+      var line=document.createElement('div'); line.className='event-datetime';
+      line.innerHTML='<i class="far fa-clock"></i><span>'+DIAS[dt.getDay()]+' • '+hora+'</span>';
+      var loc=content.querySelector('.event-location');
+      if(loc) content.insertBefore(line,loc); else content.appendChild(line);
     }
 
-    // End of admin-inject IIFE
+    function getCards(){
+      var nodes=source.querySelectorAll('.event-card');
+      var list=[];
+      for(var i=0;i<nodes.length;i++){
+        var node=nodes[i];
+        var dt=new Date(node.getAttribute('data-date'));
+        if(isNaN(dt.getTime())) continue; // skip invalid dates
+        var cloned=node.cloneNode(true);
+        var wrap=cloned.querySelector('.event-image-wrapper');
+        if(wrap){ var ft=wrap.querySelector('.fallback-title'); if(ft) ft.textContent=cloned.getAttribute('data-nome')||''; setupFallback(wrap); }
+        ensureDateLine(cloned,dt);
+        var nome=cloned.getAttribute('data-nome')||'';
+        var dataA=cloned.getAttribute('data-data')||'';
+        var local=cloned.getAttribute('data-local')||'';
+        var artEl=cloned.querySelector('.artist-title');
+        var subEl=cloned.querySelector('.event-subtitle');
+        var dNum=dt.getDate(),mNum=dt.getMonth(),yNum=dt.getFullYear(),wNum=dt.getDay();
+        var raw=[artEl?artEl.textContent:'',nome,subEl?subEl.textContent:'',local,dataA,
+          pad2(dNum)+'/'+pad2(mNum+1)+'/'+yNum, pad2(dNum)+'/'+pad2(mNum+1),
+          yNum+'-'+pad2(mNum+1)+'-'+pad2(dNum),
+          MESES[mNum],MESES_ABR[mNum],DIAS_LONGO[wNum],DIAS[wNum]].join(' • ');
+        list.push({ node:cloned, date:dt, ym:keyYM(dt), searchText:stripAccents(raw).toLowerCase(),
+          meta:{dia:dNum,mes:mNum,ano:yNum,dow:wNum} });
+      }
+      list.sort(function(a,b){ return a.date-b.date; });
+      return list;
+    }
+
+    function bindShare(){
+      var btns=view.querySelectorAll('.btn-share');
+      for(var i=0;i<btns.length;i++){
+        btns[i].onclick=function(){
+          var c=this.closest('.event-card');
+          var msg='confira "'+c.getAttribute('data-nome')+'" em "'+c.getAttribute('data-data')+'" no "'+c.getAttribute('data-local')+'". Código BOA: '+c.getAttribute('data-link');
+          window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+        };
+      }
+    }
+
+    function render(list){
+      view.innerHTML='';
+      if(!list.length){ var msg=document.createElement('div'); msg.className='no-results'; msg.textContent='Nenhum evento encontrado.'; view.appendChild(msg); return; }
+      var grid=document.createElement('div'); grid.className='events-grid';
+      for(var i=0;i<list.length;i++) grid.appendChild(list[i].node);
+      view.appendChild(grid);
+      bindShare();
+    }
+
+    function applyFilters(){
+      var byMonth=ALL_CARDS.filter(function(it){ return activeMonthFilter==='all'||it.ym===activeMonthFilter; });
+      if(!searchQuery.trim()){ render(byMonth); return; }
+      var q=stripAccents(searchQuery.trim()).toLowerCase();
+      var tokens=q.split(/\s+/).filter(Boolean);
+      var filtered=byMonth.filter(function(it){ return tokens.every(function(t){ return it.searchText.indexOf(t)!==-1; }); });
+      render(filtered);
+    }
+
+    function refresh(){
+      ALL_CARDS=getCards();
+      applyFilters();
+    }
+
+    function resetAllFilters(){
+      activeMonthFilter='all';
+      searchQuery='';
+      var si = document.querySelector('.search-wrapper input');
+      if(si) si.value = '';
+      document.querySelectorAll('#filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelector('#filters .filter-btn[data-filter="all"]').classList.add('active');
+      applyFilters();
+    }
+
+    // Expor refresh e resetAllFilters ao global
+    window._boa={ refresh:refresh, resetAllFilters:resetAllFilters };
+
+    document.getElementById('filters').addEventListener('click',function(e){
+      var btn=e.target.closest('.filter-btn'); if(!btn) return;
+      var f=btn.getAttribute('data-filter');
+      activeMonthFilter=f==='all'?'all':(f==='this'?thisKey:nextKey);
+      document.querySelectorAll('#filters .filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      applyFilters();
+    });
+    if(searchInput) searchInput.addEventListener('input',function(){ searchQuery=this.value||''; applyFilters(); });
+
+    // Inicialização — cada etapa isolada para não travar o resto
+    try { renderEventsFromData(); } catch(e){ console.warn('renderEventsFromData:', e); }
+    try { renderExistingEvents(); } catch(e){ console.warn('renderExistingEvents:', e); }
+    try { loadCustomEventsToDOM(); } catch(e){ console.warn('loadCustomEventsToDOM:', e); }
+    try { loadSavedImages(); } catch(e){ console.warn('loadSavedImages:', e); }
+    try { ALL_CARDS=getCards(); } catch(e){ console.warn('getCards:', e); ALL_CARDS=[]; }
+    applyFilters();
+
   })();
   </script>
-  <!-- === FIM DO SCRIPT INJETADO (ADMIN) === -->
+
+
+<!-- PUBLICAÇÃO UI -->
+<div id="publishStatus" style="
+display:none;
+position:fixed;
+bottom:80px;
+right:16px;
+background:#fff;
+padding:8px 12px;
+border-radius:20px;
+font-size:12px;
+box-shadow:0 2px 10px rgba(0,0,0,0.2);
+z-index:9999;">
+🟢 Publicado
+</div>
+
+<button id="publishFloatingBtn"
+onclick="publishAll()"
+style="
+display:none;
+position:fixed;
+bottom:20px;
+right:16px;
+background:#FF2A6D;
+color:#fff;
+border:none;
+padding:14px 18px;
+border-radius:50px;
+font-weight:800;
+cursor:pointer;
+z-index:9999;
+box-shadow:0 6px 20px rgba(255,42,109,.4);">
+💾 Publicar alterações
+</button>
+
+
+<script>
+// ===== CONTROLE DE PUBLICAÇÃO =====
+let hasUnpublishedChanges = false;
+
+function markAsChanged(){
+  hasUnpublishedChanges = true;
+  updatePublishUI();
+  autoSave();
+}
+
+function markAsPublished(){
+  hasUnpublishedChanges = false;
+  updatePublishUI();
+  localStorage.removeItem('draftEvents');
+}
+
+function updatePublishUI(){
+  let btn = document.getElementById('publishFloatingBtn');
+  let status = document.getElementById('publishStatus');
+  if(!btn || !status) return;
+
+  if(hasUnpublishedChanges){
+    btn.style.display = 'flex';
+    status.innerHTML = '🟡 Alterações não publicadas';
+  } else {
+    btn.style.display = 'none';
+    status.innerHTML = '🟢 Publicado';
+  }
+}
+
+// AUTO SAVE
+function autoSave(){
+  localStorage.setItem('draftEvents', JSON.stringify(eventsData));
+}
+
+function restoreDraft(){
+  let draft = localStorage.getItem('draftEvents');
+  if(draft){
+    if(confirm('🔄 Existe uma versão não publicada. Deseja restaurar?')){
+      let data = JSON.parse(draft);
+      eventsData.splice(0, eventsData.length, ...data);
+      renderEventsFromData();
+      renderExistingEvents();
+      markAsChanged();
+    }
+  }
+}
+
+window.addEventListener('load', restoreDraft);
+
+// ALERTA SAÍDA
+window.addEventListener('beforeunload', function (e) {
+  if (hasUnpublishedChanges) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+// DOWNLOAD
+const oldDownload = downloadUpdatedHTML;
+downloadUpdatedHTML = function(){
+  var eventsJSON = JSON.stringify(eventsData, null, 2);
+  var htmlDoc = document.documentElement.outerHTML;
+  htmlDoc = htmlDoc.replace(/const eventsData = \[[\s\S]*?\];/, 'const eventsData = ' + eventsJSON + ';');
+
+  var blob = new Blob([htmlDoc], {type: 'text/html'});
+  var url = URL.createObjectURL(blob);
+
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = 'index-atualizado.html';
+  link.click();
+  URL.revokeObjectURL(url);
+
+  markAsPublished();
+}
+
+// GITHUB
+const oldPush = pushToGitHub;
+pushToGitHub = function(){
+  if(!confirm('🚀 Publicar no GitHub agora?')) return;
+  oldPush();
+  setTimeout(markAsPublished, 2000);
+}
+
+// PUBLICAR
+function publishAll(){
+  let option = confirm('OK = GitHub | Cancelar = Baixar HTML');
+  if(option){
+    pushToGitHub();
+  } else {
+    downloadUpdatedHTML();
+  }
+}
+
+// HOOKS CRUD
+const oldAdd = addNewEvent;
+addNewEvent = function(){
+  oldAdd();
+  markAsChanged();
+}
+
+const oldDelete = deleteEvent;
+deleteEvent = function(id){
+  oldDelete(id);
+  markAsChanged();
+}
+
+// ===== INJEÇÃO ADMIN: updatePublishUI respeita isInEditMode =====
+updatePublishUI = function(){
+  var btn    = document.getElementById('publishFloatingBtn');
+  var status = document.getElementById('publishStatus');
+  if(!btn || !status) return;
+  if(!isInEditMode){
+    btn.style.display    = 'none';
+    status.style.display = 'none';
+    return;
+  }
+  status.style.display = 'block';
+  if(hasUnpublishedChanges){
+    btn.style.display   = 'flex';
+    status.innerHTML    = '🟡 Alterações não publicadas';
+  } else {
+    btn.style.display   = 'none';
+    status.innerHTML    = '🟢 Publicado';
+  }
+};
+
+// ===== HOOK: toggleEditMode atualiza UI de publicação =====
+(function(){
+  var _origToggle = toggleEditMode;
+  toggleEditMode = function(){
+    _origToggle();
+    updatePublishUI();
+  };
+})();
+
+// ===== HOOK: editEventDialog dispara markAsChanged ao salvar =====
+(function(){
+  var _origEdit = editEventDialog;
+  editEventDialog = function(idx){
+    _origEdit(idx);
+    setTimeout(function(){
+      var eSave = document.getElementById('eSave');
+      if(eSave){
+        var _origSave = eSave.onclick;
+        eSave.onclick = function(){
+          _origSave && _origSave.call(this);
+          markAsChanged();
+        };
+      }
+    }, 0);
+  };
+})();
+</script>
+
 </body>
 </html>
