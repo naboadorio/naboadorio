@@ -239,15 +239,49 @@
 
     syncEventsFromDOM();
 
+    // ── Ocultar painel admin temporariamente antes de capturar o HTML ──
+    var adminIds = ['adminEventsBtn','downloadHTMLBtn','closeAdminBtn'];
+    var adminSavedDisplay = {};
+    adminIds.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){ adminSavedDisplay[id] = el.style.display; el.style.display = 'none'; }
+    });
+    var githubRow = document.getElementById('githubBtnRow');
+    var githubRowDisplay = githubRow ? githubRow.style.display : '';
+    if(githubRow) githubRow.style.display = 'none';
+    var eventsPanel = document.getElementById('eventsPanel');
+    var panelWasOpen = eventsPanel && eventsPanel.classList.contains('show');
+    if(panelWasOpen) eventsPanel.classList.remove('show');
+    var publishBanner = document.getElementById('publishBanner');
+    var bannerDisplay = publishBanner ? publishBanner.style.display : '';
+    if(publishBanner) publishBanner.style.display = 'none';
+    // Renderizar em modo público para capturar HTML limpo
+    var savedViewMode = currentViewMode;
+    currentViewMode = 'public';
+    renderEventsFromData();
+
+    var fileContent = document.documentElement.outerHTML;
+    var eventsJSON = JSON.stringify(eventsData, null, 2);
+    // REGEX CORRIGIDA: \[[\s\S]*?\] com classe de caracteres correta
+    fileContent = fileContent.replace(/const eventsData = \[[\s\S]*?\];/, 'const eventsData = ' + eventsJSON + ';');
+
+    // ── Restaurar painel admin ──
+    adminIds.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el && adminSavedDisplay[id]) el.style.display = adminSavedDisplay[id];
+    });
+    if(githubRow) githubRow.style.display = githubRowDisplay;
+    if(panelWasOpen && eventsPanel) eventsPanel.classList.add('show');
+    if(publishBanner) publishBanner.style.display = bannerDisplay;
+    currentViewMode = savedViewMode;
+    renderEventsFromData();
+
     var loadingDiv = document.createElement('div');
     loadingDiv.id = 'githubLoading';
     loadingDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;';
     loadingDiv.innerHTML = '<div style="background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:320px;width:90%;"><div style="font-size:48px;margin-bottom:16px;">⏳</div><div style="font-size:18px;font-weight:800;color:#333;">Publicando...</div><div style="font-size:13px;color:#777;margin-top:8px;">Enviando para GitHub Pages</div></div>';
     document.body.appendChild(loadingDiv);
 
-    var fileContent = document.documentElement.outerHTML;
-    var eventsJSON = JSON.stringify(eventsData, null, 2);
-    fileContent = fileContent.replace(/const eventsData = \[\s\S]*?\];/, 'const eventsData = ' + eventsJSON + ';');
     var encodedContent = btoa(unescape(encodeURIComponent(fileContent)));
     var apiBase = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO;
     var authHeader = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
