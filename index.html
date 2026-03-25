@@ -217,6 +217,12 @@
     html = html.replace(/const ADMIN_PASSWORD_HASH = '[^']*';/, "const ADMIN_PASSWORD_HASH = '" + currentAdminHash + "';");
     // Limpar hash do localStorage do HTML baixado (já está embutido no código)
     html = html.replace(/var currentAdminHash = localStorage\.getItem\('boa_admin_hash'\) \|\| ADMIN_PASSWORD_HASH;/, "var currentAdminHash = ADMIN_PASSWORD_HASH;");
+    // Garantir que painel admin fique OCULTO no HTML baixado (forçar via string)
+    ['adminEventsBtn','downloadHTMLBtn','adminBottomRow','githubBtnRow','closeAdminBtn'].forEach(function(id){
+      var re = new RegExp('(id="' + id + '"[^>]*style="[^"]*?)display\\s*:\\s*(?:block|flex|inline(?:-[a-z]+)?)','g');
+      html = html.replace(re, '$1display:none');
+    });
+    html = html.replace(/(id="eventsPanel"[^>]*class="[^"]*?)\bshow\b/g, '$1');
 
     // Restaurar painel admin
     adminIds.forEach(function(id){
@@ -339,6 +345,12 @@
     fileContent = fileContent.replace(/const ADMIN_PASSWORD_HASH = '[^']*';/, "const ADMIN_PASSWORD_HASH = '" + currentAdminHash + "';");
     // Limpar hash do localStorage do HTML publicado (já está embutido no código)
     fileContent = fileContent.replace(/var currentAdminHash = localStorage\.getItem\('boa_admin_hash'\) \|\| ADMIN_PASSWORD_HASH;/, "var currentAdminHash = ADMIN_PASSWORD_HASH;");
+    // Garantir que painel admin fique OCULTO no HTML publicado (forçar via string)
+    ['adminEventsBtn','downloadHTMLBtn','adminBottomRow','githubBtnRow','closeAdminBtn'].forEach(function(id){
+      var re = new RegExp('(id="' + id + '"[^>]*style="[^"]*?)display\\s*:\\s*(?:block|flex|inline(?:-[a-z]+)?)','g');
+      fileContent = fileContent.replace(re, '$1display:none');
+    });
+    fileContent = fileContent.replace(/(id="eventsPanel"[^>]*class="[^"]*?)\bshow\b/g, '$1');
 
     // ── Restaurar painel admin ──
     adminIds.forEach(function(id){
