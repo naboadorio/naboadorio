@@ -80,8 +80,13 @@
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📅 Data e Hora:</strong>
         </div>
-        <input type="date" id="newEventDate" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
-        <input type="time" id="newEventTime" style="width:100%;padding:10px;margin-bottom:8px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+          <input type="number" id="newEventDay" placeholder="Dia" min="1" max="31" style="width:60px;padding:10px 6px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;text-align:center;">
+          <input type="number" id="newEventMonth" placeholder="Mês" min="1" max="12" style="width:60px;padding:10px 6px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;text-align:center;">
+          <input type="number" id="newEventYear" placeholder="Ano" min="2024" max="2030" style="flex:1;padding:10px 6px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;text-align:center;">
+          <input type="time" id="newEventTime" style="flex:1;padding:10px 6px;border:2px solid #fee822;border-radius:6px;font-size:12px;font-family:Nunito;">
+        </div>
+        <input type="hidden" id="newEventDate">
         
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📍 Local e Links:</strong>
@@ -96,8 +101,21 @@
         <div style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:10px;margin-top:10px;font-size:11px;color:#666;">
           <strong>📸 Foto do Evento:</strong>
         </div>
-        <div id="imagePreview" style="width: 100%; height: 120px; background: rgb(249, 249, 249); border: 2px solid rgb(76, 175, 80); border-radius: 6px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; color: rgb(153, 153, 153); font-size: 12px; overflow: hidden; cursor: pointer; transition: 0.3s;" onclick="document.getElementById('newEventImage').click();">📸 Clique aqui para adicionar imagem</div>
+        <div id="imagePreview" style="width:100%;height:100px;background:#f9f9f9;border:2px dashed #fee822;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;overflow:hidden;cursor:pointer;transition:all 0.3s;" onclick="document.getElementById('newEventImage').click();">📸 Clique aqui para adicionar imagem</div>
         <input type="file" id="newEventImage" accept="image/*" style="display:none;">
+        <div id="newEventAdjust" style="display:none;background:#f9f9f9;padding:10px;border-radius:6px;border:1px solid #fee822;margin-bottom:8px;">
+          <div style="font-size:11px;font-weight:700;margin-bottom:6px;">🔍 Ajustar foto:</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:700;min-width:35px;">Zoom</span>
+            <input type="range" id="newEventZoom" min="50" max="250" value="100" style="flex:1;">
+            <span id="newEventZoomLbl" style="font-size:11px;min-width:35px;">100%</span>
+          </div>
+          <div style="font-size:10px;color:#888;margin-bottom:5px;">Arraste para reposicionar:</div>
+          <div id="newEventEditor" style="width:100%;height:130px;background:#ddd;border:2px solid #fee822;border-radius:6px;overflow:hidden;cursor:grab;position:relative;user-select:none;">
+            <img id="newEventEditorImg" src="" style="width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block;">
+          </div>
+          <button onclick="resetNewEventImage()" style="width:100%;background:#4CAF50;color:#fff;border:none;padding:6px;border-radius:5px;font-weight:700;cursor:pointer;font-size:11px;margin-top:6px;">↺ Resetar posição</button>
+        </div>
         
         <button class="upload-btn" onclick="addNewEvent()">✅ Adicionar Evento Completo</button>
       </div>
@@ -1040,18 +1058,23 @@
   function addNewEvent(){
     var nome     = document.getElementById('newEventName').value.trim();
     var subtitle = document.getElementById('newEventSubtitle').value.trim();
-    var dateInput= document.getElementById('newEventDate').value;
+    var dia      = String(document.getElementById('newEventDay').value || '').trim();
+    var mes      = String(document.getElementById('newEventMonth').value || '').trim();
+    var ano      = String(document.getElementById('newEventYear').value || '').trim();
     var timeInput= document.getElementById('newEventTime').value;
     var local    = document.getElementById('newEventLocal').value.trim();
     var link     = document.getElementById('newEventLink').value.trim();
     var discount = document.getElementById('newEventDiscount').value.trim();
     var image    = window.selectedEventImage || null;
+    var newImgPosX = window.newEventPosX !== undefined ? window.newEventPosX : 50;
+    var newImgPosY = window.newEventPosY !== undefined ? window.newEventPosY : 50;
+    var newImgZoom = window.newEventZoom !== undefined ? window.newEventZoom : 100;
 
-    if(!nome||!dateInput){ alert('⚠️ Preencha nome e data!'); return; }
+    if(!nome||!dia||!mes||!ano){ alert('⚠️ Preencha nome, dia, mês e ano!'); return; }
+    dia = dia.padStart(2,'0'); mes = mes.padStart(2,'0');
+    var dateInput = ano + '-' + mes + '-' + dia;
 
     var DIAS  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-    var parts = dateInput.split('-');
-    var ano=parts[0], mes=parts[1], dia=parts[2];
     var dtObj  = new Date(+ano, +mes-1, +dia);
     var diaSem = DIAS[dtObj.getDay()];
     var hora   = '';
@@ -1061,16 +1084,19 @@
     var events = getCustomEvents();
     events.push({ nome:nome, subtitle:subtitle, data:dataCompleta, date:dateInput,
       time:timeInput, dayWeek:diaSem, local:local, link:link, discount:discount,
-      image:image, imageOffsetX:0, imageOffsetY:0, imageZoom:100 });
+      image:image, imageOffsetX:newImgPosX, imageOffsetY:newImgPosY, imageZoom:newImgZoom, usePctPos:true });
     saveCustomEvents(events);
 
     // Limpar campos
-    ['newEventName','newEventSubtitle','newEventDate','newEventTime',
+    ['newEventName','newEventSubtitle','newEventDay','newEventMonth','newEventYear','newEventTime',
      'newEventLocal','newEventLink','newEventDiscount'].forEach(function(id){
-      document.getElementById(id).value='';
+      var el=document.getElementById(id); if(el) el.value='';
     });
     document.getElementById('imagePreview').innerHTML='📸 Clique aqui para adicionar imagem';
+    document.getElementById('imagePreview').style.border='2px dashed #fee822';
+    document.getElementById('newEventAdjust').style.display='none';
     window.selectedEventImage=null;
+    window.newEventPosX=50; window.newEventPosY=50; window.newEventZoom=100;
 
     // Recarregar
     loadCustomEventsToDOM();
@@ -1313,10 +1339,29 @@
   }
 
 
-  // ── Preview imagem novo evento ─────────────────────────
+  // ── Preview + editor zoom/drag para novo evento ──────────
+  window.newEventPosX = 50; window.newEventPosY = 50; window.newEventZoom = 100;
+
+  function resetNewEventImage(){
+    window.newEventPosX=50; window.newEventPosY=50; window.newEventZoom=100;
+    var z=document.getElementById('newEventZoom');
+    var lbl=document.getElementById('newEventZoomLbl');
+    if(z) z.value=100; if(lbl) lbl.textContent='100%';
+    applyNewEventT();
+  }
+
+  function applyNewEventT(){
+    var img=document.getElementById('newEventEditorImg');
+    if(!img) return;
+    img.style.objectPosition = window.newEventPosX+'% '+window.newEventPosY+'%';
+    img.style.transform = window.newEventZoom!==100 ? 'scale('+window.newEventZoom/100+')' : '';
+    img.style.transformOrigin = window.newEventPosX+'% '+window.newEventPosY+'%';
+  }
+
   document.addEventListener('DOMContentLoaded', function(){
     var si=document.getElementById('search');
     if(si) si.addEventListener('input',function(){ if(this.value.toLowerCase().includes('admin')){ this.value=''; openPasswordModal(); } });
+
     var fi=document.getElementById('newEventImage');
     if(fi) fi.addEventListener('change',function(e){
       var f=e.target.files[0]; if(!f) return;
@@ -1324,12 +1369,54 @@
       var r=new FileReader();
       r.onload=function(ev){
         window.selectedEventImage=ev.target.result;
+        window.newEventPosX=50; window.newEventPosY=50; window.newEventZoom=100;
+        // Preview clicável
         var p=document.getElementById('imagePreview');
         p.innerHTML='<img src="'+ev.target.result+'" style="width:100%;height:100%;object-fit:cover;">';
         p.style.border='2px solid #4CAF50';
+        // Mostrar editor de ajuste
+        var adj=document.getElementById('newEventAdjust');
+        if(adj) adj.style.display='block';
+        var edImg=document.getElementById('newEventEditorImg');
+        if(edImg){ edImg.src=ev.target.result; }
+        var z=document.getElementById('newEventZoom');
+        var lbl=document.getElementById('newEventZoomLbl');
+        if(z) z.value=100; if(lbl) lbl.textContent='100%';
+        applyNewEventT();
+        // Drag para reposicionar
+        var ed=document.getElementById('newEventEditor');
+        if(ed){
+          ed.onmousedown=ed.ontouchstart=function(e){
+            ed.style.cursor='grabbing';
+            var isT=e.type==='touchstart';
+            var sx=isT?e.touches[0].clientX:e.clientX, sy=isT?e.touches[0].clientY:e.clientY;
+            var spx=window.newEventPosX, spy=window.newEventPosY;
+            var rect=ed.getBoundingClientRect();
+            function mv(e2){
+              var cx=isT?e2.touches[0].clientX:e2.clientX, cy=isT?e2.touches[0].clientY:e2.clientY;
+              window.newEventPosX=Math.min(100,Math.max(0,spx-(cx-sx)/rect.width*100));
+              window.newEventPosY=Math.min(100,Math.max(0,spy-(cy-sy)/rect.height*100));
+              applyNewEventT();
+            }
+            function up(){ ed.style.cursor='grab'; document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up); }
+            document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+            document.addEventListener('touchmove',mv,{passive:false}); document.addEventListener('touchend',up);
+            e.preventDefault();
+          };
+          ed.style.cursor='grab';
+        }
       };
       r.readAsDataURL(f);
     });
+
+    // Zoom slider novo evento
+    var zSlider=document.getElementById('newEventZoom');
+    if(zSlider) zSlider.oninput=function(){
+      window.newEventZoom=parseInt(this.value);
+      var lbl=document.getElementById('newEventZoomLbl');
+      if(lbl) lbl.textContent=window.newEventZoom+'%';
+      applyNewEventT();
+    };
   });
 
   // ── Motor principal (filtros, render) ──────────────────
