@@ -704,10 +704,18 @@
       container.innerHTML = '<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento</p>';
       return;
     }
+    // Ordenar por data crescente
+    var sorted = eventsData.slice().sort(function(a, b){
+      return (a.dataISO||'').localeCompare(b.dataISO||'');
+    });
+    var hoje = new Date().toISOString().slice(0,10);
     var html = '';
-    eventsData.forEach(function(evt){
-      html += '<div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">'
-        + '<div style="font-weight:700;font-size:13px;color:#FF2A6D;">' + evt.nome + '</div>'
+    sorted.forEach(function(evt){
+      var passado = evt.dataISO && evt.dataISO < hoje;
+      var cor = passado ? '#aaa' : '#FF2A6D';
+      var tag = passado ? ' <span style="font-size:10px;background:#f0f0f0;color:#999;padding:2px 6px;border-radius:10px;margin-left:4px;">✓ Passado</span>' : '';
+      html += '<div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid '+cor+';">'
+        + '<div style="font-weight:700;font-size:13px;color:'+cor+';">' + evt.nome + tag + '</div>'
         + '<div style="font-size:11px;color:#666;">📅 ' + evt.dataFormatada + '</div>'
         + '<div style="font-size:11px;color:#666;margin-bottom:8px;">📍 ' + evt.local + '</div>'
         + '<div style="display:flex;gap:6px;">'
@@ -975,6 +983,8 @@
       if(evt.image){ applyImageToCard(newCard, evt.image, _px, _py, _zoom); }
       source.appendChild(newCard);
     });
+    // Sincronizar DOM → eventsData para que a lista de edição mostre todos os eventos
+    syncEventsFromDOM();
   }
 
   // ── Aplicar imagens salvas aos eventos originais ────────
@@ -1009,32 +1019,7 @@
   }
 
   // ── Listar eventos no painel admin ─────────────────────
-  function renderExistingEvents(){
-    var source = document.getElementById('events-source');
-    var container = document.getElementById('existingEventsList');
-    if(!source||!container) return;
-    var cards = source.querySelectorAll('.event-card');
-    if(!cards.length){
-      container.innerHTML='<p style="color:#999;font-size:12px;text-align:center;padding:20px;">📭 Nenhum evento</p>';
-      return;
-    }
-    var html='';
-    for(var i=0;i<cards.length;i++){
-      var c = cards[i];
-      var nome  = c.getAttribute('data-nome')||'Evento';
-      var data  = c.getAttribute('data-data')||'';
-      var local = c.getAttribute('data-local')||'';
-      html+='<div style="background:#f9f9f9;padding:12px;margin-bottom:10px;border-radius:8px;border-left:4px solid #FF2A6D;">'
-        +'<div style="font-weight:700;font-size:13px;color:#FF2A6D;">'+nome+'</div>'
-        +'<div style="font-size:11px;color:#666;">📅 '+data+'</div>'
-        +'<div style="font-size:11px;color:#666;margin-bottom:8px;">📍 '+local+'</div>'
-        +'<div style="display:flex;gap:6px;">'
-        +'<button onclick="editEventDialog('+i+')" style="background:#0066cc;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">✏️ Editar</button>'
-        +'<button onclick="deleteEventFromSite('+i+')" style="background:#f44336;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;flex:1;">🗑️ Deletar</button>'
-        +'</div></div>';
-    }
-    container.innerHTML = html;
-  }
+
 
   // ── Deletar evento ─────────────────────────────────────
   function deleteEventFromSite(idx){
