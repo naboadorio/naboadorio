@@ -395,6 +395,82 @@
   function saveGitHubToken(t){ localStorage.setItem('boa_github_token', t.trim()); }
   function clearGitHubToken(){ localStorage.removeItem('boa_github_token'); }
 
+  /* =====================================================
+     GERENCIAMENTO DE IMAGENS NO GITHUB
+  ===================================================== */
+
+  // Gera nome de arquivo único para a imagem
+  function genImgFilename(eventName){
+    var safe = eventName.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+    return 'imgs/' + safe + '-' + Date.now() + '.jpg';
+  }
+
+  // Converte base64 dataURL para base64 puro (sem prefixo)
+  function dataURLtoBase64(dataURL){
+    return dataURL.split(',')[1] || dataURL;
+  }
+
+  // Faz upload de uma imagem para o GitHub e retorna a URL pública
+  function uploadImageToGitHub(dataURL, filename){
+    return new Promise(function(resolve, reject){
+      var token = getGitHubToken();
+      if(!token){ reject(new Error('Token do GitHub não configurado')); return; }
+      var apiBase = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO;
+      var authHeader = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
+      var b64 = dataURLtoBase64(dataURL);
+      // Verificar se já existe (para pegar SHA)
+      fetch(apiBase + '/contents/' + filename + '?t=' + Date.now(), { headers: authHeader })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(existing){
+        var body = { message: '🖼️ Imagem: ' + filename, content: b64 };
+        if(existing && existing.sha) body.sha = existing.sha;
+        return fetch(apiBase + '/contents/' + filename, {
+          method: 'PUT',
+          headers: Object.assign({'Content-Type':'application/json'}, authHeader),
+          body: JSON.stringify(body)
+        });
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        if(res.content && res.content.html_url){
+          // URL pública do GitHub Pages
+          var url = 'https://' + GITHUB_OWNER + '.github.io/' + GITHUB_REPO + '/' + filename;
+          resolve(url);
+        } else {
+          reject(new Error('Erro ao salvar imagem: ' + JSON.stringify(res.message || res)));
+        }
+      })
+      .catch(reject);
+    });
+  }
+
+  // Deleta uma imagem do GitHub (ignora erros silenciosamente)
+  function deleteImageFromGitHub(imgUrl){
+    if(!imgUrl || !imgUrl.includes('github.io')) return Promise.resolve();
+    var token = getGitHubToken();
+    if(!token) return Promise.resolve();
+    // Extrair path relativo da URL (ex: imgs/paralamas-123.jpg)
+    var marker = GITHUB_REPO + '/';
+    var idx = imgUrl.indexOf(marker);
+    if(idx === -1) return Promise.resolve();
+    var filePath = imgUrl.substring(idx + marker.length);
+    var apiBase = 'https://api.github.com/repos/' + GITHUB_OWNER + '/' + GITHUB_REPO;
+    var authHeader = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
+    return fetch(apiBase + '/contents/' + filePath + '?t=' + Date.now(), { headers: authHeader })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(info){
+      if(!info || !info.sha) return;
+      return fetch(apiBase + '/contents/' + filePath, {
+        method: 'DELETE',
+        headers: Object.assign({'Content-Type':'application/json'}, authHeader),
+        body: JSON.stringify({ message: '🗑️ Remove imagem: ' + filePath, sha: info.sha })
+      });
+    })
+    .catch(function(){}); // silencioso
+  }
+
   // Sincroniza o estado atual do DOM de volta para eventsData antes de publicar
   function syncEventsFromDOM(){
     var MESES = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
@@ -634,11 +710,15 @@
   function deleteEvent(eventId){
     var evt = eventsData.find(function(e){ return e.id === eventId; });
     if(!evt || !confirm('⚠️ Deletar "' + evt.nome + '"?')) return;
+    var imgUrl = evt.imagem || '';
     var idx = eventsData.findIndex(function(e){ return e.id === eventId; });
     eventsData.splice(idx, 1);
     renderEventsFromData();
     renderExistingEvents();
-    alert('✅ Evento deletado!');
+    markAsChanged();
+    // Deletar imagem do GitHub (assíncrono, silencioso)
+    if(imgUrl) deleteImageFromGitHub(imgUrl).catch(function(){});
+    alert('✅ Evento deletado! Publique no GitHub para salvar.');
   }
 
   function addNewEvent(){
@@ -662,39 +742,69 @@
     var horaStr = timeParts[1] === '00' ? timeParts[0] + 'h' : timeParts[0] + 'h' + timeParts[1];
     var dataFormatada = parts[2] + '/' + parts[1] + ' • ' + DIAS[d.getDay()] + ' • ' + horaStr;
 
-    if(window.editingEventId){
-      // Editar evento existente
-      var evt = eventsData.find(function(e){ return e.id === window.editingEventId; });
-      if(evt){
-        evt.nome = nome;
-        evt.subtitulo = subtitulo;
-        evt.dataISO = dataISO;
-        evt.dataFormatada = dataFormatada;
-        evt.local = local;
-        evt.link = link;
-        evt.desconto = desconto;
-        alert('✅ Evento atualizado!');
+    var selectedImg = window.selectedEventImage || null;
+
+    function finishSave(imgUrl){
+      if(window.editingEventId){
+        var evt = eventsData.find(function(e){ return e.id === window.editingEventId; });
+        if(evt){
+          var oldImg = evt.imagem;
+          evt.nome = nome; evt.subtitulo = subtitulo; evt.dataISO = dataISO;
+          evt.dataFormatada = dataFormatada; evt.local = local; evt.link = link;
+          evt.desconto = desconto;
+          if(imgUrl !== undefined){ evt.imagem = imgUrl; }
+          // Deletar imagem antiga se foi substituída
+          if(imgUrl && oldImg && oldImg !== imgUrl) deleteImageFromGitHub(oldImg).catch(function(){});
+        }
+        window.editingEventId = null;
+        alert('✅ Evento atualizado! Publique no GitHub para salvar.');
+      } else {
+        var newId = Math.max.apply(null, eventsData.map(function(e){ return e.id; }).concat([0])) + 1;
+        eventsData.push({id: newId, nome: nome, subtitulo: subtitulo, dataISO: dataISO,
+          dataFormatada: dataFormatada, local: local, link: link, desconto: desconto,
+          imagem: imgUrl || '', imageOffsetX: 50, imageOffsetY: 50, imageZoom: 100, usePctPos: true});
+        alert('✅ Evento criado! Publique no GitHub para salvar.');
       }
+      ['newEventName','newEventSubtitle','newEventDate','newEventTime',
+       'newEventLocal','newEventLink','newEventDiscount'].forEach(function(id){
+        var el=document.getElementById(id); if(el) el.value='';
+      });
+      window.selectedEventImage = null;
       window.editingEventId = null;
-    } else {
-      // Novo evento
-      var newId = Math.max(...eventsData.map(function(e){ return e.id; }), 0) + 1;
-      eventsData.push({id: newId, nome: nome, subtitulo: subtitulo, dataISO: dataISO, dataFormatada: dataFormatada, local: local, link: link, desconto: desconto, imagem: ''});
-      alert('✅ Evento criado!');
+      renderEventsFromData();
+      renderExistingEvents();
+      markAsChanged();
     }
 
-    // Limpar formulário
-    document.getElementById('newEventName').value = '';
-    document.getElementById('newEventSubtitle').value = '';
-    document.getElementById('newEventDate').value = '';
-    document.getElementById('newEventTime').value = '14:00';
-    document.getElementById('newEventLocal').value = '';
-    document.getElementById('newEventLink').value = '';
-    document.getElementById('newEventDiscount').value = '';
-    window.editingEventId = null;
-
-    renderEventsFromData();
-    renderExistingEvents();
+    if(selectedImg && selectedImg.startsWith('data:')){
+      // Imagem nova: fazer upload para GitHub
+      var token = getGitHubToken();
+      if(!token){
+        // Sem token: avisa e salva como base64 mesmo (fallback)
+        alert('⚠️ Token do GitHub não configurado. A imagem será salva temporariamente como base64. Configure o token (🔑) para salvar no GitHub.');
+        finishSave(selectedImg);
+      } else {
+        var filename = genImgFilename(nome);
+        // Mostrar loading
+        var ldiv = document.createElement('div');
+        ldiv.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        ldiv.innerHTML = '<div style="background:#fff;border-radius:12px;padding:30px;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⏳</div><div style="font-weight:700;">Enviando imagem...</div></div>';
+        document.body.appendChild(ldiv);
+        uploadImageToGitHub(selectedImg, filename)
+        .then(function(url){
+          document.body.removeChild(ldiv);
+          finishSave(url);
+        })
+        .catch(function(err){
+          document.body.removeChild(ldiv);
+          alert('❌ Erro ao enviar imagem: ' + err.message + '\n\nA imagem será salva como base64.');
+          finishSave(selectedImg);
+        });
+      }
+    } else {
+      // Sem nova imagem: manter a existente
+      finishSave(undefined);
+    }
   }
 
   function renderExistingEvents(){
@@ -1028,11 +1138,18 @@
     var card   = cards[idx];
     var nome   = card.getAttribute('data-nome')||'Evento';
     if(!confirm('⚠️ Deletar "'+nome+'"?')) return;
+    // Pegar URL da imagem antes de remover
+    var imgUrl = card.getAttribute('data-img-src') || '';
     // remove do customEvents se for custom
     var events = getCustomEvents();
+    var removed = events.find(function(e){ return e.nome===nome; });
     var updated = events.filter(function(e){ return e.nome!==nome; });
     if(updated.length < events.length) saveCustomEvents(updated);
+    // Deletar imagem do GitHub
+    var urlToDelete = imgUrl || (removed && removed.image) || '';
+    if(urlToDelete) deleteImageFromGitHub(urlToDelete).catch(function(){});
     card.remove();
+    syncEventsFromDOM();
     renderExistingEvents();
     if(window._boa) window._boa.refresh();
     markAsChanged();
@@ -1066,29 +1183,45 @@
     if(timeInput){ var tp=timeInput.split(':'); hora=tp[1]==='00'?tp[0]+'h':tp[0]+'h'+tp[1]; }
     var dataCompleta = dia+'/'+mes+' • '+diaSem+(hora?' • '+hora:'');
 
-    var events = getCustomEvents();
-    events.push({ nome:nome, subtitle:subtitle, data:dataCompleta, date:dateInput,
-      time:timeInput, dayWeek:diaSem, local:local, link:link, discount:discount,
-      image:image, imageOffsetX:newImgPosX, imageOffsetY:newImgPosY, imageZoom:newImgZoom, usePctPos:true });
-    saveCustomEvents(events);
+    function saveNewCustomEvent(finalImg){
+      var evts2 = getCustomEvents();
+      evts2.push({ nome:nome, subtitle:subtitle, data:dataCompleta, date:dateInput,
+        time:timeInput, dayWeek:diaSem, local:local, link:link, discount:discount,
+        image:finalImg, imageOffsetX:newImgPosX, imageOffsetY:newImgPosY, imageZoom:newImgZoom, usePctPos:true });
+      saveCustomEvents(evts2);
+      ['newEventName','newEventSubtitle','newEventDay','newEventMonth','newEventYear','newEventTime',
+       'newEventLocal','newEventLink','newEventDiscount'].forEach(function(id){
+        var el=document.getElementById(id); if(el) el.value='';
+      });
+      document.getElementById('imagePreview').innerHTML='📸 Clique aqui para adicionar imagem';
+      document.getElementById('imagePreview').style.border='2px dashed #fee822';
+      document.getElementById('newEventAdjust').style.display='none';
+      window.selectedEventImage=null;
+      window.newEventPosX=50; window.newEventPosY=50; window.newEventZoom=100;
+      loadCustomEventsToDOM();
+      if(window._boa) window._boa.refresh();
+      renderExistingEvents();
+      markAsChanged();
+      alert('✅ Evento "'+nome+'" adicionado! Clique em "💾 Publicar alterações" para publicar no site.');
+    }
 
-    // Limpar campos
-    ['newEventName','newEventSubtitle','newEventDay','newEventMonth','newEventYear','newEventTime',
-     'newEventLocal','newEventLink','newEventDiscount'].forEach(function(id){
-      var el=document.getElementById(id); if(el) el.value='';
-    });
-    document.getElementById('imagePreview').innerHTML='📸 Clique aqui para adicionar imagem';
-    document.getElementById('imagePreview').style.border='2px dashed #fee822';
-    document.getElementById('newEventAdjust').style.display='none';
-    window.selectedEventImage=null;
-    window.newEventPosX=50; window.newEventPosY=50; window.newEventZoom=100;
-
-    // Recarregar
-    loadCustomEventsToDOM();
-    if(window._boa) window._boa.refresh();
-    renderExistingEvents();
-    markAsChanged();
-    alert('✅ Evento "'+nome+'" adicionado! Clique em "💾 Publicar alterações" para publicar no site.');
+    if(image && image.startsWith('data:')){
+      var token3 = getGitHubToken();
+      if(!token3){
+        saveNewCustomEvent(image);
+      } else {
+        var fn3 = genImgFilename(nome);
+        var ldiv3 = document.createElement('div');
+        ldiv3.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        ldiv3.innerHTML = '<div style="background:#fff;border-radius:12px;padding:30px;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⏳</div><div style="font-weight:700;">Enviando imagem...</div></div>';
+        document.body.appendChild(ldiv3);
+        uploadImageToGitHub(image, fn3)
+        .then(function(url){ document.body.removeChild(ldiv3); saveNewCustomEvent(url); })
+        .catch(function(err){ document.body.removeChild(ldiv3); alert('❌ Erro: '+err.message); saveNewCustomEvent(image); });
+      }
+    } else {
+      saveNewCustomEvent(image);
+    }
   }
 
   // ── Editar evento ──────────────────────────────────────
@@ -1261,65 +1394,87 @@
       var tb=card.querySelector('.btn-ticket'); if(tb) tb.href=novoLink||'#';
       var wl=card.querySelector('.event-image-wrapper'); if(wl) wl.href=novoLink||'#';
 
-      // Foto
-      if(selImg!==null){
-        var img=card.querySelector('img');
-        if(img && !selImg){ img.src=''; img.style.display='none'; }
-        // Guardar dados e aplicar via helper
-        if(selImg){
-          card.setAttribute('data-img-src', selImg);
-          card.setAttribute('data-img-x', posX);
-          card.setAttribute('data-img-y', posY);
-          card.setAttribute('data-img-zoom', zoom);
-          applyImageToCard(card, selImg, posX, posY, zoom);
-        } else {
-          card.removeAttribute('data-img-src');
-          var oldBg = card.querySelector('.img-bg-div');
-          if(oldBg) oldBg.remove();
-          var wr2 = card.querySelector('.event-image-wrapper');
-          if(wr2) wr2.classList.add('no-image');
+      var oldImgUrl = card.getAttribute('data-img-src') || '';
+
+      function applyEditSave(finalImgUrl){
+        // Atualizar imagem no card
+        if(selImg !== null){
+          var imgEl2 = card.querySelector('img');
+          if(imgEl2 && !finalImgUrl){ imgEl2.src=''; imgEl2.style.display='none'; }
+          if(finalImgUrl){
+            card.setAttribute('data-img-src', finalImgUrl);
+            card.setAttribute('data-img-x', posX);
+            card.setAttribute('data-img-y', posY);
+            card.setAttribute('data-img-zoom', zoom);
+            applyImageToCard(card, finalImgUrl, posX, posY, zoom);
+          } else {
+            card.removeAttribute('data-img-src');
+            var oldBg2 = card.querySelector('.img-bg-div');
+            if(oldBg2) oldBg2.remove();
+          }
+          var fb2=card.querySelector('.event-image-fallback');
+          var wr3=card.querySelector('.event-image-wrapper');
+          if(finalImgUrl){ if(fb2){fb2.hidden=true;fb2.style.display='none';} if(wr3) wr3.classList.remove('no-image'); }
+          else{ if(fb2){fb2.hidden=false;fb2.style.display='';} if(wr3) wr3.classList.add('no-image'); }
         }
-        var fb=card.querySelector('.event-image-fallback');
-        var wr=card.querySelector('.event-image-wrapper');
-        if(selImg){ if(fb){fb.hidden=true;fb.style.display='none';} if(wr) wr.classList.remove('no-image'); }
-        else{ if(fb){fb.hidden=false;fb.style.display='';} if(wr) wr.classList.add('no-image'); }
-        // Salvar em eventImages (eventos originais)
-        var imgNum=card.getAttribute('data-img');
-        if(imgNum&&selImg){ var imgs=getSavedImages(); imgs[imgNum]=selImg; saveSavedImages(imgs); }
+
+        // Salvar em customEvents
+        var evts=getCustomEvents();
+        var ei=evts.findIndex(function(e){ return e.nome===currentNome; });
+        var imgToSave = selImg!==null ? (finalImgUrl||null) : (ei!==-1 ? evts[ei].image : null);
+        if(ei!==-1){
+          evts[ei]=Object.assign({},evts[ei],{
+            nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
+            time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
+            image:imgToSave, imageOffsetX:posX, imageOffsetY:posY, imageZoom:zoom, usePctPos:true
+          });
+        } else {
+          evts.push({ nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
+            time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
+            image:imgToSave, imageOffsetX:posX, imageOffsetY:posY, imageZoom:zoom, usePctPos:true,
+            isEditedOriginal:true, originalNome:currentNome });
+        }
+        saveCustomEvents(evts);
+
+        var dayEl=card.querySelector('.date-badge .day'), monEl=card.querySelector('.date-badge .month');
+        if(dayEl) dayEl.textContent=dia;
+        if(monEl) monEl.textContent=MESES_ABR[+mes-1];
+
+        syncEventsFromDOM();
+        document.body.removeChild(modal);
+        markAsChanged();
+        alert('✅ Salvo! Clique em "💾 Publicar alterações" para publicar no site.');
+        setTimeout(function(){ if(window._boa) window._boa.refresh(); renderExistingEvents(); }, 100);
       }
 
-      // Salvar em customEvents (eventos adicionados pelo admin)
-      var evts=getCustomEvents();
-      var ei=evts.findIndex(function(e){ return e.nome===currentNome; });
-      if(ei!==-1){
-        // Evento já existe em customEvents - atualizar
-        evts[ei]=Object.assign({},evts[ei],{
-          nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
-          time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
-          image:selImg!==null?selImg:evts[ei].image,
-          imageOffsetX:posX, imageOffsetY:posY, imageZoom:zoom, usePctPos:true
-        });
-        saveCustomEvents(evts);
+      // Se selecionou nova imagem em base64, fazer upload para GitHub
+      if(selImg && selImg.startsWith('data:')){
+        var token2 = getGitHubToken();
+        if(!token2){
+          applyEditSave(selImg); // fallback base64
+        } else {
+          var filename2 = genImgFilename(novoNome);
+          var ldiv2 = document.createElement('div');
+          ldiv2.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;';
+          ldiv2.innerHTML = '<div style="background:#fff;border-radius:12px;padding:30px;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⏳</div><div style="font-weight:700;">Enviando imagem...</div></div>';
+          document.body.appendChild(ldiv2);
+          uploadImageToGitHub(selImg, filename2)
+          .then(function(url){
+            document.body.removeChild(ldiv2);
+            // Deletar imagem antiga se existia e era do GitHub
+            if(oldImgUrl && oldImgUrl !== url) deleteImageFromGitHub(oldImgUrl).catch(function(){});
+            applyEditSave(url);
+          })
+          .catch(function(err){
+            document.body.removeChild(ldiv2);
+            alert('❌ Erro ao enviar imagem: ' + err.message);
+            applyEditSave(selImg);
+          });
+        }
       } else {
-        // Evento original está sendo editado - salvar como customEvent
-        evts.push({
-          nome:novoNome, subtitle:novoSub, data:novaData, date:novoDate,
-          time:novoTime, dayWeek:diaSem, local:novoLoc, link:novoLink, discount:novoDisc,
-          image:selImg||null,
-          imageOffsetX:posX, imageOffsetY:posY, imageZoom:zoom, usePctPos:true,
-          isEditedOriginal:true, originalNome:currentNome
-        });
-        saveCustomEvents(evts);
+        // Sem nova imagem: manter existente (ou null se removida)
+        applyEditSave(selImg === null ? null : undefined);
       }
-
-      var dayEl=card.querySelector('.date-badge .day'), monEl=card.querySelector('.date-badge .month');
-      if(dayEl) dayEl.textContent=dia;
-      if(monEl) monEl.textContent=MESES_ABR[+mes-1];
-
-      document.body.removeChild(modal);
-      markAsChanged();
-      alert('✅ Salvo! Clique em "💾 Publicar alterações" para publicar no site.');
-      setTimeout(function(){ if(window._boa) window._boa.refresh(); renderExistingEvents(); }, 100);
     };
   }
 
